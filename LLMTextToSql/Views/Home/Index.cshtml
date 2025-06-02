@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Convert";
+}
+
+<h2>Convert</h2>
+
+<form method="post">
+    <div class="mb-3">
+        <label for="inputValue" class="form-label">Enter text:</label>
+        <input type="text"
+               class="form-control"
+               id="inputValue"
+               name="inputValue"
+               placeholder="Type something…" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">CONVERT</button>
+</form>
+
+@if (ViewBag.Result != null)
+{
+    <div class="alert alert-info mt-3">
+        @ViewBag.Result
+    </div>
+}
+
