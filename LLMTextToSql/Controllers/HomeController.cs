@@ -2,27 +2,34 @@ using System.Diagnostics;
 using LLMTextToSql.Models;
 using Microsoft.AspNetCore.Mvc;
 
+
+using LLMTextToSql.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+
 namespace LLMTextToSql.Controllers
 {
-    using Microsoft.AspNetCore.Mvc;
-
-    namespace ConvertApp.Controllers
+    public class HomeController : Controller
     {
-        public class HomeController : Controller
-        {
-            [HttpGet]
-            public IActionResult Index()
-            {
-                return View();
-            }
+        private readonly ILlmService _llmService;
 
-            [HttpPost]
-            public IActionResult Index(string inputValue)
-            {
-                ViewBag.Result = $"You entered: {inputValue}";
-                return View();
-            }
+        public HomeController(ILlmService llmService)
+        {
+            _llmService = llmService;
+        }
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(string inputValue)
+        {
+            var sqlResult = await _llmService.GetSqlFromPrompt(inputValue);
+            ViewBag.Result = sqlResult;
+            return View();
         }
     }
-
 }
+
