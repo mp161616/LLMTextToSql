@@ -1,9 +1,19 @@
+using LLMTextToSql.Interfaces;
+using LLMTextToSql.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddHttpClient<ILlmService, OllamaLlmService>(client =>
+{
+    client.Timeout = TimeSpan.FromMinutes(5);
+});
+
+
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

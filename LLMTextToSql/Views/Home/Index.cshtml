@@ -1,26 +1,19 @@
 ﻿@{
-    ViewData["Title"] = "Convert";
+    ViewData["Title"] = "Text to SQL";
 }
 
-<h2>Convert</h2>
+<h2>Text to SQL</h2>
 
 <form method="post">
-    <div class="mb-3">
-        <label for="inputValue" class="form-label">Enter text:</label>
-        <input type="text"
-               class="form-control"
-               id="inputValue"
-               name="inputValue"
-               placeholder="Type something…" />
-    </div>
-
-    <button type="submit" class="btn btn-primary">CONVERT</button>
+    <input type="text" name="inputValue" class="form-control" placeholder="Ask a question..." />
+    <button type="submit" class="btn btn-primary mt-2">CONVERT TO SQL</button>
 </form>
 
 @if (ViewBag.Result != null)
 {
     <div class="alert alert-info mt-3">
-        @ViewBag.Result
+        <strong>Generated SQL:</strong>
+        <pre>@ViewBag.Result</pre>
     </div>
 }
 
