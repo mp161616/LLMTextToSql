@@ -1,20 +1,26 @@
-using System.Diagnostics;
-using LLMTextToSql.Models;
+﻿// Controllers/HomeController.cs
 using Microsoft.AspNetCore.Mvc;
-
-
 using LLMTextToSql.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+using LLMTextToSql.Interfaces.Agents;
+using LLMTextToSql.Interfaces.Services;
+using System.Threading.Tasks;
 
 namespace LLMTextToSql.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILlmService _llmService;
+        private readonly IPythonDecomposerAgent _decomposer;
+        private readonly IIterativeRefinerService _iterativeRefiner;
 
-        public HomeController(ILlmService llmService)
+        public HomeController(
+            ILlmService llmService,
+            IPythonDecomposerAgent decomposer,
+            IIterativeRefinerService iterativeRefiner)
         {
             _llmService = llmService;
+            _decomposer = decomposer;
+            _iterativeRefiner = iterativeRefiner;
         }
 
         [HttpGet]
@@ -24,10 +30,26 @@ namespace LLMTextToSql.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(string inputValue)
+        public async Task<IActionResult> Index(string inputValue, bool useDecomposer = false)
         {
-            var sqlResult = await _llmService.GetSqlFromPrompt(inputValue);
-            ViewBag.Result = sqlResult;
+            if (string.IsNullOrWhiteSpace(inputValue))
+            {
+                ViewBag.Error = "Please enter a question.";
+                return View();
+            }
+
+            // 1) Get the initial SQL from either the Decomposer or the direct LLM pipeline:
+            string initialSql = useDecomposer
+                ? await _decomposer.DecomposeAndGenerateFinalSqlAsync(inputValue)
+                : await _llmService.GenerateSqlAsync(inputValue);
+
+            // 2) Pass that initialSql to the Iterative Refiner
+            //    We'll let it try up to 3 times (for example)
+            string finalSql = await _iterativeRefiner.RefineUntilExecutableAsync(initialSql, inputValue, maxAttempts: 3);
+
+            ViewBag.Prompt = inputValue;
+            ViewBag.UseDecomposer = useDecomposer;
+            ViewBag.FinalSql = finalSql;
             return View();
         }
     }
