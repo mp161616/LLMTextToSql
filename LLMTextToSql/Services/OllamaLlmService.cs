@@ -1,57 +1,73 @@
-﻿using System.Net.Http.Json;
-using System.Text.Json;
-using LLMTextToSql.Interfaces;
+﻿using LLMTextToSql.Interfaces;
+using LLMTextToSql.Interfaces.Agents;
+using LLMTextToSql.Interfaces.Services;
+using System;
+using System.IO;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
 
 namespace LLMTextToSql.Services
 {
     public class OllamaLlmService : ILlmService
     {
         private readonly HttpClient _httpClient;
+        private readonly IInterpreterAgent _interpreter;
+        private readonly ISelectorAgent _selector;
+        private readonly IAugmenterAgent _augmenter;
+        private readonly IFixerAgent _fixer;
         private readonly string _schemaJson;
 
-        public OllamaLlmService(HttpClient httpClient)
+        public OllamaLlmService(
+            HttpClient httpClient,
+            IInterpreterAgent interpreter,
+            ISelectorAgent selector,
+            IAugmenterAgent augmenter,
+            IFixerAgent fixer)
         {
             _httpClient = httpClient;
+            _interpreter = interpreter;
+            _selector = selector;
+            _augmenter = augmenter;
+            _fixer = fixer;
 
-            // Load and compress JSON schema from file
+            // Load the compressed schema from file
             var schemaPath = Path.Combine(AppContext.BaseDirectory, "Schemas", "pagila_compressed_schema.json");
             _schemaJson = File.ReadAllText(schemaPath);
         }
 
-        public async Task<string> GetSqlFromPrompt(string userPrompt)
+        public async Task<string> GenerateSqlAsync(string question)
         {
-            var fullPrompt = $"""
-    You are an intelligent SQL assistant.
+            // 1) Preprocess the user question
+            string pre = _interpreter.PreprocessQuestion(question);
 
-    Given the following JSON-formatted database schema:
-    {_schemaJson}
+            // 2) Select relevant tables from the schema
+            var relevant = _selector.SelectRelevantTables(pre, _schemaJson);
 
-    Convert the following question into an executable SQL query.
-
-    Question: "{userPrompt}"
-
-    SQL query:
-    """;
+            // 3) Build a minimal prompt with only those tables
+            string prompt = _augmenter.AugmentPrompt(pre, relevant, _schemaJson);
 
             var body = new
             {
                 model = "sqlcoder",
-                prompt = fullPrompt,
+                prompt = prompt,
                 stream = false
             };
 
             try
             {
                 var response = await _httpClient.PostAsJsonAsync("http://localhost:11434/api/generate", body);
-
                 if (!response.IsSuccessStatusCode)
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    return $"[Error] Status {response.StatusCode}: {error}";
+                    var err = await response.Content.ReadAsStringAsync();
+                    return $"[LLM Error] {response.StatusCode}: {err}";
                 }
 
                 var result = await response.Content.ReadFromJsonAsync<OllamaResponse>();
-                return result?.Response?.Trim() ?? "[Empty response]";
+                string rawSql = result?.Response?.Trim() ?? "[Empty]";
+
+                // 4) Post‐process / fix any typos
+                return _fixer.FixQuery(rawSql, _schemaJson);
             }
             catch (Exception ex)
             {
@@ -63,7 +79,5 @@ namespace LLMTextToSql.Services
         {
             public string Response { get; set; }
         }
-
     }
-
 }

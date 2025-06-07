@@ -4,16 +4,39 @@
 
 <h2>Text to SQL</h2>
 
-<form method="post">
-    <input type="text" name="inputValue" class="form-control" placeholder="Ask a question..." />
-    <button type="submit" class="btn btn-primary mt-2">CONVERT TO SQL</button>
-</form>
-
-@if (ViewBag.Result != null)
+@if (ViewBag.Error != null)
 {
-    <div class="alert alert-info mt-3">
-        <strong>Generated SQL:</strong>
-        <pre>@ViewBag.Result</pre>
-    </div>
+    <div class="alert alert-danger">@ViewBag.Error</div>
 }
 
+<form method="post" class="mb-3">
+    <div class="form-group mb-2">
+        <input type="text"
+               name="inputValue"
+               value="@(ViewBag.Prompt ?? "")"
+               class="form-control"
+               placeholder="Enter your question..."
+               style="width: 400px;" />
+    </div>
+
+    <div class="form-check mb-2">
+        <input type="checkbox"
+               id="useDecomposer"
+               name="useDecomposer"
+               class="form-check-input"
+        @(ViewBag.UseDecomposer == true ? "checked" : "") />
+        <label for="useDecomposer" class="form-check-label">
+            Use Python Decomposer (chain‐of‐thought)
+        </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">CONVERT TO SQL</button>
+</form>
+
+@if (ViewBag.FinalSql != null)
+{
+    <div class="alert alert-info">
+        <strong>Final SQL (after up to 3 attempts):</strong>
+        <pre>@ViewBag.FinalSql</pre>
+    </div>
+}
