@@ -70,14 +70,28 @@ namespace LLMTextToSql.Services
                 return $"[Python Refiner Error]\n{stderr}";
             }
 
-            // Heuristic: pick the first SQL-like block (i.e. starting with SELECT)
-            var match = Regex.Match(stdout, @"(?i)\bSELECT\b[\s\S]+");
-            return match.Success ? match.Value.Trim() : stdout.Trim();
+            return ExtractLastSql(stdout);
         }
 
         private static string EscapeArg(string arg)
         {
             return arg.Replace("\"", "\\\"");
+        }
+
+        private static readonly Regex _sqlExtractRegex = new Regex(
+    @"(?i)\b(?:SELECT|UPDATE|DELETE)\b[\s\S]+?(?=(;|\z))",
+    RegexOptions.Compiled);
+
+        private static string ExtractLastSql(string text)
+        {
+            var matches = _sqlExtractRegex.Matches(text);
+            if (matches.Count > 0)
+            {
+                var last = matches[matches.Count - 1].Value.Trim();
+                return last.EndsWith(";") ? last : last + ";";
+            }
+            // No SQL block found → return the raw text
+            return text.Trim();
         }
     }
 }

@@ -18,55 +18,64 @@ namespace LLMTextToSql.Services
             _postgresConnectionString = postgresConnectionString;
         }
 
-        public async Task<string> RefineUntilExecutableAsync(string initialSql, string question, int maxAttempts = 3)
+        public async Task<string> RefineUntilExecutableAsync(
+                string initialSql,
+                string question,
+                int maxAttempts = 4)
         {
-            // Start with the initial SQL guess
             string currentSql = initialSql;
+
             for (int attempt = 1; attempt <= maxAttempts; attempt++)
             {
+                // Determine the SQL verb (SELECT/UPDATE/DELETE/...)
+                var trimmed = currentSql.TrimStart();
+                var stmtType = trimmed.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries)[0]
+                                      .ToUpperInvariant();
+
                 try
                 {
-                    // 1) Try running currentSql on Postgres
                     await using var conn = new NpgsqlConnection(_postgresConnectionString);
                     await conn.OpenAsync();
 
-                    await using var cmd = new NpgsqlCommand(currentSql, conn);
-                    // Using ExecuteReaderAsync() even for SELECT is fine; if it's a non‐SELECT, use ExecuteNonQueryAsync()
-                    await using var reader = await cmd.ExecuteReaderAsync();
+                    // Start a transaction so we never commit mutations
+                    await using var tx = await conn.BeginTransactionAsync();
+                    await using var cmd = new NpgsqlCommand(currentSql, conn, tx);
 
-                    // If we get here with no exception, the SQL is valid and ran successfully.
+                    if (stmtType == "SELECT")
+                    {
+                        await using var reader = await cmd.ExecuteReaderAsync();
+                    }
+                    else
+                    {
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+
+                    // Roll back any changes (dry‐run)
+                    await tx.RollbackAsync();
+
+                    // Success—return the clean, executable SQL
                     return currentSql;
                 }
                 catch (PostgresException pgEx)
                 {
-                    // 2) SQL failed—extract the Postgres error message
-                    string errorMsg = pgEx.MessageText;
-                    // (You could also include pgEx.SqlState or full pgEx.ToString() if you want more detail.)
-
                     if (attempt == maxAttempts)
-                    {
-                        // Last attempt—return whatever SQL we have, even if still invalid.
                         return currentSql;
-                    }
 
-                    // 3) Call Python Refiner to get a “fixed” version for the next iteration
+                    // Let the refiner correct it, then retry
+                    var errorMsg = pgEx.MessageText;
                     currentSql = await _refinerAgent.RefineAndGenerateSqlAsync(currentSql, errorMsg, question);
-                    // Loop again with new currentSql
                 }
                 catch (Exception ex)
                 {
-                    // Some non‐Postgres exception occurred (e.g. network issue). 
-                    // You can choose to break or treat it similarly as a refineable error.
                     if (attempt == maxAttempts)
-                    {
                         return currentSql;
-                    }
-                    // For simplicity, send the entire exception message to the Refiner.
+
+                    // Non‐SQL error—also send to refiner
                     currentSql = await _refinerAgent.RefineAndGenerateSqlAsync(currentSql, ex.Message, question);
                 }
             }
 
-            // If we somehow exit the loop (which we won’t, due to return inside), return the last SQL anyway
+            // Should never reach here, but return the last SQL anyway
             return currentSql;
         }
     }
