@@ -22,6 +22,7 @@ def build_refiner_prompt(flawed_sql: str, error_msg: str, question: str, schema_
     prompt = f"""
 You are an expert SQL assistant. Your job is to **inspect** and **correct** a flawed SQL query
 based on an error message from the database, while remaining consistent with the given schema.
+You may generate SELECT, UPDATE, or DELETE queries based on the user's intent and the given schema.
 
 Below is the **filtered/compressed schema** (only tables & columns relevant to the question):
 
