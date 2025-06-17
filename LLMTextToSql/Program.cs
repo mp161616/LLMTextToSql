@@ -5,6 +5,24 @@ using LLMTextToSql.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+if (args.Length > 0 && args[0].Equals("extract-schema", StringComparison.OrdinalIgnoreCase))
+{
+    // 1) Read connection string
+    var config = builder.Configuration;
+    string connString = config.GetConnectionString("PagilaPostgres")
+                        ?? throw new InvalidOperationException("Missing PagilaPostgres");
+
+    // 2) Run extractor
+    var extractor = new SchemaExtractorService(connString);
+    string output = Path.Combine(builder.Environment.ContentRootPath, "Schemas", "pagila_compressed_schema.json");
+    Directory.CreateDirectory(Path.GetDirectoryName(output)!);
+    await extractor.ExtractSchemaAsync(output);
+
+    Console.WriteLine("Schema extraction complete.");
+    return;  // exit the app
+}
+
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -32,8 +50,7 @@ builder.Services.AddSingleton<IIterativeRefinerService>(sp =>
 {
     // Pull the Postgres connection string from configuration or hard‐code it temporarily:
     var configuration = sp.GetRequiredService<IConfiguration>();
-    string pgConnString = configuration.GetConnectionString("PagilaPostgres")
-                         ?? "Host=localhost;Port=5432;Username=postgres;Password=admin;Database=pagila;";
+    string pgConnString = configuration.GetConnectionString("PagilaPostgres");
     var refinerAgent = sp.GetRequiredService<IPythonRefinerAgent>();
     return new IterativeRefinerService(refinerAgent, pgConnString);
 });
