@@ -1,98 +1,77 @@
-﻿// Services/PythonRefinerAgent.cs
-using LLMTextToSql.Interfaces.Agents;
+﻿ using System;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using LLMTextToSql.Interfaces.Agents;
 
 namespace LLMTextToSql.Services
 {
-    public class PythonRefinerAgent : IPythonRefinerAgent
+
+    namespace LLMTextToSql.Services
     {
-        private readonly string _pythonScriptPath;
-        private readonly string _schemaFilePath;
-        private readonly TimeSpan _timeout = TimeSpan.FromMinutes(5); // 30‐second timeout
-
-        public PythonRefinerAgent(string pythonScriptPath, string schemaFilePath)
+        public class PythonRefinerAgent : IPythonRefinerAgent
         {
-            _pythonScriptPath = pythonScriptPath;
-            _schemaFilePath = schemaFilePath;
-        }
-
-        public async Task<string> RefineAndGenerateSqlAsync(string flawedSql, string errorMessage, string question)
-        {
-            // Build the process info to call Python
-            var psi = new ProcessStartInfo
+            private readonly string _script, _schema, _dsn;
+            public PythonRefinerAgent(string scriptPath, string schemaPath, string dbConn)
             {
-                FileName = "python",
-                // Pass: refiner.py "<flawedSql>" "<errorMessage>" "<question>" "<schemaJsonPath>"
-                Arguments = $"\"{_pythonScriptPath}\" \"{EscapeArg(flawedSql)}\" \"{EscapeArg(errorMessage)}\" \"{EscapeArg(question)}\" \"{_schemaFilePath}\"",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
+                _script = scriptPath;
+                _schema = schemaPath;
+                _dsn = dbConn;
+            }
 
-            using var process = Process.Start(psi);
-            if (process == null)
-                return "[Error] Could not start Python refiner process.";
-
-            // Start reading stdout and stderr asynchronously
-            Task<string> stdoutTask = process.StandardOutput.ReadToEndAsync();
-            Task<string> stderrTask = process.StandardError.ReadToEndAsync();
-
-            // Create a Task that represents either: (a) process + pipe completion, or (b) timeout
-            Task processExited = process.WaitForExitAsync();
-            Task timeoutTask = Task.Delay(_timeout);
-
-            // Wait for either the process to exit or the timeout to elapse
-            Task firstToFinish = await Task.WhenAny(Task.WhenAll(stdoutTask, stderrTask, processExited), timeoutTask);
-
-            if (firstToFinish == timeoutTask)
+            public async Task<string> RefineAndGenerateSqlAsync(string flawedSql, string err, string question)
             {
-                // We hit the timeout before the process finished.
-                try
+                var args = string.Join(" ",
+                    $"\"{_script}\"",
+                    $"\"{Escape(flawedSql)}\"",
+                    $"\"{Escape(err)}\"",
+                    $"\"{Escape(question)}\"",
+                    $"\"{Escape(_schema)}\"",
+                    $"\"{Escape(_dsn)}\""
+                );
+
+                var psi = new ProcessStartInfo("python", args)
                 {
-                    process.Kill(entireProcessTree: true);
-                }
-                catch
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using var proc = Process.Start(psi)
+                              ?? throw new InvalidOperationException("Cannot start Python");
+
+                string stdout = await proc.StandardOutput.ReadToEndAsync();
+                string stderr = await proc.StandardError.ReadToEndAsync();
+                await proc.WaitForExitAsync();
+
+                if (!string.IsNullOrWhiteSpace(stderr))
+                    return $"[Python Refiner Error]\n{stderr}";
+
+                return ExtractSql(stdout);
+            }
+
+            static string Escape(string s) => s.Replace("\"", "\\\"");
+            private static readonly Regex _rxCodeBlock = new Regex(@"```sql\s*(.*?)\s*```", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            private static readonly Regex _rxFallback = new Regex(@"(?i)\b(?:SELECT|UPDATE|DELETE)\b[\s\S]+?(?=(;|\z))", RegexOptions.Compiled);
+
+            private static string ExtractSql(string text)
+            {
+                var codeBlockMatch = _rxCodeBlock.Match(text);
+                if (codeBlockMatch.Success)
                 {
-                    // Ignore any exception that occurs during Kill()
+                    return codeBlockMatch.Groups[1].Value.Trim();
                 }
-                return "[Error] Refiner timed out after 30 seconds.";
+
+                var matches = _rxFallback.Matches(text);
+                if (matches.Count > 0)
+                {
+                    var last = matches[matches.Count - 1].Value.Trim();
+                    return last.EndsWith(";") ? last : last + ";";
+                }
+                return text.Trim();
             }
 
-            // Otherwise, the process did finish in time. Capture the outputs:
-            string stdout = await stdoutTask;
-            string stderr = await stderrTask;
-
-            if (!string.IsNullOrWhiteSpace(stderr))
-            {
-                return $"[Python Refiner Error]\n{stderr}";
-            }
-
-            return ExtractLastSql(stdout);
-        }
-
-        private static string EscapeArg(string arg)
-        {
-            return arg.Replace("\"", "\\\"");
-        }
-
-        private static readonly Regex _sqlExtractRegex = new Regex(
-    @"(?i)\b(?:SELECT|UPDATE|DELETE)\b[\s\S]+?(?=(;|\z))",
-    RegexOptions.Compiled);
-
-        private static string ExtractLastSql(string text)
-        {
-            var matches = _sqlExtractRegex.Matches(text);
-            if (matches.Count > 0)
-            {
-                var last = matches[matches.Count - 1].Value.Trim();
-                return last.EndsWith(";") ? last : last + ";";
-            }
-            // No SQL block found → return the raw text
-            return text.Trim();
         }
     }
 }
-
