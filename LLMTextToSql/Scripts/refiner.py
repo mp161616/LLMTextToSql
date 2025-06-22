@@ -1,108 +1,137 @@
-﻿# refiner.py
+﻿import sys, subprocess, re, psycopg2, unicodedata
 
-import sys
-import json
-import ollama     # pip install ollama
-import time       # for timeout example
+MAX_ROUNDS, FETCH_LIMIT = 3, 1
 
-def load_schema(schema_path: str) -> str:
-    """
-    Reads the compressed schema JSON from disk.
-    """
-    print(f"DEBUG: load_schema() reading: {schema_path}", flush=True)
-    with open(schema_path, 'r', encoding='utf-8') as f:
-        data = f.read()
-    print(f"DEBUG: load_schema() succeeded, length={len(data)} bytes", flush=True)
-    return data
+def debug(msg):
+    print(f"[DEBUG] {msg}", flush=True)
 
-def build_refiner_prompt(flawed_sql: str, error_msg: str, question: str, schema_json: str) -> str:
-    """
-    Constructs a Chain-of-Thought style prompt for the Refiner.
-    """
-    prompt = f"""
-You are an expert SQL assistant. Your job is to **inspect** and **correct** a flawed SQL query
+def load_schema(path):
+    debug(f"Loading schema from path: {path}")
+    return open(path, encoding='utf-8').read()
+
+def test_sql(conn, sql: str):
+    with conn.cursor() as cur:
+        sql_type = sql.strip().split()[0].upper()
+        debug(f"Detected SQL type: {sql_type}")
+        debug(f"SQL being executed: {sql}")
+
+        if sql_type == "SELECT":
+            sql_cleaned = sql.strip().rstrip(';')
+            limited_sql = f"{sql_cleaned} LIMIT {FETCH_LIMIT}"
+            cur.execute(limited_sql)
+            return cur.fetchall()
+        else:
+            conn.autocommit = False
+            try:
+                cur.execute(sql)
+                conn.rollback()
+                return [("Mutation query executed successfully",)]
+            except Exception as e:
+                conn.rollback()
+                debug(f"SQL execution error: {e}")
+                raise e
+            finally:
+                conn.autocommit = True
+
+def call_ollama(prompt, model="sqlcoder"):
+    proc = subprocess.run(
+        ['ollama', 'run', model],
+        input=prompt,
+        capture_output=True,
+        encoding='utf-8',
+        errors='ignore'
+    )
+    if proc.returncode != 0:
+        raise RuntimeError(proc.stderr)
+    return proc.stdout
+
+def extract_sql(ollama_output: str) -> str:
+    text = ollama_output.strip()
+    text = text.replace("```sql", "").replace("```", "")
+    text = unicodedata.normalize('NFKC', text)
+    text = ''.join(c for c in text if not unicodedata.category(c).startswith('C'))
+    return text.strip(" '\n\r\t")
+
+def main():
+    if len(sys.argv) != 6:
+        print("Usage: refiner.py <sql> <err> <q> <schema> <dsn>")
+        sys.exit(1)
+
+    flawed, err, q, schema_path, dsn = sys.argv[1:]
+    debug(f"Received flawed SQL: {flawed}")
+    debug(f"Received error message: {err}")
+    debug(f"Received question: {q}")
+    debug(f"Using schema path: {schema_path}")
+    debug(f"Using DB connection string: {dsn}")
+
+    schema = load_schema(schema_path)
+
+    try:
+        conn = psycopg2.connect(dsn)
+        conn.autocommit = True
+    except Exception as e:
+        print(f"[ERROR] DB connect failed: {e}", flush=True)
+        sys.exit(1)
+
+    try:
+        if test_sql(conn, flawed):
+            print(flawed, flush=True)
+            return
+        else:
+            err = "Ran without error but zero rows."
+    except Exception as e:
+        debug(f"Initial SQL execution error: {e}")
+        err = str(e)
+
+    cur = flawed
+
+    for _ in range(MAX_ROUNDS):
+        prompt = f"""
+You are an expert SQL assistant. You are an expert SQL assistant. Your job is to inspect and correct a flawed SQL query
 based on an error message from the database, while remaining consistent with the given schema.
 You may generate SELECT, UPDATE, or DELETE queries based on the user's intent and the given schema.
 
-Below is the **filtered/compressed schema** (only tables & columns relevant to the question):
+OUTPUT RULES:
+Return only the corrected SQL query.
+Do NOT include: markdown, <s>, explanations, question IDs, emojis, or non-SQL decorations.
+Use only plain ASCII quotes and standard SQL.
 
-{schema_json}
+Schema:
+{schema}
 
-User question: "{question}"
+User Question:
+{q}
 
-The model attempts this SQL:
----
-{flawed_sql}
----
+Flawed SQL:
+{cur}
 
-When executed on the database above, it produced this error:
----
-{error_msg}
----
-
-Please diagnose what is wrong with the SQL (syntax, wrong table/column, invalid join, etc.), 
-and **provide a corrected, fully valid SQL query** that will run successfully under the same schema. 
-Return **only the corrected SQL** (no additional explanation).
+Database Error:
+{err}
 
 Corrected SQL:
 """
-    print(f"DEBUG: Prompt built, length={len(prompt)} characters", flush=True)
-    return prompt
 
-def call_ollama_refiner(prompt: str, model_name: str = "sqlcoder") -> str:
-    """
-    Sends the prompt to Ollama (SQLCoder) as a single‐turn chat and returns the model's raw response.
-    """
-    start_time = time.time()
+        try:
+            raw = call_ollama(prompt)
+            cur = extract_sql(raw)
 
-    # Make sure we do NOT use stream=True
-    response = ollama.chat(
-        model=model_name,
-        messages=[{"role": "user", "content": prompt}]
-    )
+            if "<s>" in cur or "/***" in cur or not cur.lower().startswith(('select', 'update', 'delete')):
+                debug("Model returned invalid SQL-like garbage.")
+                raise ValueError("Model failed to produce usable SQL.")
 
-    elapsed = time.time() - start_time
-    return response["message"]["content"]
+            if test_sql(conn, cur):
+                print(cur, flush=True)
+                return
+            else:
+                err = "Ran without error but zero rows."
 
-def extract_correct_sql(ollama_output: str) -> str:
-    """
-    Extract the first SQL-looking block, stripping backticks if present.
-    """
-    text = ollama_output.strip()
-    if text.startswith("```") and text.endswith("```"):
-        lines = text.splitlines()
-        return "\n".join(lines[1:-1]).strip()
-    return text
+        except Exception as e:
+            debug(f"ERRRORRRR: {e}")
+            err = str(e)
 
-def main():
-
-    if len(sys.argv) != 5:
-        print("Usage: python refiner.py \"<flawed_sql>\" \"<error_message>\" \"<original_question>\" \"<schema_json_path>\"", flush=True)
-        sys.exit(1)
-
-    flawed_sql  = sys.argv[1]
-    error_msg   = sys.argv[2]
-    question    = sys.argv[3]
-    schema_path = sys.argv[4]
-
-    # 1) Load the filtered/compressed schema
-    schema_json = load_schema(schema_path)
-
-    # 2) Build the refiner prompt
-    prompt = build_refiner_prompt(flawed_sql, error_msg, question, schema_json)
-
-    # 3) Call Ollama (SQLCoder) to “refine” the SQL
-    try:
-        ollama_raw = call_ollama_refiner(prompt, model_name="sqlcoder")
-    except Exception as e:
-        print(f"[ERROR] Exception during ollama.chat(): {e}", flush=True)
-        sys.exit(1)
-
-    # 4) Extract just the corrected SQL
-    corrected_sql = extract_correct_sql(ollama_raw)
-
-    print(corrected_sql, flush=True)
+    debug(f"Final failed SQL: {cur}")
+    print("[ERROR] Model failed to produce a valid SQL query after all retries.", flush=True)
+    sys.exit(2)
 
 if __name__ == "__main__":
     main()
-

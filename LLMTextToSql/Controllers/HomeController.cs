@@ -11,16 +11,16 @@ namespace LLMTextToSql.Controllers
     {
         private readonly ILlmService _llmService;
         private readonly IPythonDecomposerAgent _decomposer;
-        private readonly IIterativeRefinerService _iterativeRefiner;
+        private readonly IPythonRefinerAgent _refinerAgent;
 
         public HomeController(
             ILlmService llmService,
             IPythonDecomposerAgent decomposer,
-            IIterativeRefinerService iterativeRefiner)
+            IPythonRefinerAgent refinerAgent)
         {
             _llmService = llmService;
             _decomposer = decomposer;
-            _iterativeRefiner = iterativeRefiner;
+            _refinerAgent = refinerAgent;
         }
 
         [HttpGet]
@@ -37,15 +37,12 @@ namespace LLMTextToSql.Controllers
                 ViewBag.Error = "Please enter a question.";
                 return View();
             }
-
-            // 1) Get the initial SQL from either the Decomposer or the direct LLM pipeline:
             string initialSql = useDecomposer
                 ? await _decomposer.DecomposeAndGenerateFinalSqlAsync(inputValue)
                 : await _llmService.GenerateSqlAsync(inputValue);
 
-            // 2) Pass that initialSql to the Iterative Refiner
-            //    We'll let it try up to 3 times (for example)
-            string finalSql = await _iterativeRefiner.RefineUntilExecutableAsync(initialSql, inputValue, maxAttempts: 3);
+            string finalSql = await _refinerAgent
+                .RefineAndGenerateSqlAsync(initialSql, errorMessage: "", question: inputValue);
 
             ViewBag.Prompt = inputValue;
             ViewBag.UseDecomposer = useDecomposer;

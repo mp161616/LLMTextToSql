@@ -1,51 +1,39 @@
 ﻿using LLMTextToSql.Interfaces;
 using LLMTextToSql.Interfaces.Agents;
 using LLMTextToSql.Interfaces.Services;
-using System;
-using System.IO;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 
 namespace LLMTextToSql.Services
 {
     public class OllamaLlmService : ILlmService
     {
         private readonly HttpClient _httpClient;
-        private readonly IInterpreterAgent _interpreter;
         private readonly ISelectorAgent _selector;
-        private readonly IAugmenterAgent _augmenter;
-        private readonly IFixerAgent _fixer;
+        private readonly IAugmentService _augmenter;
+        private readonly IFixerService _fixer;
         private readonly string _schemaJson;
 
         public OllamaLlmService(
             HttpClient httpClient,
-            IInterpreterAgent interpreter,
             ISelectorAgent selector,
-            IAugmenterAgent augmenter,
-            IFixerAgent fixer)
+            IAugmentService augmenter,
+            IFixerService fixer)
         {
             _httpClient = httpClient;
-            _interpreter = interpreter;
             _selector = selector;
             _augmenter = augmenter;
             _fixer = fixer;
 
-            // Load the compressed schema from file
             var schemaPath = Path.Combine(AppContext.BaseDirectory, "Schemas", "pagila_compressed_schema.json");
             _schemaJson = File.ReadAllText(schemaPath);
         }
 
         public async Task<string> GenerateSqlAsync(string question)
         {
-            // 1) Preprocess the user question
-            string pre = _interpreter.PreprocessQuestion(question);
+            string preprocessedQuestion = question.Trim();
 
-            // 2) Select relevant tables from the schema
-            var relevant = _selector.SelectRelevantTables(pre, _schemaJson);
+            var relevant = _selector.SelectRelevantTables(preprocessedQuestion, _schemaJson);
 
-            // 3) Build a minimal prompt with only those tables
-            string prompt = _augmenter.AugmentPrompt(pre, relevant, _schemaJson);
+            string prompt = _augmenter.AugmentPrompt(preprocessedQuestion, relevant, _schemaJson);
 
             var body = new
             {
@@ -66,7 +54,6 @@ namespace LLMTextToSql.Services
                 var result = await response.Content.ReadFromJsonAsync<OllamaResponse>();
                 string rawSql = result?.Response?.Trim() ?? "[Empty]";
 
-                // 4) Post‐process / fix any typos
                 return _fixer.FixQuery(rawSql, _schemaJson);
             }
             catch (Exception ex)

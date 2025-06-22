@@ -1,6 +1,6 @@
-﻿namespace LLMTextToSql.Interfaces.Agents
+﻿namespace LLMTextToSql.Interfaces.Services
 {
-    public interface IAugmenterAgent
+    public interface IAugmentService
     {
         string AugmentPrompt(string question, IEnumerable<string> relevantTables, string schemaJson);
     }
