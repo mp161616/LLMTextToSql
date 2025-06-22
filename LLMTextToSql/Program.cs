@@ -8,9 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSingleton<IFixerAgent, FixerAgent>();
-builder.Services.AddSingleton<IAugmenterAgent, AugmenterAgent>();
-builder.Services.AddSingleton<IInterpreterAgent, InterpreterAgent>();
+builder.Services.AddSingleton<IFixerService, FixerService>();
+builder.Services.AddSingleton<IAugmentService, AugmentService>();
 builder.Services.AddSingleton<ISelectorAgent, SelectorAgent>();
 
 builder.Services.AddSingleton<IPythonDecomposerAgent>(sp =>

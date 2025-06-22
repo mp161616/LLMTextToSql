@@ -1,11 +1,10 @@
-﻿using LLMTextToSql.Interfaces.Agents;
+﻿using LLMTextToSql.Interfaces.Services;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 
-namespace LLMTextToSql.Agents
+namespace LLMTextToSql.Services
 {
-    using System.Text.Json;
-    using System.Text.RegularExpressions;
-
-    public class FixerAgent : IFixerAgent
+    public class FixerService : IFixerService
     {
         private Dictionary<string, HashSet<string>> _schemaMap = new();
 
@@ -53,7 +52,7 @@ namespace LLMTextToSql.Agents
             for (int j = 0; j <= b.Length; j++) dp[0, j] = j;
             for (int i = 1; i <= a.Length; i++)
                 for (int j = 1; j <= b.Length; j++)
-                    dp[i, j] = (a[i - 1] == b[j - 1])
+                    dp[i, j] = a[i - 1] == b[j - 1]
                         ? dp[i - 1, j - 1]
                         : 1 + Math.Min(dp[i - 1, j - 1], Math.Min(dp[i, j - 1], dp[i - 1, j]));
             return dp[a.Length, b.Length];

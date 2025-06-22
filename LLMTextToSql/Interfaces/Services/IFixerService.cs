@@ -1,6 +1,6 @@
-﻿namespace LLMTextToSql.Interfaces.Agents
+﻿namespace LLMTextToSql.Interfaces.Services
 {
-    public interface IFixerAgent
+    public interface IFixerService
     {
         string FixQuery(string originalQuery, string schemaJson);
     }

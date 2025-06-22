@@ -1,9 +1,9 @@
-﻿using LLMTextToSql.Interfaces.Agents;
+﻿using LLMTextToSql.Interfaces.Services;
 using System.Text.Json;
 
-namespace LLMTextToSql.Agents
+namespace LLMTextToSql.Services
 {
-    public class AugmenterAgent : IAugmenterAgent
+    public class AugmentService : IAugmentService
     {
         public string AugmentPrompt(string question, IEnumerable<string> relevantTables, string schemaJson)
         {
