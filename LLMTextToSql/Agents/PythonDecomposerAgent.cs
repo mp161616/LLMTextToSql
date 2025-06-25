@@ -1,7 +1,7 @@
-﻿using LLMTextToSql.Interfaces.Agents;
+﻿// PythonDecomposerAgent.cs
+using LLMTextToSql.Interfaces.Agents;
 using System;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace LLMTextToSql.Services
@@ -17,9 +17,8 @@ namespace LLMTextToSql.Services
             _schemaFilePath = schemaFilePath;
         }
 
-        public async Task<string> DecomposeAndGenerateFinalSqlAsync(string question)
+        public async Task<string> DecomposeChainOfThoughtAsync(string question)
         {
-            // Build a ProcessStartInfo to execute `python decomposer.py "question" "schema.json"`
             var psi = new ProcessStartInfo
             {
                 FileName = "python",
@@ -30,28 +29,22 @@ namespace LLMTextToSql.Services
                 CreateNoWindow = true
             };
 
-            using var process = Process.Start(psi);
-            if (process == null)
-                return "[Error] Could not start Python process.";
+            using var process = Process.Start(psi)
+                                ?? throw new InvalidOperationException("Could not start Python process.");
 
+            // Capture everything Python writes
             string stdout = await process.StandardOutput.ReadToEndAsync();
             string stderr = await process.StandardError.ReadToEndAsync();
             await process.WaitForExitAsync();
 
             if (!string.IsNullOrWhiteSpace(stderr))
-                return $"[Python Error]\n{stderr}";
+                throw new InvalidOperationException($"[Python Error]\n{stderr}");
 
-            // Extract only the final SQL from the chain‐of‐thought output
-            var match = Regex.Match(stdout, @"Final SQL:\s*(.+)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-            return match.Success
-                ? match.Groups[1].Value.Trim()
-                : "[Error] Could not extract Final SQL from Python output.";
+            // Return the full chain-of-thought unmodified
+            return stdout.Trim();
         }
 
         private static string EscapeArg(string arg)
-        {
-            return arg.Replace("\"", "\\\"");
-        }
+            => arg.Replace("\"", "\\\"");
     }
 }
-
