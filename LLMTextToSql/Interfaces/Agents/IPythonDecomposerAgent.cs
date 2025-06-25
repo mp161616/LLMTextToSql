@@ -1,12 +1,14 @@
-﻿namespace LLMTextToSql.Interfaces.Agents
+﻿// IPythonDecomposerAgent.cs
+using System.Threading.Tasks;
+
+namespace LLMTextToSql.Interfaces.Agents
 {
     public interface IPythonDecomposerAgent
     {
         /// <summary>
-        /// Uses an external Python script (decomposer.py) to break down the question
-        /// into chain‐of‐thought reasoning and return the final SQL only.
+        /// Returns the raw chain-of-thought from the Python decomposer,
+        /// including all Sub-question / SQL n: / Final SQL sections.
         /// </summary>
-        Task<string> DecomposeAndGenerateFinalSqlAsync(string question);
+        Task<string> DecomposeChainOfThoughtAsync(string question);
     }
 }
-
