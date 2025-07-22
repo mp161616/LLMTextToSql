@@ -10,6 +10,8 @@
 }
 
 <form method="post" class="mb-3">
+    
+
     <div class="form-group mb-2">
         <input type="text"
                name="inputValue"
@@ -23,15 +25,27 @@
         <input type="checkbox"
                id="useDecomposer"
                name="useDecomposer"
+               value="true"
                class="form-check-input"
         @(ViewBag.UseDecomposer == true ? "checked" : "") />
         <label for="useDecomposer" class="form-check-label">
-            Use Python Decomposer (chain‐of‐thought)
+            Use Python Decomposer (chain-of-thought)
         </label>
+
+        <input type="hidden" name="useDecomposer" value="false" />
+
     </div>
 
     <button type="submit" class="btn btn-primary">CONVERT TO SQL</button>
 </form>
+
+@if (ViewBag.ChainOfThought != null)
+{
+    <div class="mb-3">
+        <h4>Chain-of-Thought</h4>
+        <pre style="white-space: pre-wrap;">@ViewBag.ChainOfThought</pre>
+    </div>
+}
 
 @if (ViewBag.FinalSql != null)
 {
@@ -40,3 +54,4 @@
         <pre>@ViewBag.FinalSql</pre>
     </div>
 }
+
