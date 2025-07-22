@@ -1,40 +1,75 @@
-# decomposer.py
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import sys
 import json
-import ollama  # pip install ollama
+from ollama import chat  # pip install ollama
+
+print(">>> [DEBUG] Starting decomposer.py")
 
 if len(sys.argv) < 3:
-    print("Usage: decomposer.py \"<question>\" \"<schema.json path>\"")
+    print("Usage: decomposer.py \"<question>\" \"<schema.json path>\"", file=sys.stderr)
     sys.exit(1)
 
 question = sys.argv[1]
 schema_path = sys.argv[2]
 
-with open(schema_path, 'r') as f:
-    schema_json = f.read()
+print(f">>> [DEBUG] Received question: {question}")
+print(f">>> [DEBUG] Using schema path: {schema_path}")
 
-prompt = f"""
-You are an intelligent SQL assistant. Given the database schema below, break down the user question
-into sub-questions and their respective SQL queries (chain-of-thought), then produce the final SQL.
+# Safely read schema.json using utf-8 with error handling
+try:
+    with open(schema_path, 'r', encoding='utf-8') as f:
+        schema_meta = f.read()
+        print(f">>> [DEBUG] Schema file loaded successfully. Size: {len(schema_meta)} characters")
+except UnicodeDecodeError:
+    print("-- [ERROR] Failed to read schema.json due to encoding error.", file=sys.stderr)
+    sys.exit(1)
+except Exception as e:
+    print(f"-- [ERROR] Failed to open schema file: {e}", file=sys.stderr)
+    sys.exit(1)
 
-Schema:
-{schema_json}
+# Few-shot examples
+shots = """
+### Example
+Sub-question 1: What are all books released after 2010?
+SQL 1: SELECT * FROM books WHERE release_year > 2010;
 
-Format:
-Sub-question 1: ...
-SQL 1: ...
-...
-Final SQL: ...
+Sub-question 2: Get their titles
+SQL 2: SELECT title FROM books WHERE release_year > 2010;
 
-User question: "{question}"
+Final SQL: SELECT title FROM books WHERE release_year > 2010;
 """
 
-# Send a single-turn chat to Ollama
-response = ollama.chat(
-    model='sqlcoder',
-    messages=[{"role": "user", "content": prompt}]
-)
 
-# Print the full chain-of-thought including 'Final SQL: ...'
-print(response['message']['content'])
+# Build the full prompt
+prompt = f"""
+You are an expert SQL assistant. Decompose the user's question into sub-questions,
+write SQL for each sub-question, and finally combine them into a single SQL query.
+
+{schema_meta}
+
+{shots}
+
+Now, answer this question:
+User: "{question}"
+"""
+
+print(f">>> [DEBUG] Prompt built. Total characters: {len(prompt)}")
+print(f">>> [DEBUG] Sending prompt to Ollama with model 'sqlcoder'")
+
+# Run the Ollama chat model
+try:
+    response = chat(
+        model="sqlcoder",
+        messages=[{"role": "user", "content": prompt}]
+    )
+except Exception as e:
+    print(f"-- [ERROR] Ollama call failed: {e}", file=sys.stderr)
+    sys.exit(1)
+
+# Output chain-of-thought reasoning
+print(">>> [DEBUG] Ollama responded with content:")
+print("========== BEGIN RESPONSE ==========")
+print(response["message"]["content"].strip())
+print("=========== END RESPONSE ===========")
