@@ -6,6 +6,22 @@ using LLMTextToSql.Services.LLMTextToSql.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+if (args.Length > 0 && args[0].Equals("extract-cardgames-schema", StringComparison.OrdinalIgnoreCase))
+{
+    var config = builder.Configuration;
+    string connString = config.GetConnectionString("CardGamesPostgres")
+                        ?? throw new InvalidOperationException("Missing CardGamesPostgres");
+
+    var extractor = new SchemaExtractorService(connString);
+    string output = Path.Combine(builder.Environment.ContentRootPath, "Schemas", "card_games_schema.json");
+    Directory.CreateDirectory(Path.GetDirectoryName(output)!);
+    await extractor.ExtractSchemaAsync(output);
+
+    Console.WriteLine("Card‑games schema extraction complete.");
+    return;
+}
+
+
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<IFixerService, FixerService>();
