@@ -3,6 +3,7 @@ using LLMTextToSql.Interfaces.Agents;
 using LLMTextToSql.Interfaces.Services;
 using LLMTextToSql.Services;
 using LLMTextToSql.Services.LLMTextToSql.Services;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,19 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<IFixerService, FixerService>();
 builder.Services.AddSingleton<IAugmentService, AugmentService>();
-builder.Services.AddSingleton<ISelectorAgent, SelectorAgent>();
+
+builder.Services.Configure<KestrelServerOptions>(options =>
+{
+    options.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(60);
+    options.Limits.RequestHeadersTimeout = TimeSpan.FromSeconds(60);
+});
+
+
+builder.Services.AddSingleton<IPythonSelectorAgent>(sp =>
+    new PythonSelectorAgent(
+        Path.Combine(builder.Environment.ContentRootPath, "Scripts", "selector.py")
+    )
+);
 
 builder.Services.AddSingleton<IPythonDecomposerAgent>(sp =>
     new PythonDecomposerAgent(

@@ -1,20 +1,21 @@
 ﻿using LLMTextToSql.Interfaces;
 using LLMTextToSql.Interfaces.Agents;
 using LLMTextToSql.Interfaces.Services;
+using System.Text.Json;
 
 namespace LLMTextToSql.Services
 {
     public class OllamaLlmService : ILlmService
     {
         private readonly HttpClient _httpClient;
-        private readonly ISelectorAgent _selector;
+        private readonly IPythonSelectorAgent _selector;
         private readonly IAugmentService _augmenter;
         private readonly IFixerService _fixer;
         private readonly string _schemaJson;
 
         public OllamaLlmService(
             HttpClient httpClient,
-            ISelectorAgent selector,
+            IPythonSelectorAgent selector,
             IAugmentService augmenter,
             IFixerService fixer)
         {
@@ -31,30 +32,11 @@ namespace LLMTextToSql.Services
         {
             string preprocessedQuestion = question.Trim();
 
-            var relevant = _selector.SelectRelevantTables(preprocessedQuestion, _schemaJson);
-
-            string prompt = _augmenter.AugmentPrompt(preprocessedQuestion, relevant, _schemaJson);
-
-            var body = new
-            {
-                model = "sqlcoder",
-                prompt = prompt,
-                stream = false
-            };
-
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("http://localhost:11434/api/generate", body);
-                if (!response.IsSuccessStatusCode)
-                {
-                    var err = await response.Content.ReadAsStringAsync();
-                    return $"[LLM Error] {response.StatusCode}: {err}";
-                }
+               var relevantSchemaJson = await _selector.SelectRelevantSchemaAsync(preprocessedQuestion);
 
-                var result = await response.Content.ReadFromJsonAsync<OllamaResponse>();
-                string rawSql = result?.Response?.Trim() ?? "[Empty]";
-
-                return _fixer.FixQuery(rawSql, _schemaJson);
+               return _fixer.FixQuery(relevantSchemaJson, _schemaJson);
             }
             catch (Exception ex)
             {
