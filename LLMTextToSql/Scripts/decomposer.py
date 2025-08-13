@@ -1,9 +1,6 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import sys
 import json
-from ollama import chat  # pip install ollama
+from ollama import chat
 
 print(">>> [DEBUG] Starting decomposer.py")
 
@@ -17,7 +14,6 @@ schema_path = sys.argv[2]
 print(f">>> [DEBUG] Received question: {question}")
 print(f">>> [DEBUG] Using schema path: {schema_path}")
 
-# Safely read schema.json using utf-8 with error handling
 try:
     with open(schema_path, 'r', encoding='utf-8') as f:
         schema_meta = f.read()
@@ -29,7 +25,6 @@ except Exception as e:
     print(f"-- [ERROR] Failed to open schema file: {e}", file=sys.stderr)
     sys.exit(1)
 
-# Few-shot examples
 shots = """
 ### Example
 Sub-question 1: What are all books released after 2010?
@@ -42,7 +37,6 @@ Final SQL: SELECT title FROM books WHERE release_year > 2010;
 """
 
 
-# Build the full prompt
 prompt = f"""
 You are an expert SQL assistant. Decompose the user's question into sub-questions,
 write SQL for each sub-question, and finally combine them into a single SQL query.
@@ -58,7 +52,6 @@ User: "{question}"
 print(f">>> [DEBUG] Prompt built. Total characters: {len(prompt)}")
 print(f">>> [DEBUG] Sending prompt to Ollama with model 'sqlcoder'")
 
-# Run the Ollama chat model
 try:
     response = chat(
         model="sqlcoder",
@@ -68,7 +61,6 @@ except Exception as e:
     print(f"-- [ERROR] Ollama call failed: {e}", file=sys.stderr)
     sys.exit(1)
 
-# Output chain-of-thought reasoning
 print(">>> [DEBUG] Ollama responded with content:")
 print("========== BEGIN RESPONSE ==========")
 print(response["message"]["content"].strip())

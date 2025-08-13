@@ -1,6 +1,6 @@
 ﻿import sys, subprocess, re, psycopg2, unicodedata
 
-MAX_ROUNDS, FETCH_LIMIT = 3, 1
+MAX_ROUNDS, FETCH_LIMIT = 5, 1
 
 def debug(msg):
     print(f"[DEBUG] {msg}", flush=True)
@@ -53,11 +53,11 @@ def extract_sql(ollama_output: str) -> str:
     return text.strip(" '\n\r\t")
 
 def main():
-    if len(sys.argv) != 6:
+    if len(sys.argv) != 7:
         print("Usage: refiner.py <sql> <err> <q> <schema> <dsn>")
         sys.exit(1)
 
-    flawed, err, q, schema_path, dsn = sys.argv[1:]
+    flawed, err, q, evidence, schema_path, dsn = sys.argv[1:]
     debug(f"Received flawed SQL: {flawed}")
     debug(f"Received error message: {err}")
     debug(f"Received question: {q}")
@@ -87,29 +87,34 @@ def main():
 
     for _ in range(MAX_ROUNDS):
         prompt = f"""
-You are an expert SQL assistant. You are an expert SQL assistant. Your job is to inspect and correct a flawed SQL query
-based on an error message from the database, while remaining consistent with the given schema.
-You may generate SELECT, UPDATE, or DELETE queries based on the user's intent and the given schema.
+You are an expert SQL assistant.
 
-OUTPUT RULES:
-Return only the corrected SQL query.
-Do NOT include: markdown, <s>, explanations, question IDs, emojis, or non-SQL decorations.
-Use only plain ASCII quotes and standard SQL.
+Goal: Correct the SQL using the DB error, the schema, and the evidence.
 
-Schema:
+HARD RULES:
+- Use ONLY columns/tables in the schema. No invented names.
+- Add casts if comparing text to numbers.
+- Always have a FROM clause.
+- Return ONLY the corrected SQL (no explanations/markdown/comments).
+- Keep SELECT minimal (usually just id) unless more fields are explicitly needed.
+
+Schema (typed):
 {schema}
+
+Evidence / Hints:
+{evidence}
 
 User Question:
 {q}
 
-Flawed SQL:
-{cur}
+Flawed SQL (may be empty if synthesizing new):
+{cur or '[none provided]'}
 
 Database Error:
 {err}
 
 Corrected SQL:
-"""
+""".strip()
 
         try:
             raw = call_ollama(prompt)

@@ -1,0 +1,50 @@
+[
+    {
+        "question_id": 340,
+        "db_id": "card_games",
+        "question": "Which are the cards that have incredibly powerful foils.",
+        "evidence": "incredibly poweful foils refers to cardKingdomFoilId is not null AND cardKingdomId is not null",
+        "SQL": "SELECT id FROM cards WHERE cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NOT NULL",
+        "difficulty": "simple"
+    },
+    {
+        "question_id": 341,
+        "db_id": "card_games",
+        "question": "What are the borderless cards available without powerful foils?",
+        "evidence": "borderless' refers to borderColor; poweful foils refers to cardKingdomFoilId paired with cardKingdomId AND cardKingdomId is not null",
+        "SQL": "SELECT id FROM cards WHERE borderColor = 'borderless' AND (cardKingdomId IS NULL OR cardKingdomId IS NULL)",
+        "difficulty": "simple"
+    },
+    {
+        "question_id": 342,
+        "db_id": "card_games",
+        "question": "Name all cards with 2015 frame style ranking below 100 on EDHRec.",
+        "evidence": "below 100 on EDHRec refers to EDHRec <100; with 2015 frame style refers to frameVersion = 2015;",
+        "SQL": "SELECT id FROM cards WHERE edhrecRank < 100 AND frameVersion = 2015",
+        "difficulty": "simple"
+    },
+    {
+        "question_id": 343,
+        "db_id": "card_games",
+        "question": "What kind of printing is on the card that Daren Bader created?",
+        "evidence": "kind of printing refers to availability; Daren Bader created refers to artist = 'Daren Bader'",
+        "SQL": "SELECT DISTINCT availability FROM cards WHERE artist = 'Daren Bader'",
+        "difficulty": "simple"
+    },
+    {
+        "question_id": 344,
+        "db_id": "card_games",
+        "question": "How many cards are oversized, reprinted, and printed for promotions?",
+        "evidence": "are oversized refers to isOversized = 1; reprinted refers to isReprint = 1; printed for promotions refers to isPromo = 1",
+        "SQL": "SELECT COUNT(id) FROM cards WHERE isOversized = 1 AND isReprint = 1 AND isPromo = 1",
+        "difficulty": "simple"
+    },
+    {
+        "question_id": 345,
+        "db_id": "card_games",
+        "question": "What is the language of the card with the multiverse number 149934?",
+        "evidence": "multiverse number 149934 refers to multiverseid = 149934;",
+        "SQL": "SELECT language FROM foreign_data WHERE multiverseid = 149934",
+        "difficulty": "simple"
+    }
+]
