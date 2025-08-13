@@ -2,7 +2,6 @@
 using LLMTextToSql.Interfaces.Agents;
 using LLMTextToSql.Interfaces.Services;
 using LLMTextToSql.Services;
-using LLMTextToSql.Services.LLMTextToSql.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +25,6 @@ if (args.Length > 0 && args[0].Equals("extract-cardgames-schema", StringComparis
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<IFixerService, FixerService>();
-builder.Services.AddSingleton<IAugmentService, AugmentService>();
 
 builder.Services.Configure<KestrelServerOptions>(options =>
 {
@@ -53,9 +51,9 @@ builder.Services.AddSingleton<IPythonRefinerAgent>(sp =>
     var env = sp.GetRequiredService<IWebHostEnvironment>();
     var cfg = sp.GetRequiredService<IConfiguration>();
     string sc = Path.Combine(env.ContentRootPath, "Scripts", "refiner.py");
-    string sch = Path.Combine(env.ContentRootPath, "Schemas", "pagila_compressed_schema.json");
-    string dsn = cfg.GetConnectionString("PagilaPostgres")
-                 ?? throw new InvalidOperationException("Missing PagilaPostgres");
+    string sch = Path.Combine(env.ContentRootPath, "Schemas", "card_games_schema.json");
+    string dsn = cfg.GetConnectionString("CardGamesPostgres")
+                 ?? throw new InvalidOperationException("Missing CardGamesPostgres");
     return new PythonRefinerAgent(sc, sch, dsn);
 });
 

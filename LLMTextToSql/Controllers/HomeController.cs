@@ -42,10 +42,8 @@ namespace LLMTextToSql.Controllers
 
             if (useDecomposer)
             {
-                // get the full chain-of-thought
                 chain = await _decomposer.DecomposeChainOfThoughtAsync(inputValue);
 
-                //  pull out the Final SQL so the refiner still works
                 var m = Regex.Match(chain, @"Final SQL:\s*(.+)", RegexOptions.Singleline);
                 sqlToRefine = m.Success
                     ? m.Groups[1].Value.Trim()
@@ -56,11 +54,9 @@ namespace LLMTextToSql.Controllers
                 sqlToRefine = await _llmService.GenerateSqlAsync(inputValue);
             }
 
-            //  refine / polish the SQL
             string finalSql = await _refinerAgent
                 .RefineAndGenerateSqlAsync(sqlToRefine, errorMessage: "", question: inputValue);
 
-            // push everything into the ViewBag
             ViewBag.Prompt = inputValue;
             ViewBag.UseDecomposer = useDecomposer;
             ViewBag.ChainOfThought = chain;

@@ -1,6 +1,0 @@
-{
-  "tables": {
-    "film": [ "film_id", "title", "release_year" ],
-    "language": [ "language_id", "name" ]
-  }
-}

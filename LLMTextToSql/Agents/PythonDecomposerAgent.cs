@@ -1,10 +1,9 @@
-﻿// PythonDecomposerAgent.cs
-using LLMTextToSql.Interfaces.Agents;
+﻿using LLMTextToSql.Interfaces.Agents;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace LLMTextToSql.Services
+namespace LLMTextToSql.Agents
 {
     public class PythonDecomposerAgent : IPythonDecomposerAgent
     {
@@ -32,7 +31,6 @@ namespace LLMTextToSql.Services
             using var process = Process.Start(psi)
                                 ?? throw new InvalidOperationException("Could not start Python process.");
 
-            // Capture everything Python writes
             string stdout = await process.StandardOutput.ReadToEndAsync();
             string stderr = await process.StandardError.ReadToEndAsync();
             await process.WaitForExitAsync();
@@ -40,7 +38,6 @@ namespace LLMTextToSql.Services
             if (!string.IsNullOrWhiteSpace(stderr))
                 throw new InvalidOperationException($"[Python Error]\n{stderr}");
 
-            // Return the full chain-of-thought unmodified
             return stdout.Trim();
         }
 

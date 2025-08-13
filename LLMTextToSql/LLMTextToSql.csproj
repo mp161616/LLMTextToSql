@@ -7,7 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Scripts\config.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Schemas\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Scripts\config.json" />
   </ItemGroup>
 
   <ItemGroup>
