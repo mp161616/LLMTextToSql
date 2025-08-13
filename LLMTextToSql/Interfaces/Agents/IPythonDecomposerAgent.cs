@@ -1,5 +1,4 @@
-﻿// IPythonDecomposerAgent.cs
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace LLMTextToSql.Interfaces.Agents
 {

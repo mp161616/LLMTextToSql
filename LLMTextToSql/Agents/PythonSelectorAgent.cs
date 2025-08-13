@@ -43,7 +43,6 @@ namespace LLMTextToSql.Agents
 
                 string rawSql = stdout.Trim();
 
-                // Optional: wrap in list for compatibility
                 var tables = new List<string> { rawSql };
                 return JsonSerializer.Serialize(tables);
             }
