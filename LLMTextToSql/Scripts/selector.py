@@ -7,7 +7,7 @@ def error_exit(msg): print(f"[ERROR] {msg}", file=sys.stderr); sys.exit(1)
 
 
 if len(sys.argv) != 2:
-    error_exit("Usage: selector_vanna.py '<question>'")
+    error_exit("Usage: selector.py '<question>'")
 
 question = sys.argv[1]
 
@@ -43,10 +43,15 @@ except Exception as e:
 with open("config.json", "r", encoding="utf-8") as f:
     all_examples = json.load(f)
 
-for example in all_examples:
-    vn.train(
-        documentation=example.get("evidence", "")
-    )
+
+for ex in all_examples:
+    try:
+        if ex.get("SQL"):
+            vn.train(question=ex["question"], sql=ex["SQL"])
+    except Exception as e:
+        print(f" Failed on question {ex['question_id']}: {e}")
+
+
 
 import io
 import contextlib

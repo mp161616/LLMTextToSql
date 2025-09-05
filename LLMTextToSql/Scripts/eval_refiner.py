@@ -4,7 +4,7 @@ import os
 
 EVIDENCE_FILE = "config.json"
 SELECTOR_RESULTS_FILE = "output/eval_results.json"
-REFINER_RESULTS_FILE = "output/eval_results_refiner.json"
+REFINER_RESULTS_FILE = "output/refiner_eval_results.json"
 
 SCHEMA_PATH = "../Schemas/card_games_schema.json"
 DSN = "host=localhost port=5432 dbname=card_games user=postgres password=admin"
