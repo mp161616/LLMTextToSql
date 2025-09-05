@@ -1,0 +1,369 @@
+[
+    {
+        "question": "Which are the cards that have incredibly powerful foils.",
+        "expected_sql": "SELECT id FROM cards WHERE cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NOT NULL",
+        "selector_output": "[Error] No SQL found in output",
+        "difficulty": "simple"
+    },
+    {
+        "question": "What are the borderless cards available without powerful foils?",
+        "expected_sql": "SELECT id FROM cards WHERE borderColor = 'borderless' AND (cardKingdomId IS NULL OR cardKingdomId IS NULL)",
+        "selector_output": "SELECT id FROM cards WHERE borderColor = 'borderless' AND (cardKingdomFoilId IS NULL OR cardKingdomFoilId IS NULL) AND (cardKingdomId IS NULL OR cardKingdomId IS NULL)",
+        "difficulty": "simple"
+    },
+    {
+        "question": "Name all cards with 2015 frame style ranking below 100 on EDHRec.",
+        "expected_sql": "SELECT id FROM cards WHERE edhrecRank < 100 AND frameVersion = 2015",
+        "selector_output": "SELECT id, name FROM cards WHERE frameVersion = '2015' AND edhRank < 100",
+        "difficulty": "simple"
+    },
+    {
+        "question": "What kind of printing is on the card that Daren Bader created?",
+        "expected_sql": "SELECT DISTINCT availability FROM cards WHERE artist = 'Daren Bader'",
+        "selector_output": "SELECT c.availability FROM public.cards as c WHERE artist = 'Daren Bader'",
+        "difficulty": "simple"
+    },
+    {
+        "question": "How many cards are oversized, reprinted, and printed for promotions?",
+        "expected_sql": "SELECT COUNT(id) FROM cards WHERE isOversized = 1 AND isReprint = 1 AND isPromo = 1",
+        "selector_output": "SELECT COUNT(*) FROM cards WHERE isOversized = 1 AND isReprint = 1 AND isPromo = 1",
+        "difficulty": "simple"
+    },
+    {
+        "question": "List all the mythic rarity print cards banned in gladiator format.",
+        "expected_sql": "SELECT DISTINCT T1.id FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'gladiator' AND T2.status = 'Banned' AND T1.rarity = 'mythic'",
+        "selector_output": "SELECT DISTINCT T2.name FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'gladiator' AND T2.status = 'Banned' AND rarity = 'mythic'",
+        "difficulty": "moderate"
+    },
+    {
+        "question": "For artifact type of cards that do not have multiple faces on the same card, state its legalities status for vintage play format.",
+        "evidence": "Artifact type of cards refers to types = 'Artifact'; card does not have multiple faces on the same card refers to side is NULL'; vintage play format refers to format = 'vintage';",
+        "expected_sql": "SELECT DISTINCT T2.status FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.type = 'Artifact' AND T2.format = 'vintage' AND T1.side IS NULL",
+        "selector_output": "SELECT DISTINCT T2.status FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.type = 'Artifact' AND (T1.side IS NULL AND T2.format = 'vintage'",
+        "difficulty": "moderate"
+    },
+    {
+        "question": "List all the card id and artist with unknown power which are legal for commander play format.",
+        "expected_sql": "SELECT T1.id, T1.artist FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.status = 'Legal' AND T2.format = 'commander' AND (T1.power IS NULL OR T1.power = '*')",
+        "selector_output": "[Error] No SQL found in output",
+        "difficulty": "moderate"
+    },
+    {
+        "question": "Find all cards illustrated by Stephen Daniel and describe the text of the ruling of these cards. State if these cards have missing or degraded properties and values.",
+        "expected_sql": "SELECT T1.id, T2.text, T1.hasContentWarning FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.artist = 'Stephen Daniele'",
+        "selector_output": "SELECT T1.id, T2.text, COALESCE(T1.hasContentWarning, FALSE) AS hasContentWarning FROM cards T1 INNER JOIN rulings T2 ON T1.uuid = T2.uuid WHERE EXISTS ( SELECT 1 FROM cards C WHERE C.artist = 'Stephen Daniele' AND C.uuid = T1.uuid ) AND T2.text IS NOT NULL",
+        "difficulty": "moderate"
+    },
+    {
+        "question": "Name all the cards which have alternative language in Japanese.",
+        "expected_sql": "SELECT T1.name FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.language = 'Japanese'",
+        "selector_output": "SELECT DISTINCT name FROM foreign_data WHERE language = 'Japanese'",
+        "difficulty": "simple"
+    },
+    {
+        "question": "Calculate the percentage of the cards availabe in Chinese Simplified.",
+        "expected_sql": "SELECT CAST(SUM(CASE WHEN T2.language = 'Chinese Simplified' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid",
+        "selector_output": "SELECT DISTINCT CAST(SUM(CASE WHEN T2.language = 'Chinese Simplified' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid",
+        "difficulty": "moderate"
+    },
+    {
+        "question": "List all the sets available in Italian translation. State the total number of cards per set.",
+        "expected_sql": "SELECT T1.name, T1.totalSetSize FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Italian'",
+        "selector_output": "SELECT DISTINCT T1.name, CASE WHEN T1.totalSetSize > 0 THEN T1.totalSetSize ELSE NULL END AS totalSetSize FROM sets T1 INNER JOIN set_translations T2 ON T1.code = T2.setCode WHERE EXISTS ( SELECT 1 FROM set_translations ST WHERE ST.language = 'Italian' AND ST.setCode = T1.code ) AND LENGTH(T1.name) > 1",
+        "difficulty": "simple"
+    },
+    {
+        "question": "How many types of cards does the artist Aaron Boyd illustrated about card art?",
+        "expected_sql": "SELECT COUNT(type) FROM cards WHERE artist = 'Aaron Boyd'",
+        "selector_output": "SELECT DISTINCT COUNT(type) FROM public.cards WHERE artist = 'Aaron Boyd'",
+        "difficulty": "simple"
+    },
+    {
+        "question": "What is the keyword found on card 'Angel of Mercy'?",
+        "expected_sql": "SELECT DISTINCT keywords FROM cards WHERE name = 'Angel of Mercy'",
+        "selector_output": "SELECT keywords FROM cards WHERE name = 'Angel of Mercy'",
+        "difficulty": "simple"
+    },
+    {
+        "question": "How many cards have infinite power?",
+        "expected_sql": "SELECT COUNT(*) FROM cards WHERE power = '*'",
+        "selector_output": "SELECT DISTINCT COUNT(id) FROM cards WHERE power = '*'",
+        "difficulty": "simple"
+    },
+    {
+        "question": "What type of promotion is of card 'Duress'?",
+        "expected_sql": "SELECT promoTypes FROM cards WHERE name = 'Duress' AND promoTypes IS NOT NULL",
+        "selector_output": "SELECT promoTypes FROM public.cards WHERE promoTypes IS NOT NULL AND name = 'Duress' AND promoTypes IS NOT NULL",
+        "difficulty": "simple"
+    },
+    {
+        "question": "cards are not directly linked to language but through table 'set'. you need to add set in covered table & rephrase your question\nWhat are the languages available for the set that card 'Angel of Mercy' is in?",
+        "expected_sql": "SELECT language FROM set_translations WHERE id IN ( SELECT id FROM cards WHERE name = 'Angel of Mercy' )",
+        "selector_output": "[Timeout]",
+        "difficulty": "moderate"
+    },
+    {
+        "question": "Among the Artifact cards, which are black color and comes with foreign languague translation?",
+        "expected_sql": "SELECT DISTINCT T1.name FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T1.originalType = 'Artifact' AND T1.colors = 'B'",
+        "selector_output": "[Timeout]",
+        "difficulty": "moderate"
+    },
+    {
+        "question": "Pick 3 cards with rarity of uncommon, list down name these cards according to ascending order of it's ruling date.",
+        "expected_sql": "SELECT DISTINCT T1.name FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.rarity = 'uncommon' ORDER BY T2.date ASC LIMIT 3",
+        "selector_output": "SELECT DISTINCT T1.name FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.rarity = 'uncommon' ORDER BY T2.date ASC LIMIT 3",
+        "difficulty": "simple"
+    },
+    {
+        "question": "On how many cards designed by John Avon is its foil non-powerful?",
+        "expected_sql": "SELECT COUNT(id) FROM cards WHERE (cardKingdomId IS NULL OR cardKingdomFoilId IS NULL) AND artist = 'John Avon'",
+        "selector_output": "SELECT COUNT(*) FROM cards WHERE cards.artist = 'John Avon' AND cardKingdomId IS NULL",
+        "difficulty": "simple"
+    },
+    {
+        "question": "How many white bordered cards are powerful?",
+        "expected_sql": "SELECT COUNT(id) FROM cards WHERE borderColor = 'white' AND cardKingdomId IS NOT NULL AND cardKingdomFoilId IS NOT NULL",
+        "selector_output": "SELECT DISTINCT COUNT(id) FROM cards WHERE border_color = 'white' AND cardKingdomId IS NOT NULL AND cardKingdomFoilId IS NOT NULL",
+        "difficulty": "simple"
+    },
+    {
+        "question": "How many cards designed by UDON and available in mtgo print type has a starting maximum hand size of -1?",
+        "expected_sql": "SELECT COUNT(id) FROM cards WHERE hAND = '-1' AND artist = 'UDON' AND Availability = 'mtgo' ",
+        "selector_output": "SELECT DISTINCT COUNT(id) FROM cards WHERE hAND = '-1' AND Availability = 'mtgo' AND artist = 'UDON'",
+        "difficulty": "simple"
+    },
+    {
+        "question": "How many cards with a 1993 frame version and available on paper have a sensitive content warning?",
+        "expected_sql": "SELECT COUNT(id) FROM cards WHERE frameVersion = 1993 AND availability = 'paper' AND hasContentWarning = 1",
+        "selector_output": "SELECT DISTINCT COUNT(id) FROM cards WHERE cards.frameVersion = 1993 AND Availability = 'paper' AND hasContentWarning = 1",
+        "difficulty": "simple"
+    },
+    {
+        "question": "What is the mana cost of cards with a normal layout, a 2003 frame version, with a black border color, and available in paper and mtgo?",
+        "expected_sql": "SELECT manaCost FROM cards WHERE availability = 'mtgo,paper' AND borderColor = 'black' AND frameVersion = 2003 AND layout = 'normal'",
+        "selector_output": "SELECT c.manaCost FROM cards AS c WHERE c.Availability = 'mtgo,paper' AND c.borderColor = 'black' AND c.frameVersion = '2003' AND c.layout = 'normal'",
+        "difficulty": "moderate"
+    },
+    {
+        "question": "What is the unconverted mana do all the cards created by Rob Alexander cost in total?",
+        "expected_sql": "SELECT manaCost FROM cards WHERE artist = 'Rob Alexander'",
+        "selector_output": "SELECT DISTINCT manaCost FROM cards WHERE artist = 'Rob Alexander'",
+        "difficulty": "simple"
+    },
+    {
+        "question": "Lists all types of cards available in arena.",
+        "expected_sql": "SELECT DISTINCT subtypes, supertypes FROM cards WHERE availability = 'arena' AND subtypes IS NOT NULL AND supertypes IS NOT NULL",
+        "selector_output": "SELECT DISTINCT subtypes, supertypes FROM cards WHERE availability = 'arena'",
+        "difficulty": "simple"
+    },
+    {
+        "question": "Lists the set code of all cards translated into Spanish.",
+        "expected_sql": "SELECT setCode FROM set_translations WHERE language = 'Spanish'",
+        "selector_output": "SELECT st.set_code FROM set_translations as st WHERE language = 'Spanish'",
+        "difficulty": "simple"
+    },
+    {
+        "question": "What percentage of legendary frame effect cards that are only available in online game variations?",
+        "expected_sql": "SELECT SUM(CASE WHEN isOnlineOnly = 1 THEN 1.0 ELSE 0 END) / COUNT(id) * 100 FROM cards WHERE frameEffects = 'legendary'",
+        "selector_output": "[Error] No SQL found in output",
+        "difficulty": "moderate"
+    },
+    {
+        "question": "What is the percentage of Story Spotlight cards that do not have a text box? List them by their ID.",
+        "expected_sql": "SELECT CAST(SUM(CASE WHEN isTextless = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(id) FROM cards WHERE isStorySpotlight = 1",
+        "selector_output": "SELECT DISTINCT CAST(SUM(CASE WHEN isTextless = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(id) FROM cards WHERE isStorySpotlight = 1",
+        "difficulty": "moderate"
+    },
+    {
+        "question": "Calculate the percentage of cards in Spanish. List them by name.",
+        "expected_sql": "SELECT ( SELECT CAST(SUM(CASE WHEN language = 'Spanish' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM foreign_data ), name FROM foreign_data WHERE language = 'Spanish'",
+        "selector_output": "SELECT (SELECT CAST(SUM(CASE WHEN language = 'Spanish' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM foreign_data ), name FROM foreign_data WHERE language = 'Spanish'",
+        "difficulty": "simple"
+    },
+    {
+        "question": "Indicates the name of all the languages into which the set whose number of cards is 309 is translated.",
+        "expected_sql": "SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.baseSetSize = 309",
+        "selector_output": "SELECT T1.language FROM sets AS T2 INNER JOIN set_translations AS T1 ON T2.code = T1.setCode WHERE T2.baseSetSize = 309",
+        "difficulty": "simple"
+    },
+    {
+        "question": "How many Brazilian Portuguese translated sets are inside the Commander block?",
+        "expected_sql": "SELECT COUNT(T1.id) FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Portuguese (Brazil)' AND T1.block = 'Commander'",
+        "selector_output": "SELECT DISTINCT COUNT(T1.id) FROM public.sets AS T1 INNER JOIN public.set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Portuguese (Brazil)' AND T1.block = 'Commander'",
+        "difficulty": "moderate"
+    },
+    {
+        "question": "Lists by ID all Creature-type cards with legal status.",
+        "expected_sql": "SELECT T1.id FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid INNER JOIN legalities AS T3 ON T1.uuid = T3.uuid WHERE T3.status = 'Legal' AND T1.types = 'Creature'",
+        "selector_output": "[Error] No SQL found in output",
+        "difficulty": "simple"
+    },
+    {
+        "question": "Lists all types of cards in German.",
+        "expected_sql": "SELECT T1.subtypes, T1.supertypes FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.language = 'German' AND T1.subtypes IS NOT NULL AND T1.supertypes IS NOT NULL",
+        "selector_output": "SELECT T1.supertypes, T1.subtypes FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T1.supertypes IS NOT NULL AND T1.subtypes IS NOT NULL AND T2.language = 'German'",
+        "difficulty": "moderate"
+    },
+    {
+        "question": "How many unknown power cards contain info about the triggered ability",
+        "expected_sql": "SELECT T2.text FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE (T1.power IS NULL OR T1.power = '*') AND T2.text LIKE '%triggered ability%'",
+        "selector_output": "SELECT COUNT(*) FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.skyfullid WHERE EXISTS IN (T1.power IS NULL OR T1.power = '*') AND T2.text LIKE '%triggered ability%'",
+        "difficulty": "moderate"
+    },
+    {
+        "question": "Indicates the number of cards with pre-modern format, ruling text. This is a triggered mana ability that do not have multiple faces.",
+        "expected_sql": "SELECT COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid INNER JOIN rulings AS T3 ON T1.uuid = T3.uuid WHERE T2.format = 'premodern' AND T3.text = 'This is a triggered mana ability.' AND T1.Side IS NULL",
+        "selector_output": "SELECT COUNT(*) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid INNER JOIN rulings AS T3 ON T1.uuid = T3.uuid WHERE T2.format = 'premodern' AND (LOWER(T3.text) LIKE '%This is a triggered mana ability.%') AND T1.Side IS NULL",
+        "difficulty": "moderate"
+    },
+    {
+        "question": "Is there any card from Erica Yang artist in pauper format and available in paper? If so, indicate its ID.",
+        "expected_sql": "SELECT T1.id FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.artist = 'Erica Yang' AND T2.format = 'pauper' AND T1.availability = 'paper'",
+        "selector_output": "SELECT DISTINCT T1.id FROM cards AS T1 LEFT INNER JOIN legalities AS T2 ON T1.uuid = T2.skyfullid WHERE T1.artist = 'Erica Yang' AND T2.format = 'pauper' AND T1.availability = 'paper'",
+        "difficulty": "simple"
+    },
+    {
+        "question": "To which artist does the card with the text \"Das perfekte Gegenmittel zu einer dichten Formation\" belong?",
+        "expected_sql": "SELECT DISTINCT T1.artist FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.flavorText LIKE '%DAS perfekte Gegenmittel zu einer dichten Formation%'",
+        "selector_output": "SELECT DISTINCT T1.artist FROM cards AS T1 INNER JOIN ForeignData AS T2 ON T1.uuid = T2.uuid WHERE T2.flavorText LIKE '%DAS perfekte Gegenmittel zu einer dichten Formation%'",
+        "difficulty": "simple"
+    },
+    {
+        "question": "What is the foreign name of the card in French of type Creature, normal layout and black border color, by artist Matthew D. Wilson?",
+        "expected_sql": "SELECT name FROM foreign_data WHERE uuid IN ( SELECT uuid FROM cards WHERE types = 'Creature' AND layout = 'normal' AND borderColor = 'black' AND artist = 'Matthew D. Wilson' ) AND language = 'French'",
+        "selector_output": "SELECT fd.name FROM cards AS c INNER JOIN foreign_data AS fd ON c.uuid = fd.uuid WHERE (c.types LIKE '%Creature%' AND c.layout = 'normal' AND c.borderColor = 'black') AND c.artist = 'Matthew D. Wilson' AND fd.language = 'French'",
+        "difficulty": "moderate"
+    },
+    {
+        "question": "How many cards with print rarity have ruling text printed on 01/02/2007?",
+        "expected_sql": "SELECT COUNT(DISTINCT T1.id) FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.rarity = 'rare' AND T2.date = '2007-02-01'",
+        "selector_output": "SELECT DISTINCT COUNT(DISTINCT T1.id) FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.rarity = 'rare' AND T2.date = 2007-02-01",
+        "difficulty": "simple"
+    },
+    {
+        "question": "What language is the set of 180 cards that belongs to the Ravnica block translated into?",
+        "expected_sql": "SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.block = 'Ravnica' AND T1.baseSetSize = 180",
+        "selector_output": "SELECT DISTINCT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.block = 'Ravnica' AND T1.baseSetSize = 180",
+        "difficulty": "simple"
+    },
+    {
+        "question": "What percentage of cards with format commander and legal status do not have a content warning?",
+        "expected_sql": "SELECT CAST(SUM(CASE WHEN T1.hasContentWarning = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal'",
+        "selector_output": "[Timeout]",
+        "difficulty": "challenging"
+    },
+    {
+        "question": "What percentage of cards without power are in French?",
+        "expected_sql": "SELECT CAST(SUM(CASE WHEN T2.language = 'French' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T1.power IS NULL OR T1.power = '*'",
+        "selector_output": "SELECT CAST(SUM(CASE WHEN foreign_data.language = 'French' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(cards.id) FROM cards INNER JOIN foreign_data ON cards.uuid = foreign_data.uuid WHERE power IS NULL OR power = '*'",
+        "difficulty": "challenging"
+    },
+    {
+        "question": "What percentage of Japanese translated sets are expansion sets?",
+        "expected_sql": "SELECT CAST(SUM(CASE WHEN T2.language = 'Japanese' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.type = 'expansion'",
+        "selector_output": "SELECT CAST(SUM(CASE WHEN language = 'Japanese' THEN CASE WHEN type = 'expansion' THEN 1 ELSE 0 END ELSE NULL END) AS REAL) / COUNT(*) * 100 as Percentage FROM set_translations GROUP BY code",
+        "difficulty": "moderate"
+    },
+    {
+        "question": "What kind of printing is on the card that Daren Bader created?",
+        "expected_sql": "SELECT DISTINCT availability FROM cards WHERE artist = 'Daren Bader'",
+        "selector_output": "SELECT DISTINCT availability FROM cards WHERE artist = 'Daren Bader'",
+        "difficulty": "simple"
+    },
+    {
+        "question": "How many color cards with no borders have been ranked higher than 12000 on EDHRec?",
+        "expected_sql": "SELECT COUNT(id) FROM cards WHERE edhrecRank > 12000 AND borderColor = 'borderless'",
+        "selector_output": "SELECT COUNT(*) FROM cards WHERE edhreRank > 12000 AND borderColor = 'borderless'",
+        "difficulty": "simple"
+    },
+    {
+        "question": "How many cards are oversized, reprinted, and printed for promotions?",
+        "expected_sql": "SELECT COUNT(id) FROM cards WHERE isOversized = 1 AND isReprint = 1 AND isPromo = 1",
+        "selector_output": "SELECT COUNT(id) FROM cards WHERE isOversized = 1 AND isReprint = 1 AND isPromo = 1",
+        "difficulty": "simple"
+    },
+    {
+        "question": "Please list top three unknown power cards that have promotional types for arena league in alphabetical order.",
+        "expected_sql": "SELECT name FROM cards WHERE (power IS NULL OR power LIKE '%*%') AND promoTypes = 'arenaleague' ORDER BY name LIMIT 3",
+        "selector_output": "SELECT name FROM cards WHERE (power IS NULL OR power LIKE '%*%') AND promoTypes = 'arenaleague' ORDER BY name LIMIT 3",
+        "difficulty": "simple"
+    },
+    {
+        "question": "What is the language of the card with the multiverse number 149934?",
+        "expected_sql": "SELECT language FROM foreign_data WHERE multiverseid = 149934",
+        "selector_output": "SELECT DISTINCT language FROM foreign_data WHERE multiverseid = 149934",
+        "difficulty": "simple"
+    },
+    {
+        "question": "Please provide the ids of top three powerful pairs of Kingdom Foil and Kingdom Cards sorted by Kingdom Foil id in alphabetical order.",
+        "expected_sql": "SELECT cardKingdomFoilId, cardKingdomId FROM cards WHERE cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NOT NULL ORDER BY cardKingdomFoilId LIMIT 3",
+        "selector_output": "SELECT DISTINCT cardKingdomFoilId, cardKingdomId FROM cards WHERE cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NOT NULL ORDER BY cardKingdomFoilId LIMIT 3",
+        "difficulty": "simple"
+    },
+    {
+        "question": "What proportion of cards do not have a text box with a normal layout?",
+        "expected_sql": "SELECT CAST(SUM(CASE WHEN isTextless = 1 AND layout = 'normal' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM cards",
+        "selector_output": "SELECT CAST(SUM(CASE WHEN isTextless = 1 AND layout LIKE %normal% THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM cards",
+        "difficulty": "simple"
+    },
+    {
+        "question": "What are the card numbers that don't have multiple faces on a single card and have the subtypes Angel and Wizard?",
+        "expected_sql": "SELECT id FROM cards WHERE subtypes = 'Angel,Wizard' AND side IS NULL",
+        "selector_output": "SELECT c.id FROM (SELECT DISTINCT id, subtypes, side FROM cards) c WHERE COALESCE(TRIM(c.subtypes), '') = 'Angel,Wizard' AND (c.side IS NULL OR c.side IS NOT DISTINCT FROM NULL)",
+        "difficulty": "simple"
+    },
+    {
+        "question": "Please provide top three sets that don't appear in Magic: The Gathering Online, along with their names in in alphabetical order.",
+        "expected_sql": "SELECT name FROM sets WHERE mtgoCode IS NULL ORDER BY name LIMIT 3",
+        "selector_output": "SELECT name FROM sets WHERE mtgoCode IS NULL ORDER BY name LIMIT 3",
+        "difficulty": "simple"
+    },
+    {
+        "question": "What languages are available in the set known as Archenemy on the magic card market and having the code ARC?",
+        "expected_sql": "SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.mcmName = 'Archenemy' AND T2.setCode = 'ARC'",
+        "selector_output": "SELECT DISTINCT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.mcmName = 'Archenemy' AND T2.setCode = 'ARC'",
+        "difficulty": "moderate"
+    },
+    {
+        "question": "Which set is not available outside of the United States and has foil cards with Japanese writing on them? Please include the set ID in your response.",
+        "expected_sql": "SELECT T1.name, T1.id FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Japanese' AND T1.isFoilOnly = 1 AND T1.isForeignOnly = 0",
+        "selector_output": "SELECT T1.id FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Japanese' AND T1.isFoilOnly = 1 AND T1.isForeignOnly = 0",
+        "difficulty": "challenging"
+    },
+    {
+        "question": "Which of these artists have designed a card in the set Coldsnap, Jeremy Jarvis, Aaron Miller or Chippy?",
+        "expected_sql": "SELECT T1.artist FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE (T2.name = 'Coldsnap' AND T1.artist = 'Chippy') OR (T2.name = 'Coldsnap' AND T1.artist = 'Aaron Miller') OR (T2.name = 'Coldsnap' AND T1.artist = 'Jeremy Jarvis') GROUP BY T1.artist",
+        "selector_output": "SELECT T1.artist FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE (T2.name = 'Coldsnap' AND T1.artist = 'Chippy') OR (T2.name = 'Coldsnap' AND T1.artist = 'Aaron Miller') OR (T2.name = 'Coldsnap' AND T1.artist = 'Jeremy Jarvis') GROUP BY T1.artist",
+        "difficulty": "challenging"
+    },
+    {
+        "question": "What is the percentage of incredibly powerful cards in the set Coldsnap?",
+        "expected_sql": "SELECT CAST(SUM(CASE WHEN T1.cardKingdomFoilId IS NOT NULL AND T1.cardKingdomId IS NOT NULL THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE T2.name = 'Coldsnap'",
+        "selector_output": "SELECT CAST(SUM(CASE WHEN cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NULL THEN 0 ELSE 1 END) AS REAL) * 100 / COUNT(*) as percentage_of_powerful FROM cards INNER JOIN foreign_data ON Cards.uuid = ForeignData.scryfallid WHERE setCode = 'Coldsnap'",
+        "difficulty": "challenging"
+    },
+    {
+        "question": "For all cards illustrated by Jim Pavelec. and describe the text of the ruling of these cards. Do these cards have missing or degraded properties and values.",
+        "expected_sql": "SELECT T2.text , CASE WHEN T1.hasContentWarning = 1 THEN 'YES' ELSE 'NO' END FROM cards AS T1 INNER JOIN rulings AS T2 ON T2.uuid = T1.uuid WHERE T1.artist = 'Jim Pavelec'",
+        "selector_output": "[Error] No SQL found in output",
+        "difficulty": "challenging"
+    },
+    {
+        "question": "For all the set of cards that has Japanese translation, what is the percentage of them are only available in non-foil?",
+        "expected_sql": "SELECT CAST(SUM(CASE WHEN isNonFoilOnly = 1 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(id) FROM sets WHERE code IN ( SELECT setCode FROM set_translations WHERE language = 'Japanese' )",
+        "selector_output": "SELECT CAST(SUM(CASE WHEN T2.language = 'Japanese' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN set_translations AS T2 ON T1.scryfallId = T2.uuid WHERE (isNonFoilOnly = TRUE AND isForeignOnly = FALSE)",
+        "difficulty": "challenging"
+    },
+    {
+        "question": "Among the sets whose expansion type is Commander, which set has the highest total number of cards including promotional and related supplemental products but excluding Alchemy modifications? Indicate the id of the set.",
+        "expected_sql": "SELECT id FROM sets WHERE type = 'commander' ORDER BY totalSetSize DESC LIMIT 1",
+        "selector_output": "SELECT id FROM sets WHERE type = 'commander' ORDER BY totalSetSize DESC LIMIT 1",
+        "difficulty": "challenging"
+    },
+    {
+        "question": "List the names of all the cards in the set Hour of Devastation and find the formats in which these cards are legal.",
+        "expected_sql": "SELECT DISTINCT T2.name , CASE WHEN T1.status = 'Legal' THEN T1.format ELSE NULL END FROM legalities AS T1 INNER JOIN cards AS T2 ON T2.uuid = T1.uuid WHERE T2.setCode IN ( SELECT code FROM sets WHERE name = 'Hour of Devastation' )",
+        "selector_output": "SELECT T2.name, CASE WHEN T1.status IN ('Legal', 'Experimental') THEN T1.format ELSE NULL END FROM legalities AS T1 INNER JOIN sets ON T1.uuid = ( SELECT uuid FROM set_translations WHERE language = current locale AND code = SETS(SETS).setcode ) AS SetsT2 INNER JOIN cards AS CardsON SetsT2.id = CardsON.scryfallId WHERE EXISTS ( SELECT 1 FROM sets T3 WHERE NAME IN ('Hour of Devastation') )",
+        "difficulty": "challenging"
+    }
+]

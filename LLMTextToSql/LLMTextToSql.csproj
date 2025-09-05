@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Scripts\run_evaluation_refiner_agent.py" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Schemas\" />
   </ItemGroup>
 
