@@ -42,8 +42,8 @@ for idx, test in enumerate(test_cases):
     })
 
 os.makedirs("output", exist_ok=True)
-with open("output/eval_results.json", "w", encoding="utf-8") as f:
+with open("output/selector_eval_results.json", "w", encoding="utf-8") as f:
     json.dump(results, f, indent=2, ensure_ascii=False)
 
-print("Evaluation complete. Check output/eval_results.json")
+print("Evaluation complete. Check output/selector_eval_results.json")
 
