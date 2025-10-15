@@ -35,7 +35,7 @@ builder.Services.Configure<KestrelServerOptions>(options =>
 
 builder.Services.AddSingleton<IPythonSelectorAgent>(sp =>
     new PythonSelectorAgent(
-        Path.Combine(builder.Environment.ContentRootPath, "Scripts", "selector.py")
+        Path.Combine(builder.Environment.ContentRootPath, "Scripts/OpenAiAgents/Agents", "selector.py")
     )
 );
 
@@ -50,11 +50,19 @@ builder.Services.AddSingleton<IPythonRefinerAgent>(sp =>
 {
     var env = sp.GetRequiredService<IWebHostEnvironment>();
     var cfg = sp.GetRequiredService<IConfiguration>();
-    string sc = Path.Combine(env.ContentRootPath, "Scripts", "refiner.py");
+    string sc = Path.Combine(env.ContentRootPath, "Scripts/OpenAiAgents/Agents", "refiner.py");
     string sch = Path.Combine(env.ContentRootPath, "Schemas", "card_games_schema.json");
     string dsn = cfg.GetConnectionString("CardGamesPostgres")
                  ?? throw new InvalidOperationException("Missing CardGamesPostgres");
-    return new PythonRefinerAgent(sc, sch, dsn);
+    string pythonDsn = dsn
+    .Replace("Host=", "host=")
+    .Replace("Port=", "port=")
+    .Replace("Database=", "dbname=")
+    .Replace("Username=", "user=")
+    .Replace("Password=", "password=")
+    .Replace(";", " "); // replace ; with space for psycopg2
+
+    return new PythonRefinerAgent(sc, sch, pythonDsn);
 });
 
 builder.Services.AddHttpClient<ILlmService, OllamaLlmService>(client =>

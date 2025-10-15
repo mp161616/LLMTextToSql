@@ -1,0 +1,42 @@
+[
+    {
+        "question_id": 412,
+        "db_id": "card_games",
+        "question": "What is the foreign name of the card in French of type Creature, normal layout and black border color, by artist Matthew D. Wilson?",
+        "evidence": "in French refers to language = 'French'; black border color refers to borderColor = 'black'",
+        "SQL": "SELECT name FROM foreign_data WHERE uuid IN ( SELECT uuid FROM cards WHERE types = 'Creature' AND layout = 'normal' AND borderColor = 'black' AND artist = 'Matthew D. Wilson' ) AND language = 'French'",
+        "difficulty": "moderate"
+    },
+    {
+        "question_id": 417,
+        "db_id": "card_games",
+        "question": "What percentage of Japanese translated sets are expansion sets?",
+        "evidence": "Japanese translated refers to language = 'Japanese'; expansion sets refers to type = 'expansion'; percentage = DIVIDE(COUNT(language = 'Japanese'),COUNT(language))*100",
+        "SQL": "SELECT CAST(SUM(CASE WHEN T2.language = 'Japanese' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.type = 'expansion'",
+        "difficulty": "moderate"
+    },
+    {
+        "question_id": 427,
+        "db_id": "card_games",
+        "question": "What languages are available in the set known as Archenemy on the magic card market and having the code ARC?",
+        "evidence": "known as Archenemy refers to mcmName = 'Archenemy'; having the code ARC refers to setCode = 'ARC'",
+        "SQL": "SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.mcmName = 'Archenemy' AND T2.setCode = 'ARC'",
+        "difficulty": "moderate"
+    },
+    {
+        "question_id": 351,
+        "db_id": "card_games",
+        "question": "Name all the cards which have alternative language in Japanese.",
+        "evidence": "Japanese' is the language;",
+        "SQL": "SELECT T1.name FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.language = 'Japanese'",
+        "difficulty": "simple"
+    },
+    {
+        "question_id": 528,
+        "db_id": "card_games",
+        "question": "List the names of all the cards in the set Hour of Devastation and find the formats in which these cards are legal.",
+        "evidence": "the set Hour of Devastation refers to set.name = 'Hour of Devastation'; names of all the cards in the set refers to cards.name; legal cards refers to status = 'Legal'; the formats refers to format",
+        "SQL": "SELECT DISTINCT T2.name , CASE WHEN T1.status = 'Legal' THEN T1.format ELSE NULL END FROM legalities AS T1 INNER JOIN cards AS T2 ON T2.uuid = T1.uuid WHERE T2.setCode IN ( SELECT code FROM sets WHERE name = 'Hour of Devastation' )",
+        "difficulty": "challenging"
+    }
+]

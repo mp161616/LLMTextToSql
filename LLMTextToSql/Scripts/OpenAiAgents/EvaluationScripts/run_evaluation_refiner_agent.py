@@ -8,6 +8,12 @@ import datetime
 import asyncio
 from collections import defaultdict
 
+# Load Paths from configuration
+def load_settings(path="../appsettings.json"):
+    with open(path, "r", encoding="utf-8") as f:
+        config = json.load(f)
+    return config["Paths"]["OpenAIRefinerGeneratedQueries"], config["Paths"]["OpenAIRefinerEvaluationResults"]
+
 # LOGGING
 logger.add("evaluation_debug.log", level="DEBUG", rotation="500 KB")
 
@@ -16,15 +22,17 @@ DB_CONFIG = {
     "HOST": "localhost",
     "PORT": 5432,
     "USER": "postgres",
-    "PASSWORD": "admin",  # Change this if needed
-    "NAME": "card_games"
+    "PASSWORD": "admin",
+    "NAME": "european_football"
 }
 
-# PATHS
-EVALUATION_FILE = "selector_evaluation_results.txt"
-RESULTS_PATH = Path("output/selector_eval_results.json")
+# PATHS 
+refiner_generated_queries, refiner_evaluation_results = load_settings()
 
-# DB CONNECTOR
+EVALUATION_FILE = refiner_evaluation_results
+RESULTS_PATH = Path(refiner_generated_queries)
+
+# DB CONNECTOR 
 class PostgreSQLConnector:
     def __init__(self, host, port, user, password, dbname):
         self.conn = psycopg2.connect(
@@ -39,7 +47,7 @@ class PostgreSQLConnector:
             columns = [desc[0] for desc in cur.description]
             return rows if return_type == "raw" else (rows, columns)
 
-# EXECUTION
+# EXECUTION 
 def execute_sql_query(db_config: dict, sql_query: str):
     db = PostgreSQLConnector(
         host=db_config["HOST"],
@@ -120,6 +128,14 @@ async def run_evaluation():
     num_total = 0
     difficulty_summary = defaultdict(lambda: {"correct": 0, "total": 0})
 
+    def normalize_sql(sql: str) -> str:
+      """Normalize SQL text for syntactic comparison."""
+      import re
+      return (
+        re.sub(r'\s+', ' ', sql.strip().lower())  # collapse spaces and lowercase
+       .rstrip(';')                              # remove trailing semicolons
+      )
+
     for entry in data:
         question = entry["question"]
         expected_sql = entry["expected_sql"]
@@ -132,8 +148,28 @@ async def run_evaluation():
 
         if not generated_sql or "[Error]" in generated_sql or "Timeout" in generated_sql:
             logger.warning(f" Skipping due to invalid SQL:\n{generated_sql}")
-            write_evaluation_results(EVALUATION_FILE, question, expected_sql, generated_sql, "No result", "N/A", False, difficulty)
+            write_evaluation_results(
+                EVALUATION_FILE, question, expected_sql, generated_sql,
+                "No result", "N/A", False, difficulty
+            )
             continue
+
+        if normalize_sql(expected_sql) == normalize_sql(generated_sql):
+            logger.success("Identical SQL detected — marking as SUCCESS ✅")
+            num_success += 1
+            difficulty_summary[difficulty]["correct"] += 1
+
+            write_evaluation_results(
+                EVALUATION_FILE,
+                question,
+                expected_sql,
+                generated_sql,
+                result="[Skipped DB Execution] — SQL matched syntactically.",
+                expected_result="[Skipped DB Execution]",
+                is_success=True,
+                difficulty=difficulty
+            )
+            continue  # Skip DB querying for perfect matches
 
         try:
             expected_result = pd.DataFrame(execute_sql_query(DB_CONFIG, expected_sql))

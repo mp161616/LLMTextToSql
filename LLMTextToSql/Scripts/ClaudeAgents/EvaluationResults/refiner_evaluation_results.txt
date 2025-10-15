@@ -1,0 +1,4609 @@
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:03
+================================================================================
+
+QUESTION: Which are the cards that have incredibly powerful foils.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT id FROM cards WHERE cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NOT NULL
+
+GENERATED SQL:
+SELECT id FROM cards WHERE cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NOT NULL
+
+RESULT:
+           0
+0      45810
+1      45812
+2      45814
+3      45816
+4      45818
+5      45820
+6      45822
+7      45824
+8      45830
+[... truncated ...]
+
+EXPECTED RESULT:
+           0
+0      45810
+1      45812
+2      45814
+3      45816
+4      45818
+5      45820
+6      45822
+7      45824
+8      45830
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:03
+================================================================================
+
+QUESTION: What are the borderless cards available without powerful foils?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT id FROM cards WHERE borderColor = 'borderless' AND (cardKingdomId IS NULL OR cardKingdomId IS NULL)
+
+GENERATED SQL:
+SELECT id FROM cards WHERE borderColor = 'borderless' AND (cardKingdomFoilId IS NULL OR cardKingdomId IS NULL)
+
+RESULT:
+        0
+0   48433
+1   48434
+2   48435
+3   48436
+4   48437
+5   48438
+6   48439
+7   48440
+8   48441
+[... truncated ...]
+
+EXPECTED RESULT:
+        0
+0   48433
+1   48434
+2   48435
+3   48436
+4   48437
+5   48438
+6   48439
+7   48440
+8   48441
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:03
+================================================================================
+
+QUESTION: Name all cards with 2015 frame style ranking below 100 on EDHRec.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT id FROM cards WHERE edhrecRank < 100 AND frameVersion = 2015
+
+GENERATED SQL:
+SELECT name FROM cards WHERE edhrecrank < 100 AND frameversion = '2015'
+
+RESULT:
+N/A
+
+EXPECTED RESULT:
+operator does not exist: text = integer
+LINE 1: ...id FROM cards WHERE edhrecRank < 100 AND frameVersion = 2015
+                                                                 ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:03
+================================================================================
+
+QUESTION: What kind of printing is on the card that Daren Bader created?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT availability FROM cards WHERE artist = 'Daren Bader'
+
+GENERATED SQL:
+SELECT DISTINCT availability FROM cards WHERE artist = 'Daren Bader'
+
+RESULT:
+             0
+0        arena
+1  arena,paper
+2    dreamcast
+3         mtgo
+4   mtgo,paper
+5        paper
+
+EXPECTED RESULT:
+             0
+0        arena
+1  arena,paper
+2    dreamcast
+3         mtgo
+4   mtgo,paper
+5        paper
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:03
+================================================================================
+
+QUESTION: How many cards are oversized, reprinted, and printed for promotions?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(id) FROM cards WHERE isOversized = 1 AND isReprint = 1 AND isPromo = 1
+
+GENERATED SQL:
+SELECT COUNT(id) FROM cards WHERE isOversized = 1 AND isReprint = 1 AND isPromo = 1
+
+RESULT:
+    0
+0  17
+
+EXPECTED RESULT:
+    0
+0  17
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:03
+================================================================================
+
+QUESTION: What is the language of the card with the multiverse number 149934?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT language FROM foreign_data WHERE multiverseid = 149934
+
+GENERATED SQL:
+SELECT language FROM foreign_data WHERE multiverseid = 149934
+
+RESULT:
+        0
+0  French
+
+EXPECTED RESULT:
+        0
+0  French
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:03
+================================================================================
+
+QUESTION: List all the mythic rarity print cards banned in gladiator format.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT T1.id FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'gladiator' AND T2.status = 'Banned' AND T1.rarity = 'mythic'
+
+GENERATED SQL:
+SELECT DISTINCT T1.id FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'gladiator' AND T2.status = 'Banned' AND T1.rarity = 'mythic'
+
+RESULT:
+       0
+0  17983
+1  18058
+2  29523
+3  38736
+4  38737
+
+EXPECTED RESULT:
+       0
+0  17983
+1  18058
+2  29523
+3  38736
+4  38737
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:03
+================================================================================
+
+QUESTION: For artifact type of cards that do not have multiple faces on the same card, state its legalities status for vintage play format.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT DISTINCT T2.status FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.type = 'Artifact' AND T2.format = 'vintage' AND T1.side IS NULL
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT DISTINCT T2.status
+[DEBUG] Received error message: 
+[DEBUG] Received question: For artifact type of cards that do not have multiple faces on the same card, state its legalities status for vintage play format.
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT T2.status
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t2"
+LINE 1: SELECT DISTINCT T2.status LIMIT 1
+                        ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.uuid = l.uuidWHERE c.types = 'Artifact'  AND c.side IS NULL  AND l.format = 'vintage
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.u...
+                                           ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.uuid = l.uuidWHERE c.types = 'Artifact'   AND c.side IS NULL   AND l.format = 'vintage
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.u...
+                                           ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.uuid = l.uuidWHERE c.types = 'Artifact'  AND c.side IS NULL  AND l.format = 'vintage
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.u...
+                                           ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.uuid = l.uuidWHERE c.types = 'Artifact'  AND c.side IS NULL  AND l.format = 'vintage
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.u...
+                                           ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.uuid = l.uuidWHERE c.types = 'Artifact'  AND c.side IS NULL  AND l.format = 'vintage
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.u...
+                                           ^
+
+[DEBUG] Final failed SQL: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.uuid = l.uuidWHERE c.types = 'Artifact'  AND c.side IS NULL  AND l.format = 'vintage
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:04
+================================================================================
+
+QUESTION: List all the card id and artist with unknown power which are legal for commander play format.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T1.id, T1.artist FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.status = 'Legal' AND T2.format = 'commander' AND (T1.power IS NULL OR T1.power = '*')
+
+GENERATED SQL:
+SELECT T1.id, T1.artist FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.status = 'Legal' AND T2.format = 'commander' AND (T1.power IS NULL OR T1.power = '*')
+
+RESULT:
+           0                                   1
+0      15564                       Adam Paquette
+1      15565                        Raoul Vitale
+2      15566                     Steven Belledin
+3      15567                       Adam Paquette
+4      15568                        Raoul Vitale
+5      15575                         Mike Bierek
+6      15576                          Scott Chou
+7      15577                       Clint Cearley
+8      15583                          Chris Rahn
+[... truncated ...]
+
+EXPECTED RESULT:
+           0                                   1
+0      15543                         Jason Felix
+1      15547                     Slawomir Maniak
+2      15548                        Johann Bodin
+3      15549                           John Avon
+4      15553                      Wayne Reynolds
+5      15558                         Chase Stone
+6      15560                          Eytan Zana
+7      15561                     Steven Belledin
+8      15562                        James Zapata
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:04
+================================================================================
+
+QUESTION: Find all cards illustrated by Stephen Daniel and describe the text of the ruling of these cards. State if these cards have missing or degraded properties and values.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT T1.id, T2.text, T1.hasContentWarning FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.artist = 'Stephen Daniele'
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT T1.id, T2.text,
+[DEBUG] Received error message: 
+[DEBUG] Received question: Find all cards illustrated by Stephen Daniel and describe the text of the ruling of these cards. State if these cards have missing or degraded properties and values.
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T1.id, T2.text,
+[DEBUG] Initial SQL execution error: syntax error at or near "LIMIT"
+LINE 1: SELECT T1.id, T2.text, LIMIT 1
+                               ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOIN rulings T2 ON T1.uuid = T2.uuidWHERE T1.artist = 'Stephen Daniele
+[DEBUG] ERRRORRRR: syntax error at or near "T1LEFT"
+LINE 1: ...CT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOI...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOIN rulings T2 ON T1.uuid = T2.uuidWHERE T1.artist = 'Stephen Daniele
+[DEBUG] ERRRORRRR: syntax error at or near "T1LEFT"
+LINE 1: ...CT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOI...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOIN rulings T2 ON T1.uuid = T2.uuidWHERE T1.artist = 'Stephen Daniele
+[DEBUG] ERRRORRRR: syntax error at or near "T1LEFT"
+LINE 1: ...CT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOI...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOIN rulings T2 ON T1.uuid = T2.uuidWHERE T1.artist = 'Stephen Daniele
+[DEBUG] ERRRORRRR: syntax error at or near "T1LEFT"
+LINE 1: ...CT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOI...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOIN rulings T2 ON T1.uuid = T2.uuidWHERE T1.artist = 'Stephen Daniele
+[DEBUG] ERRRORRRR: syntax error at or near "T1LEFT"
+LINE 1: ...CT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOI...
+                                                             ^
+
+[DEBUG] Final failed SQL: SELECT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOIN rulings T2 ON T1.uuid = T2.uuidWHERE T1.artist = 'Stephen Daniele
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:04
+================================================================================
+
+QUESTION: Name all the cards which have alternative language in Japanese.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T1.name FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.language = 'Japanese'
+
+GENERATED SQL:
+SELECT T1.name FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.language = 'Japanese'
+
+RESULT:
+                                                                 0
+0                                         Drakuseth, Maw of Flames
+1                                                     Ember Hauler
+2                                                   Fire Elemental
+3                                                      Flame Sweep
+4                                                              Fry
+5                                             Glint-Horn Buccaneer
+6                                              Goblin Bird-Grabber
+7                                                Goblin Ringleader
+8                                                  Goblin Smuggler
+[... truncated ...]
+
+EXPECTED RESULT:
+                                                                 0
+0                                         Drakuseth, Maw of Flames
+1                                                     Ember Hauler
+2                                                   Fire Elemental
+3                                                      Flame Sweep
+4                                                              Fry
+5                                             Glint-Horn Buccaneer
+6                                              Goblin Bird-Grabber
+7                                                Goblin Ringleader
+8                                                  Goblin Smuggler
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:04
+================================================================================
+
+QUESTION: Calculate the percentage of the cards availabe in Chinese Simplified.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT CAST(SUM(CASE WHEN T2.language = 'Chinese Simplified' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid
+
+GENERATED SQL:
+SELECT CAST(SUM(CASE WHEN T2.language = 'Chinese Simplified' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid
+
+RESULT:
+                   0
+0  8.773399659641314
+
+EXPECTED RESULT:
+                   0
+0  8.773399659641314
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:05
+================================================================================
+
+QUESTION: List all the sets available in Italian translation. State the total number of cards per set.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T1.name, T1.totalSetSize FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Italian'
+
+GENERATED SQL:
+SELECT T1.name, T1.totalSetSize FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Italian'
+
+RESULT:
+                                           0    1
+0                              Tenth Edition  508
+1                             Fourth Edition  379
+2                                 Fifth Dawn  165
+3                              Fifth Edition  460
+4                      Classic Sixth Edition  351
+5                            Seventh Edition  354
+6                             Eighth Edition  361
+7                              Ninth Edition  359
+8                              Aether Revolt  197
+[... truncated ...]
+
+EXPECTED RESULT:
+                                           0    1
+0                              Tenth Edition  508
+1                             Fourth Edition  379
+2                                 Fifth Dawn  165
+3                              Fifth Edition  460
+4                      Classic Sixth Edition  351
+5                            Seventh Edition  354
+6                             Eighth Edition  361
+7                              Ninth Edition  359
+8                              Aether Revolt  197
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:05
+================================================================================
+
+QUESTION: How many types of cards does the artist Aaron Boyd illustrated about card art?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT COUNT(type) FROM cards WHERE artist = 'Aaron Boyd'
+
+GENERATED SQL:
+SELECT COUNT(DISTINCT type) FROM cards WHERE artist = 'Aaron Boyd'
+
+RESULT:
+   0
+0  4
+
+EXPECTED RESULT:
+    0
+0  12
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:05
+================================================================================
+
+QUESTION: What is the keyword found on card 'Angel of Mercy'?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT keywords FROM cards WHERE name = 'Angel of Mercy'
+
+GENERATED SQL:
+SELECT keywords FROM cards WHERE name = 'Angel of Mercy'
+
+RESULT:
+         0
+0   Flying
+1   Flying
+2   Flying
+3   Flying
+4   Flying
+5   Flying
+6   Flying
+7   Flying
+8   Flying
+[... truncated ...]
+
+EXPECTED RESULT:
+        0
+0  Flying
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:05
+================================================================================
+
+QUESTION: How many cards have infinite power?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(*) FROM cards WHERE power = '*'
+
+GENERATED SQL:
+SELECT COUNT(*) FROM cards WHERE power = '*'
+
+RESULT:
+     0
+0  429
+
+EXPECTED RESULT:
+     0
+0  429
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:05
+================================================================================
+
+QUESTION: What type of promotion is of card 'Duress'?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT promoTypes FROM cards WHERE name = 'Duress' AND promoTypes IS NOT NULL
+
+GENERATED SQL:
+SELECT promoTypes FROM cards WHERE name = 'Duress' AND promoTypes IS NOT NULL
+
+RESULT:
+             0
+0  tourney,fnm
+1  arenaleague
+2  mediainsert
+3  mediainsert
+
+EXPECTED RESULT:
+             0
+0  tourney,fnm
+1  arenaleague
+2  mediainsert
+3  mediainsert
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:05
+================================================================================
+
+QUESTION: cards are not directly linked to language but through table 'set'. you need to add set in covered table & rephrase your question
+What are the languages available for the set that card 'Angel of Mercy' is in?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT language FROM set_translations WHERE id IN ( SELECT id FROM cards WHERE name = 'Angel of Mercy' )
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT DISTINCT T2.language
+[DEBUG] Received error message: 
+[DEBUG] Received question: cards are not directly linked to language but through table 'set'. you need to add set in covered table & rephrase your question
+What are the languages available for the set that card 'Angel of Mercy' is in?
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT T2.language
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t2"
+LINE 1: SELECT DISTINCT T2.language LIMIT 1
+                        ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT st.languageFROM cards cJOIN set_translations st ON c.setcode = st.setcodeWHERE c.name = 'Angel of Mercy
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT st.languageFROM cards cJOIN set_translations...
+                                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT st.languageFROM cards cJOIN set_translations st ON c.setcode = st.setcodeWHERE c.name = 'Angel of Mercy
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT st.languageFROM cards cJOIN set_translations...
+                                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT st.languageFROM cards cJOIN set_translations st ON c.setcode = st.setcodeWHERE c.name = 'Angel of Mercy';
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT st.languageFROM cards cJOIN set_translations...
+                                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT st.languageFROM cards cJOIN set_translations st ON c.setcode = st.setcodeWHERE c.name = 'Angel of Mercy';
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT st.languageFROM cards cJOIN set_translations...
+                                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT st.languageFROM cards cJOIN set_translations st ON c.setcode = st.setcodeWHERE c.name = 'Angel of Mercy';
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT st.languageFROM cards cJOIN set_translations...
+                                              ^
+
+[DEBUG] Final failed SQL: SELECT DISTINCT st.languageFROM cards cJOIN set_translations st ON c.setcode = st.setcodeWHERE c.name = 'Angel of Mercy';
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:05
+================================================================================
+
+QUESTION: Among the Artifact cards, which are black color and comes with foreign languague translation?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT DISTINCT T1.name FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T1.originalType = 'Artifact' AND T1.colors = 'B'
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT DISTINCT T1.name
+[DEBUG] Received error message: 
+[DEBUG] Received question: Among the Artifact cards, which are black color and comes with foreign languague translation?
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT T1.name
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t1"
+LINE 1: SELECT DISTINCT T1.name LIMIT 1
+                        ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data f ON c.uuid = f.uuidWHERE c.originaltype = 'Artifact'AND c.colors = 'B
+[DEBUG] ERRRORRRR: syntax error at or near "cINNER"
+LINE 1: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data f ON...
+                                       ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data f ON c.uuid = f.uuidWHERE c.originaltype = 'Artifact'AND c.colors = 'B
+[DEBUG] ERRRORRRR: syntax error at or near "cINNER"
+LINE 1: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data f ON...
+                                       ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data f ON c.uuid = f.uuidWHERE c.originaltype = 'Artifact'AND c.colors = 'B
+[DEBUG] ERRRORRRR: syntax error at or near "cINNER"
+LINE 1: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data f ON...
+                                       ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data f ON c.uuid = f.uuidWHERE c.originaltype = 'Artifact'AND c.colors = 'B
+[DEBUG] ERRRORRRR: syntax error at or near "cINNER"
+LINE 1: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data f ON...
+                                       ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data f ON c.uuid = f.uuidWHERE c.originaltype = 'Artifact'AND c.colors = 'B
+[DEBUG] ERRRORRRR: syntax error at or near "cINNER"
+LINE 1: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data f ON...
+                                       ^
+
+[DEBUG] Final failed SQL: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data f ON c.uuid = f.uuidWHERE c.originaltype = 'Artifact'AND c.colors = 'B
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:05
+================================================================================
+
+QUESTION: Pick 3 cards with rarity of uncommon, list down name these cards according to ascending order of it's ruling date.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT DISTINCT T1.name FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.rarity = 'uncommon' ORDER BY T2.date ASC LIMIT 3
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT DISTINCT T1.name
+[DEBUG] Received error message: 
+[DEBUG] Received question: Pick 3 cards with rarity of uncommon, list down name these cards according to ascending order of it's ruling date.
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT T1.name
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t1"
+LINE 1: SELECT DISTINCT T1.name LIMIT 1
+                        ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid = r.uuidWHERE c.rarity = 'uncommon'ORDER BY r.date ASCLIMIT 3
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid =...
+                                         ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid = r.uuidWHERE c.rarity = 'uncommon'ORDER BY r.date ASCLIMIT 3
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid =...
+                                         ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid = r.uuidWHERE c.rarity = 'uncommon'ORDER BY r.date ASCLIMIT 3
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid =...
+                                         ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid = r.uuidWHERE c.rarity = 'uncommon'ORDER BY r.date ASCLIMIT 3
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid =...
+                                         ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid = r.uuidWHERE c.rarity = 'uncommon'ORDER BY r.date ASCLIMIT 3
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid =...
+                                         ^
+
+[DEBUG] Final failed SQL: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid = r.uuidWHERE c.rarity = 'uncommon'ORDER BY r.date ASCLIMIT 3
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:05
+================================================================================
+
+QUESTION: On how many cards designed by John Avon is its foil non-powerful?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(id) FROM cards WHERE (cardKingdomId IS NULL OR cardKingdomFoilId IS NULL) AND artist = 'John Avon'
+
+GENERATED SQL:
+SELECT COUNT(id) FROM cards WHERE artist = 'John Avon' AND (cardKingdomId IS NULL OR cardKingdomFoilId IS NULL)
+
+RESULT:
+     0
+0  739
+
+EXPECTED RESULT:
+     0
+0  739
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:05
+================================================================================
+
+QUESTION: How many white bordered cards are powerful?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(id) FROM cards WHERE borderColor = 'white' AND cardKingdomId IS NOT NULL AND cardKingdomFoilId IS NOT NULL
+
+GENERATED SQL:
+SELECT COUNT(id) FROM cards WHERE borderColor = 'white' AND cardKingdomId IS NOT NULL AND cardKingdomFoilId IS NOT NULL
+
+RESULT:
+      0
+0  1050
+
+EXPECTED RESULT:
+      0
+0  1050
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:05
+================================================================================
+
+QUESTION: How many cards designed by UDON and available in mtgo print type has a starting maximum hand size of -1?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(id) FROM cards WHERE hAND = '-1' AND artist = 'UDON' AND Availability = 'mtgo' 
+
+GENERATED SQL:
+SELECT COUNT(id) FROM cards WHERE hand = '-1' AND artist = 'UDON' AND availability = 'mtgo'
+
+RESULT:
+    0
+0  17
+
+EXPECTED RESULT:
+    0
+0  17
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:05
+================================================================================
+
+QUESTION: How many cards with a 1993 frame version and available on paper have a sensitive content warning?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT COUNT(id) FROM cards WHERE frameVersion = 1993 AND availability = 'paper' AND hasContentWarning = 1
+
+GENERATED SQL:
+SELECT COUNT(*) FROM cards WHERE frameVersion = '1993' AND availability = 'paper' AND hasContentWarning = 1
+
+RESULT:
+N/A
+
+EXPECTED RESULT:
+operator does not exist: text = integer
+LINE 1: SELECT COUNT(id) FROM cards WHERE frameVersion = 1993 AND av...
+                                                       ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:05
+================================================================================
+
+QUESTION: What is the mana cost of cards with a normal layout, a 2003 frame version, with a black border color, and available in paper and mtgo?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT manaCost FROM cards WHERE availability = 'mtgo,paper' AND borderColor = 'black' AND frameVersion = 2003 AND layout = 'normal'
+
+GENERATED SQL:
+SELECT manacost FROM cards WHERE layout = 'normal' AND frameversion = '2003' AND bordercolor = 'black' AND availability = 'mtgo,paper'
+
+RESULT:
+N/A
+
+EXPECTED RESULT:
+operator does not exist: text = integer
+LINE 1: ...paper' AND borderColor = 'black' AND frameVersion = 2003 AND...
+                                                             ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:06
+================================================================================
+
+QUESTION: What is the  unconverted mana do all the cards created by Rob Alexander cost in total?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT manaCost FROM cards WHERE artist = 'Rob Alexander'
+
+GENERATED SQL:
+SELECT SUM(convertedmanacost) FROM cards WHERE artist = 'Rob Alexander'
+
+RESULT:
+       0
+0  678.0
+
+EXPECTED RESULT:
+                   0
+0                {U}
+1          {3}{G}{G}
+2             {G}{W}
+3               None
+4               None
+5               None
+6               None
+7                {U}
+8                {U}
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:06
+================================================================================
+
+QUESTION: Lists all types of cards available in arena.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT DISTINCT subtypes, supertypes FROM cards WHERE availability = 'arena' AND subtypes IS NOT NULL AND supertypes IS NOT NULL
+
+GENERATED SQL:
+SELECT DISTINCT types FROM cards WHERE availability LIKE '%arena%'
+
+RESULT:
+                      0
+0                  Land
+1          Planeswalker
+2               Instant
+3     Artifact,Creature
+4               Sorcery
+5              Creature
+6           Enchantment
+7              Artifact
+8  Enchantment,Creature
+
+EXPECTED RESULT:
+                          0          1
+0          Aetherborn,Rogue  Legendary
+1        Aetherborn,Vampire  Legendary
+2                     Ajani  Legendary
+3                     Bolas  Legendary
+4                   Chandra  Legendary
+5                     Demon  Legendary
+6                     Dovin  Legendary
+7             Dwarf,Advisor  Legendary
+8               Dwarf,Pilot  Legendary
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:06
+================================================================================
+
+QUESTION: Lists the set code of all cards translated into Spanish.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT setCode FROM set_translations WHERE language = 'Spanish'
+
+GENERATED SQL:
+SELECT setCode FROM set_translations WHERE language = 'Spanish'
+
+RESULT:
+       0
+0    10E
+1    4ED
+2    5DN
+3    5ED
+4    6ED
+5    7ED
+6    8ED
+7    9ED
+8    AER
+[... truncated ...]
+
+EXPECTED RESULT:
+       0
+0    10E
+1    4ED
+2    5DN
+3    5ED
+4    6ED
+5    7ED
+6    8ED
+7    9ED
+8    AER
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:06
+================================================================================
+
+QUESTION: What percentage of legendary frame effect cards that are only available in online game variations?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT SUM(CASE WHEN isOnlineOnly = 1 THEN 1.0 ELSE 0 END) / COUNT(id) * 100 FROM cards WHERE frameEffects = 'legendary'
+
+GENERATED SQL:
+SELECT CAST(SUM(CASE WHEN isOnlineOnly = 1 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(id) FROM cards WHERE frameEffects = 'legendary'
+
+RESULT:
+                    0
+0  1.0889292196007259
+
+EXPECTED RESULT:
+                        0
+0  1.08892921960072595300
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:06
+================================================================================
+
+QUESTION: What is the percentage of Story Spotlight cards that do not have a text box? List them by their ID.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT CAST(SUM(CASE WHEN isTextless = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(id) FROM cards WHERE isStorySpotlight = 1
+
+GENERATED SQL:
+SELECT
+
+RESULT:
+Empty DataFrame
+Columns: []
+Index: [0]
+
+EXPECTED RESULT:
+       0
+0  100.0
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:06
+================================================================================
+
+QUESTION: Calculate the percentage of cards in Spanish. List them by name.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT ( SELECT CAST(SUM(CASE WHEN language = 'Spanish' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM foreign_data ), name FROM foreign_data WHERE language = 'Spanish'
+
+GENERATED SQL:
+SELECT
+
+RESULT:
+Empty DataFrame
+Columns: []
+Index: [0]
+
+EXPECTED RESULT:
+                        0                                                                        1
+0      12.495963976857226                                               Drakuseth, fauces de fuego
+1      12.495963976857226                                                       Cargador de brasas
+2      12.495963976857226                                                       Sabio de la sabana
+3      12.495963976857226                                                       Elemental de fuego
+4      12.495963976857226                                                        Barrido de llamas
+5      12.495963976857226                                                                    Freír
+6      12.495963976857226                                                    Bucanero centelleasta
+7      12.495963976857226                                                     Aferrapájaros trasgo
+8      12.495963976857226                                                         Cabecilla trasgo
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:06
+================================================================================
+
+QUESTION: Indicates the name of all the languages into which the set whose number of cards is 309 is translated.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.baseSetSize = 309
+
+GENERATED SQL:
+SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.baseSetSize = 309
+
+RESULT:
+                     0
+0   Chinese Simplified
+1  Chinese Traditional
+2               French
+3               German
+4              Italian
+5             Japanese
+6               Korean
+7  Portuguese (Brazil)
+8              Russian
+9              Spanish
+
+EXPECTED RESULT:
+                     0
+0   Chinese Simplified
+1  Chinese Traditional
+2               French
+3               German
+4              Italian
+5             Japanese
+6               Korean
+7  Portuguese (Brazil)
+8              Russian
+9              Spanish
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:06
+================================================================================
+
+QUESTION: How many Brazilian Portuguese translated sets are inside the Commander block?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(T1.id) FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Portuguese (Brazil)' AND T1.block = 'Commander'
+
+GENERATED SQL:
+SELECT COUNT(DISTINCT T1.id) FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Portuguese (Brazil)' AND T1.block = 'Commander'
+
+RESULT:
+   0
+0  7
+
+EXPECTED RESULT:
+   0
+0  7
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:08
+================================================================================
+
+QUESTION: Lists by ID all Creature-type cards with legal status.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T1.id FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid INNER JOIN legalities AS T3 ON T1.uuid = T3.uuid WHERE T3.status = 'Legal' AND T1.types = 'Creature'
+
+GENERATED SQL:
+SELECT T1.id FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.status = 'Legal' AND T1.types = 'Creature'
+
+RESULT:
+            0
+0       15541
+1       15541
+2       15541
+3       15541
+4       15541
+5       15541
+6       15542
+7       15542
+8       15542
+[... truncated ...]
+
+EXPECTED RESULT:
+            0
+0       15541
+1       15541
+2       15541
+3       15541
+4       15541
+5       15541
+6       15542
+7       15542
+8       15542
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:08
+================================================================================
+
+QUESTION: Lists all types of cards in German.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT T1.subtypes, T1.supertypes FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.language = 'German' AND T1.subtypes IS NOT NULL AND T1.supertypes IS NOT NULL
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT DISTINCT T2.type
+[DEBUG] Received error message: 
+[DEBUG] Received question: Lists all types of cards in German.
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT T2.type
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t2"
+LINE 1: SELECT DISTINCT T2.type LIMIT 1
+                        ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language = 'German'AND fd.type IS NOT NULL
+[DEBUG] ERRRORRRR: syntax error at or near "fdWHERE"
+LINE 1: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language...
+                                                 ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language = 'German'AND fd.type IS NOT NULL
+[DEBUG] ERRRORRRR: syntax error at or near "fdWHERE"
+LINE 1: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language...
+                                                 ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language = 'German'AND fd.type IS NOT NULL
+[DEBUG] ERRRORRRR: syntax error at or near "fdWHERE"
+LINE 1: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language...
+                                                 ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language = 'German'AND fd.type IS NOT NULL
+[DEBUG] ERRRORRRR: syntax error at or near "fdWHERE"
+LINE 1: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language...
+                                                 ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language = 'German'AND fd.type IS NOT NULL
+[DEBUG] ERRRORRRR: syntax error at or near "fdWHERE"
+LINE 1: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language...
+                                                 ^
+
+[DEBUG] Final failed SQL: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language = 'German'AND fd.type IS NOT NULL
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:08
+================================================================================
+
+QUESTION: How many unknown power cards contain info about the triggered ability
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT T2.text FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE (T1.power IS NULL OR T1.power = '*') AND T2.text LIKE '%triggered ability%'
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT COUNT(DISTINCT T1.id)
+[DEBUG] Received error message: 
+[DEBUG] Received question: How many unknown power cards contain info about the triggered ability
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT COUNT(DISTINCT T1.id)
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t1"
+LINE 1: SELECT COUNT(DISTINCT T1.id) LIMIT 1
+                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT COUNT(DISTINCT id)FROM cardsWHERE (power IS NULL OR power = '*')AND text LIKE '%triggered ability%
+[DEBUG] ERRRORRRR: syntax error at or near "AND"
+LINE 1: ... id)FROM cardsWHERE (power IS NULL OR power = '*')AND text L...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT COUNT(DISTINCT id) FROM cards WHERE (power IS NULL OR power = '*') AND text LIKE '%triggered ability%
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'%triggered ability% LIMIT 1"
+LINE 1: ...HERE (power IS NULL OR power = '*') AND text LIKE '%triggere...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT COUNT(DISTINCT id) FROM cards WHERE (power IS NULL OR power = '*') AND text LIKE '%triggered ability%
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'%triggered ability% LIMIT 1"
+LINE 1: ...HERE (power IS NULL OR power = '*') AND text LIKE '%triggere...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT COUNT(DISTINCT id) FROM cards WHERE (power IS NULL OR power = '*') AND text LIKE '%triggered ability%
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'%triggered ability% LIMIT 1"
+LINE 1: ...HERE (power IS NULL OR power = '*') AND text LIKE '%triggere...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT COUNT(DISTINCT id) FROM cards WHERE (power IS NULL OR power = '*') AND text LIKE '%triggered ability%
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'%triggered ability% LIMIT 1"
+LINE 1: ...HERE (power IS NULL OR power = '*') AND text LIKE '%triggere...
+                                                             ^
+
+[DEBUG] Final failed SQL: SELECT COUNT(DISTINCT id) FROM cards WHERE (power IS NULL OR power = '*') AND text LIKE '%triggered ability%
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:08
+================================================================================
+
+QUESTION: Indicates the number of cards with pre-modern format, ruling text "This is a triggered mana ability." that do not have multiple faces.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid INNER JOIN rulings AS T3 ON T1.uuid = T3.uuid WHERE T2.format = 'premodern' AND T3.text = 'This is a triggered mana ability.' AND T1.Side IS NULL
+
+GENERATED SQL:
+SELECT COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid INNER JOIN rulings AS T3 ON T1.uuid = T3.uuid WHERE T2.format = 'premodern' AND T3.text = 'This is a triggered mana ability.' AND T1.side IS NULL
+
+RESULT:
+    0
+0  16
+
+EXPECTED RESULT:
+    0
+0  16
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:08
+================================================================================
+
+QUESTION: Is there any card from Erica Yang artist in pauper format and available in paper? If so, indicate its ID.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T1.id FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.artist = 'Erica Yang' AND T2.format = 'pauper' AND T1.availability = 'paper'
+
+GENERATED SQL:
+SELECT T1.id FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.artist = 'Erica Yang' AND T2.format = 'pauper' AND T1.availability = 'paper'
+
+RESULT:
+       0
+0  15594
+1  15943
+2  30953
+3  45195
+4  45201
+
+EXPECTED RESULT:
+       0
+0  15594
+1  15943
+2  30953
+3  45195
+4  45201
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:08
+================================================================================
+
+QUESTION: To which artist does the card with the text "Das perfekte Gegenmittel zu einer dichten Formation" belong?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT DISTINCT T1.artist FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.flavorText LIKE '%DAS perfekte Gegenmittel zu einer dichten Formation%'
+
+GENERATED SQL:
+SELECT DISTINCT T1.artist FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.flavorText LIKE '%Das perfekte Gegenmittel zu einer dichten Formation%'
+
+RESULT:
+                   0
+0  Matthew D. Wilson
+
+EXPECTED RESULT:
+Empty DataFrame
+Columns: []
+Index: []
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:08
+================================================================================
+
+QUESTION: What is the foreign name of the card in French of type Creature, normal layout and black border color, by artist Matthew D. Wilson?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT name FROM foreign_data WHERE uuid IN ( SELECT uuid FROM cards WHERE types = 'Creature' AND layout = 'normal' AND borderColor = 'black' AND artist = 'Matthew D. Wilson' ) AND language = 'French'
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT T2.name
+[DEBUG] Received error message: 
+[DEBUG] Received question: What is the foreign name of the card in French of type Creature, normal layout and black border color, by artist Matthew D. Wilson?
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T2.name
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t2"
+LINE 1: SELECT T2.name LIMIT 1
+               ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT foreign_data.nameFROM cardsJOIN foreign_data ON cards.uuid = foreign_data.uuidWHERE cards.type LIKE '%Creature%'AND cards.layout = 'normal'AND cards.bordercolor = 'black'AND cards.artist = 'Matthew D. Wilson'AND foreign_data.language = 'French
+[DEBUG] ERRRORRRR: syntax error at or near "foreign_data"
+LINE 1: SELECT foreign_data.nameFROM cardsJOIN foreign_data ON cards...
+                                               ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT foreign_data.nameFROM cardsJOIN foreign_data ON cards.uuid = foreign_data.uuidWHERE cards.types LIKE '%Creature%'AND cards.layout = 'normal'AND cards.bordercolor = 'black'AND cards.artist = 'Matthew D. Wilson'AND foreign_data.language = 'French';
+[DEBUG] ERRRORRRR: syntax error at or near "foreign_data"
+LINE 1: SELECT foreign_data.nameFROM cardsJOIN foreign_data ON cards...
+                                               ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT foreign_data.nameFROM cardsJOIN foreign_data ON cards.uuid = foreign_data.uuidWHERE cards.types LIKE '%Creature%'AND cards.layout = 'normal'AND cards.bordercolor = 'black'AND cards.artist = 'Matthew D. Wilson'AND foreign_data.language = 'French';
+[DEBUG] ERRRORRRR: syntax error at or near "foreign_data"
+LINE 1: SELECT foreign_data.nameFROM cardsJOIN foreign_data ON cards...
+                                               ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT foreign_data.nameFROM cardsJOIN foreign_data ON cards.uuid = foreign_data.uuidWHERE cards.types LIKE '%Creature%'AND cards.layout = 'normal'AND cards.bordercolor = 'black'AND cards.artist = 'Matthew D. Wilson'AND foreign_data.language = 'French';
+[DEBUG] ERRRORRRR: syntax error at or near "foreign_data"
+LINE 1: SELECT foreign_data.nameFROM cardsJOIN foreign_data ON cards...
+                                               ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT foreign_data.nameFROM cardsJOIN foreign_data ON cards.uuid = foreign_data.uuidWHERE cards.types LIKE '%Creature%'AND cards.layout = 'normal'AND cards.bordercolor = 'black'AND cards.artist = 'Matthew D. Wilson'AND foreign_data.language = 'French';
+[DEBUG] ERRRORRRR: syntax error at or near "foreign_data"
+LINE 1: SELECT foreign_data.nameFROM cardsJOIN foreign_data ON cards...
+                                               ^
+
+[DEBUG] Final failed SQL: SELECT foreign_data.nameFROM cardsJOIN foreign_data ON cards.uuid = foreign_data.uuidWHERE cards.types LIKE '%Creature%'AND cards.layout = 'normal'AND cards.bordercolor = 'black'AND cards.artist = 'Matthew D. Wilson'AND foreign_data.language = 'French';
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:09
+================================================================================
+
+QUESTION: How many cards with print rarity have ruling text printed on 01/02/2007?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(DISTINCT T1.id) FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.rarity = 'rare' AND T2.date = '2007-02-01'
+
+GENERATED SQL:
+SELECT COUNT(DISTINCT T1.id) FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.rarity = 'rare' AND T2.date = '2007-02-01'
+
+RESULT:
+     0
+0  126
+
+EXPECTED RESULT:
+     0
+0  126
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:09
+================================================================================
+
+QUESTION: What language is the set of 180 cards that belongs to the Ravnica block translated into?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.block = 'Ravnica' AND T1.baseSetSize = 180
+
+GENERATED SQL:
+SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.block = 'Ravnica' AND T1.baseSetSize = 180
+
+RESULT:
+                     0
+0   Chinese Simplified
+1  Chinese Traditional
+2               French
+3               German
+4              Italian
+5             Japanese
+6               Korean
+7  Portuguese (Brazil)
+8              Russian
+9              Spanish
+
+EXPECTED RESULT:
+                     0
+0   Chinese Simplified
+1  Chinese Traditional
+2               French
+3               German
+4              Italian
+5             Japanese
+6               Korean
+7  Portuguese (Brazil)
+8              Russian
+9              Spanish
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:09
+================================================================================
+
+QUESTION: What percentage of cards with format commander and legal status do not have a content warning?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT CAST(SUM(CASE WHEN T1.hasContentWarning = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal'
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT CAST(SUM(CASE WHEN T1.hasContentWarning = FALSE THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal'
+[DEBUG] Received error message: 
+[DEBUG] Received question: What percentage of cards with format commander and legal status do not have a content warning?
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT CAST(SUM(CASE WHEN T1.hasContentWarning = FALSE THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal'
+[DEBUG] Initial SQL execution error: operator does not exist: integer = boolean
+LINE 1: SELECT CAST(SUM(CASE WHEN T1.hasContentWarning = FALSE THEN ...
+                                                       ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT CAST(SUM(CASE WHEN T1.hasContentWarning = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'Legal LIMIT 1"
+LINE 1: ...uid WHERE T2.format = 'commander' AND T2.status = 'Legal LIM...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT CAST(SUM(CASE WHEN T1.hasContentWarning = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'Legal LIMIT 1"
+LINE 1: ...uid WHERE T2.format = 'commander' AND T2.status = 'Legal LIM...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT CAST(SUM(CASE WHEN T1.hascontentwarning = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'Legal LIMIT 1"
+LINE 1: ...uid WHERE T2.format = 'commander' AND T2.status = 'Legal LIM...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT CAST(SUM(CASE WHEN T1.hascontentwarning = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'Legal LIMIT 1"
+LINE 1: ...uid WHERE T2.format = 'commander' AND T2.status = 'Legal LIM...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT CAST(SUM(CASE WHEN T1.hascontentwarning = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'Legal LIMIT 1"
+LINE 1: ...uid WHERE T2.format = 'commander' AND T2.status = 'Legal LIM...
+                                                             ^
+
+[DEBUG] Final failed SQL: SELECT CAST(SUM(CASE WHEN T1.hascontentwarning = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:09
+================================================================================
+
+QUESTION: What percentage of cards without power are in French?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT CAST(SUM(CASE WHEN T2.language = 'French' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T1.power IS NULL OR T1.power = '*'
+
+GENERATED SQL:
+SELECT CAST(SUM(CASE WHEN T2.language = 'French' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T1.power IS NULL OR T1.power = '*'
+
+RESULT:
+                    0
+0  12.975290140452374
+
+EXPECTED RESULT:
+                    0
+0  12.975290140452374
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:09
+================================================================================
+
+QUESTION: What percentage of Japanese translated sets are expansion sets?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT CAST(SUM(CASE WHEN T2.language = 'Japanese' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.type = 'expansion'
+
+GENERATED SQL:
+SELECT CAST(SUM(CASE WHEN T2.language = 'Japanese' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.type = 'expansion'
+
+RESULT:
+      0
+0  10.0
+
+EXPECTED RESULT:
+      0
+0  10.0
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:09
+================================================================================
+
+QUESTION: What kind of printing is on the card that Daren Bader created?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT availability FROM cards WHERE artist = 'Daren Bader'
+
+GENERATED SQL:
+SELECT DISTINCT availability FROM cards WHERE artist = 'Daren Bader'
+
+RESULT:
+             0
+0        arena
+1  arena,paper
+2    dreamcast
+3         mtgo
+4   mtgo,paper
+5        paper
+
+EXPECTED RESULT:
+             0
+0        arena
+1  arena,paper
+2    dreamcast
+3         mtgo
+4   mtgo,paper
+5        paper
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:09
+================================================================================
+
+QUESTION: How many color cards with no borders have been ranked higher than 12000 on EDHRec?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(id) FROM cards WHERE edhrecRank > 12000 AND borderColor = 'borderless'
+
+GENERATED SQL:
+SELECT COUNT(id) FROM cards WHERE edhrecRank > 12000 AND borderColor = 'borderless'
+
+RESULT:
+   0
+0  7
+
+EXPECTED RESULT:
+   0
+0  7
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:09
+================================================================================
+
+QUESTION: How many cards are oversized, reprinted, and printed for promotions?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(id) FROM cards WHERE isOversized = 1 AND isReprint = 1 AND isPromo = 1
+
+GENERATED SQL:
+SELECT COUNT(id) FROM cards WHERE isoversized = 1 AND isreprint = 1 AND ispromo = 1
+
+RESULT:
+    0
+0  17
+
+EXPECTED RESULT:
+    0
+0  17
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:09
+================================================================================
+
+QUESTION: Please list top three unknown power cards that have promotional types for arena league in alphabetical order.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT name FROM cards WHERE (power IS NULL OR power LIKE '%*%') AND promoTypes = 'arenaleague' ORDER BY name LIMIT 3
+
+GENERATED SQL:
+SELECT name FROM cards WHERE (power IS NULL OR power LIKE '%*%') AND promotypes LIKE '%arenaleague%' ORDER BY name LIMIT 3
+
+RESULT:
+                 0
+0    Arc Lightning
+1  Ashnod's Coupon
+2     Bonesplitter
+
+EXPECTED RESULT:
+                 0
+0    Arc Lightning
+1  Ashnod's Coupon
+2     Bonesplitter
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:10
+================================================================================
+
+QUESTION: What is the language of the card with the multiverse number 149934?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT language FROM foreign_data WHERE multiverseid = 149934
+
+GENERATED SQL:
+SELECT language FROM foreign_data WHERE multiverseid = 149934
+
+RESULT:
+        0
+0  French
+
+EXPECTED RESULT:
+        0
+0  French
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:10
+================================================================================
+
+QUESTION: Please provide the ids of top three powerful pairs of Kingdom Foil and Kingdom Cards sorted by Kingdom Foil id in alphabetical order.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT cardKingdomFoilId, cardKingdomId FROM cards WHERE cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NOT NULL ORDER BY cardKingdomFoilId LIMIT 3
+
+GENERATED SQL:
+SELECT id FROM cards WHERE cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NOT NULL ORDER BY cardKingdomFoilId LIMIT 3
+
+RESULT:
+       0
+0  17204
+1  17205
+2  17206
+
+EXPECTED RESULT:
+        0       1
+0  110502  110332
+1  110503  110333
+2  110504  110334
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:10
+================================================================================
+
+QUESTION: What proportion of cards do not have a text box with a normal layout?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT CAST(SUM(CASE WHEN isTextless = 1 AND layout = 'normal' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM cards
+
+GENERATED SQL:
+SELECT CAST(SUM(CASE WHEN isTextless = 1 AND layout = 'normal' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM cards
+
+RESULT:
+                     0
+0  0.20238639963394459
+
+EXPECTED RESULT:
+                     0
+0  0.20238639963394459
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:10
+================================================================================
+
+QUESTION: What are the card numbers that don't have multiple faces on a single card and have the subtypes Angel and Wizard?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT id FROM cards WHERE subtypes = 'Angel,Wizard' AND side IS NULL
+
+GENERATED SQL:
+SELECT number FROM cards WHERE subtypes = 'Angel,Wizard' AND side IS NULL
+
+RESULT:
+      0
+0  226p
+1  226s
+2   226
+3   368
+4    97
+
+EXPECTED RESULT:
+       0
+0  45892
+1  45893
+2  56643
+3  56809
+4  25149
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:10
+================================================================================
+
+QUESTION: Please provide top three sets that don't appear in Magic: The Gathering Online, along with their names in in alphabetical order.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT name FROM sets WHERE mtgoCode IS NULL ORDER BY name LIMIT 3
+
+GENERATED SQL:
+SELECT name FROM sets WHERE mtgocode IS NULL ORDER BY name LIMIT 3
+
+RESULT:
+                          0
+0    15th Anniversary Cards
+1  2016 Heroes of the Realm
+2            2017 Gift Pack
+
+EXPECTED RESULT:
+                          0
+0    15th Anniversary Cards
+1  2016 Heroes of the Realm
+2            2017 Gift Pack
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:10
+================================================================================
+
+QUESTION: What languages are available in the set known as Archenemy on the magic card market and having the code ARC?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.mcmName = 'Archenemy' AND T2.setCode = 'ARC'
+
+GENERATED SQL:
+SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.mcmName = 'Archenemy' AND T1.code = 'ARC'
+
+RESULT:
+                     0
+0   Chinese Simplified
+1  Chinese Traditional
+2               French
+3               German
+4              Italian
+5             Japanese
+6               Korean
+7  Portuguese (Brazil)
+8              Russian
+9              Spanish
+
+EXPECTED RESULT:
+                     0
+0   Chinese Simplified
+1  Chinese Traditional
+2               French
+3               German
+4              Italian
+5             Japanese
+6               Korean
+7  Portuguese (Brazil)
+8              Russian
+9              Spanish
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:10
+================================================================================
+
+QUESTION: Which set is not available outside of the United States and has foil cards with Japanese writing on them? Please include the set ID in your response.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT T1.name, T1.id FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Japanese' AND T1.isFoilOnly = 1 AND T1.isForeignOnly = 0
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT T1.name, T1.id
+[DEBUG] Received error message: 
+[DEBUG] Received question: Which set is not available outside of the United States and has foil cards with Japanese writing on them? Please include the set ID in your response.
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T1.name, T1.id
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t1"
+LINE 1: SELECT T1.name, T1.id LIMIT 1
+               ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s.isfoilonly = 1AND EXISTS (    SELECT 1    FROM set_translations st    WHERE st.setcode = s.code    AND st.language = 'Japanese')
+[DEBUG] ERRRORRRR: syntax error at or near "sWHERE"
+LINE 1: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s...
+                                     ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s.isfoilonly = 1AND EXISTS (    SELECT 1    FROM set_translations st    WHERE st.setcode = s.code    AND st.language = 'Japanese')
+[DEBUG] ERRRORRRR: syntax error at or near "sWHERE"
+LINE 1: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s...
+                                     ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s.isfoilonly = 1AND EXISTS (    SELECT 1    FROM set_translations st    WHERE st.setcode = s.code    AND st.language = 'Japanese')
+[DEBUG] ERRRORRRR: syntax error at or near "sWHERE"
+LINE 1: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s...
+                                     ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s.isfoilonly = 1AND EXISTS (    SELECT 1    FROM set_translations st    WHERE st.setcode = s.code    AND st.language = 'Japanese')
+[DEBUG] ERRRORRRR: syntax error at or near "sWHERE"
+LINE 1: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s...
+                                     ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s.isfoilonly = 1AND EXISTS (    SELECT 1    FROM set_translations st    WHERE st.setcode = s.code    AND st.language = 'Japanese')
+[DEBUG] ERRRORRRR: syntax error at or near "sWHERE"
+LINE 1: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s...
+                                     ^
+
+[DEBUG] Final failed SQL: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s.isfoilonly = 1AND EXISTS (    SELECT 1    FROM set_translations st    WHERE st.setcode = s.code    AND st.language = 'Japanese')
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:10
+================================================================================
+
+QUESTION: Which of these artists have designed a card in the set Coldsnap, Jeremy Jarvis, Aaron Miller or Chippy?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT T1.artist FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE (T2.name = 'Coldsnap' AND T1.artist = 'Chippy') OR (T2.name = 'Coldsnap' AND T1.artist = 'Aaron Miller') OR (T2.name = 'Coldsnap' AND T1.artist = 'Jeremy Jarvis') GROUP BY T1.artist
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT DISTINCT T1.artist
+[DEBUG] Received error message: 
+[DEBUG] Received question: Which of these artists have designed a card in the set Coldsnap, Jeremy Jarvis, Aaron Miller or Chippy?
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT T1.artist
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t1"
+LINE 1: SELECT DISTINCT T1.artist LIMIT 1
+                        ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT artistFROM cardsWHERE setcode = (SELECT code FROM sets WHERE name = 'Coldsnap')AND artist IN ('Jeremy Jarvis', 'Aaron Miller', 'Chippy')
+[DEBUG] ERRRORRRR: syntax error at or near "setcode"
+LINE 1: SELECT DISTINCT artistFROM cardsWHERE setcode = (SELECT code...
+                                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT artistFROM cardsWHERE setcode = (SELECT code FROM sets WHERE name = 'Coldsnap')AND artist IN ('Jeremy Jarvis', 'Aaron Miller', 'Chippy')
+[DEBUG] ERRRORRRR: syntax error at or near "setcode"
+LINE 1: SELECT DISTINCT artistFROM cardsWHERE setcode = (SELECT code...
+                                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT artistFROM cardsWHERE setcode = (SELECT code FROM sets WHERE name = 'Coldsnap')AND artist IN ('Jeremy Jarvis', 'Aaron Miller', 'Chippy')
+[DEBUG] ERRRORRRR: syntax error at or near "setcode"
+LINE 1: SELECT DISTINCT artistFROM cardsWHERE setcode = (SELECT code...
+                                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT artistFROM cardsWHERE setcode = (SELECT code FROM sets WHERE name = 'Coldsnap')AND artist IN ('Jeremy Jarvis', 'Aaron Miller', 'Chippy')
+[DEBUG] ERRRORRRR: syntax error at or near "setcode"
+LINE 1: SELECT DISTINCT artistFROM cardsWHERE setcode = (SELECT code...
+                                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT artistFROM cardsWHERE setcode = (SELECT code FROM sets WHERE name = 'Coldsnap')AND artist IN ('Jeremy Jarvis', 'Aaron Miller', 'Chippy')
+[DEBUG] ERRRORRRR: syntax error at or near "setcode"
+LINE 1: SELECT DISTINCT artistFROM cardsWHERE setcode = (SELECT code...
+                                              ^
+
+[DEBUG] Final failed SQL: SELECT DISTINCT artistFROM cardsWHERE setcode = (SELECT code FROM sets WHERE name = 'Coldsnap')AND artist IN ('Jeremy Jarvis', 'Aaron Miller', 'Chippy')
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:10
+================================================================================
+
+QUESTION: What is the percentage of incredibly powerful cards in the set Coldsnap?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT CAST(SUM(CASE WHEN T1.cardKingdomFoilId IS NOT NULL AND T1.cardKingdomId IS NOT NULL THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE T2.name = 'Coldsnap'
+
+GENERATED SQL:
+SELECT CAST(SUM(CASE WHEN T1.cardKingdomFoilId IS NOT NULL AND T1.cardKingdomId IS NOT NULL THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE T2.name = 'Coldsnap'
+
+RESULT:
+       0
+0  100.0
+
+EXPECTED RESULT:
+       0
+0  100.0
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:10
+================================================================================
+
+QUESTION: For all cards illustrated by Jim Pavelec. and describe the text of the ruling of these cards. Do these cards have missing or degraded properties and values.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT T2.text , CASE WHEN T1.hasContentWarning = 1 THEN 'YES' ELSE 'NO' END FROM cards AS T1 INNER JOIN rulings AS T2 ON T2.uuid = T1.uuid WHERE T1.artist = 'Jim Pavelec'
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT T2.text,
+[DEBUG] Received error message: 
+[DEBUG] Received question: For all cards illustrated by Jim Pavelec. and describe the text of the ruling of these cards. Do these cards have missing or degraded properties and values.
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T2.text,
+[DEBUG] Initial SQL execution error: syntax error at or near "LIMIT"
+LINE 1: SELECT T2.text, LIMIT 1
+                        ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN rulings r ON c.uuid = r.uuidWHERE c.artist = 'Jim Pavelec
+[DEBUG] ERRRORRRR: syntax error at or near "cLEFT"
+LINE 1: ...ELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN rulings r ON c.uuid = r.uuidWHERE c.artist = 'Jim Pavelec
+[DEBUG] ERRRORRRR: syntax error at or near "cLEFT"
+LINE 1: ...ELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN rulings r ON c.uuid = r.uuidWHERE c.artist = 'Jim Pavelec
+[DEBUG] ERRRORRRR: syntax error at or near "cLEFT"
+LINE 1: ...ELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN...
+                                                             ^
+
+[DEBUG] ERRRORRRR: Claude API failed: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CTn5rotmcTwAapBXUHofT'}
+[DEBUG] ERRRORRRR: Claude API failed: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CTn5rpcBZoes19BcpTu5c'}
+[DEBUG] Final failed SQL: SELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN rulings r ON c.uuid = r.uuidWHERE c.artist = 'Jim Pavelec
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:10
+================================================================================
+
+QUESTION: For all the set of cards that has Japanese translation, what is the percentage of them are only available in non-foil?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT CAST(SUM(CASE WHEN isNonFoilOnly = 1 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(id) FROM sets WHERE code IN ( SELECT setCode FROM set_translations WHERE language = 'Japanese' )
+
+GENERATED SQL:
+SELECT CAST(SUM(CASE WHEN isNonFoilOnly = 1 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(id) FROM sets WHERE code IN ( SELECT setCode FROM set_translations WHERE language = 'Japanese' )
+
+RESULT:
+                    0
+0  11.570247933884298
+
+EXPECTED RESULT:
+                    0
+0  11.570247933884298
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:10
+================================================================================
+
+QUESTION: Among the sets whose expansion type is Commander, which set has the highest total number of cards including promotional and related supplemental products but excluding Alchemy modifications? Indicate the id of the set.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT id FROM sets WHERE type = 'commander' ORDER BY totalSetSize DESC LIMIT 1
+
+GENERATED SQL:
+SELECT id FROM sets WHERE type = 'commander' ORDER BY totalsetsize DESC LIMIT 1
+
+RESULT:
+    0
+0  37
+
+EXPECTED RESULT:
+    0
+0  37
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:34:10
+================================================================================
+
+QUESTION: List the names of all the cards in the set Hour of Devastation and find the formats in which these cards are legal.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT DISTINCT T2.name , CASE WHEN T1.status = 'Legal' THEN T1.format ELSE NULL END FROM legalities AS T1 INNER JOIN cards AS T2 ON T2.uuid = T1.uuid WHERE T2.setCode IN ( SELECT code FROM sets WHERE name = 'Hour of Devastation' )
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT DISTINCT T1.name, T2.format
+[DEBUG] Received error message: 
+[DEBUG] Received question: List the names of all the cards in the set Hour of Devastation and find the formats in which these cards are legal.
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT T1.name, T2.format
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t1"
+LINE 1: SELECT DISTINCT T1.name, T2.format LIMIT 1
+                        ^
+
+[DEBUG] ERRRORRRR: Claude API failed: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CTn5rzM4rDEuQKrroSQCP'}
+[DEBUG] ERRRORRRR: Claude API failed: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CTn5s15inUJN9ga8gTFhS'}
+[DEBUG] ERRRORRRR: Claude API failed: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CTn5s26zTUdzUXWRPQVbT'}
+[DEBUG] ERRRORRRR: Claude API failed: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CTn5s2p9jXuR8T98kz4Ls'}
+[DEBUG] ERRRORRRR: Claude API failed: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CTn5s3YJhBo8NHbtGzvMF'}
+[DEBUG] Final failed SQL: SELECT DISTINCT T1.name, T2.format
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+
+================================================================================
+EVALUATION SUMMARY: 2025-10-04 13:34:10
+================================================================================
+
+Unknown     : 39/62 correct (62.90%)
+
+Overall Accuracy: 39/62 (62.90%)
+================================================================================
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:53
+================================================================================
+
+QUESTION: Which are the cards that have incredibly powerful foils.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT id FROM cards WHERE cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NOT NULL
+
+GENERATED SQL:
+SELECT id FROM cards WHERE cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NOT NULL
+
+RESULT:
+           0
+0      25075
+1      25076
+2      25077
+3      25078
+4      25079
+5      25080
+6      25081
+7      25082
+8      25083
+[... truncated ...]
+
+EXPECTED RESULT:
+           0
+0      25075
+1      25076
+2      25077
+3      25078
+4      25079
+5      25080
+6      25081
+7      25082
+8      25083
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:53
+================================================================================
+
+QUESTION: What are the borderless cards available without powerful foils?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT id FROM cards WHERE borderColor = 'borderless' AND (cardKingdomId IS NULL OR cardKingdomId IS NULL)
+
+GENERATED SQL:
+SELECT id FROM cards WHERE borderColor = 'borderless' AND (cardKingdomFoilId IS NULL OR cardKingdomId IS NULL)
+
+RESULT:
+        0
+0   25350
+1   25355
+2   25357
+3   25359
+4   25361
+5   33094
+6   33095
+7   33096
+8   33097
+[... truncated ...]
+
+EXPECTED RESULT:
+        0
+0   25350
+1   25355
+2   25357
+3   25359
+4   25361
+5   33094
+6   33095
+7   33096
+8   33097
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:53
+================================================================================
+
+QUESTION: Name all cards with 2015 frame style ranking below 100 on EDHRec.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT id FROM cards WHERE edhrecRank < 100 AND frameVersion = 2015
+
+GENERATED SQL:
+SELECT name FROM cards WHERE edhrecrank < 100 AND frameversion = '2015'
+
+RESULT:
+N/A
+
+EXPECTED RESULT:
+operator does not exist: text = integer
+LINE 1: ...id FROM cards WHERE edhrecRank < 100 AND frameVersion = 2015
+                                                                 ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:53
+================================================================================
+
+QUESTION: What kind of printing is on the card that Daren Bader created?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT availability FROM cards WHERE artist = 'Daren Bader'
+
+GENERATED SQL:
+SELECT DISTINCT availability FROM cards WHERE artist = 'Daren Bader'
+
+RESULT:
+             0
+0        arena
+1  arena,paper
+2    dreamcast
+3         mtgo
+4   mtgo,paper
+5        paper
+
+EXPECTED RESULT:
+             0
+0        arena
+1  arena,paper
+2    dreamcast
+3         mtgo
+4   mtgo,paper
+5        paper
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:53
+================================================================================
+
+QUESTION: How many cards are oversized, reprinted, and printed for promotions?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(id) FROM cards WHERE isOversized = 1 AND isReprint = 1 AND isPromo = 1
+
+GENERATED SQL:
+SELECT COUNT(id) FROM cards WHERE isOversized = 1 AND isReprint = 1 AND isPromo = 1
+
+RESULT:
+    0
+0  17
+
+EXPECTED RESULT:
+    0
+0  17
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:54
+================================================================================
+
+QUESTION: What is the language of the card with the multiverse number 149934?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT language FROM foreign_data WHERE multiverseid = 149934
+
+GENERATED SQL:
+SELECT language FROM foreign_data WHERE multiverseid = 149934
+
+RESULT:
+        0
+0  French
+
+EXPECTED RESULT:
+        0
+0  French
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:54
+================================================================================
+
+QUESTION: List all the mythic rarity print cards banned in gladiator format.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT T1.id FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'gladiator' AND T2.status = 'Banned' AND T1.rarity = 'mythic'
+
+GENERATED SQL:
+SELECT DISTINCT T1.id FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'gladiator' AND T2.status = 'Banned' AND T1.rarity = 'mythic'
+
+RESULT:
+       0
+0  17983
+1  18058
+2  29523
+3  38736
+4  38737
+
+EXPECTED RESULT:
+       0
+0  17983
+1  18058
+2  29523
+3  38736
+4  38737
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:54
+================================================================================
+
+QUESTION: For artifact type of cards that do not have multiple faces on the same card, state its legalities status for vintage play format.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT DISTINCT T2.status FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.type = 'Artifact' AND T2.format = 'vintage' AND T1.side IS NULL
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT DISTINCT T2.status
+[DEBUG] Received error message: 
+[DEBUG] Received question: For artifact type of cards that do not have multiple faces on the same card, state its legalities status for vintage play format.
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT T2.status
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t2"
+LINE 1: SELECT DISTINCT T2.status LIMIT 1
+                        ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.uuid = l.uuidWHERE c.types = 'Artifact'AND c.side IS NULLAND l.format = 'vintage
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.u...
+                                           ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.uuid = l.uuidWHERE c.types = 'Artifact'AND c.side IS NULLAND l.format = 'vintage
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.u...
+                                           ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.uuid = l.uuidWHERE c.types = 'Artifact'AND c.side IS NULLAND l.format = 'vintage
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.u...
+                                           ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.uuid = l.uuidWHERE c.types = 'Artifact'AND c.side IS NULLAND l.format = 'vintage
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.u...
+                                           ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.uuid = l.uuidWHERE c.types = 'Artifact'AND c.side IS NULLAND l.format = 'vintage
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.u...
+                                           ^
+
+[DEBUG] Final failed SQL: SELECT DISTINCT l.statusFROM cards cJOIN legalities l ON c.uuid = l.uuidWHERE c.types = 'Artifact'AND c.side IS NULLAND l.format = 'vintage
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:54
+================================================================================
+
+QUESTION: List all the card id and artist with unknown power which are legal for commander play format.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T1.id, T1.artist FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.status = 'Legal' AND T2.format = 'commander' AND (T1.power IS NULL OR T1.power = '*')
+
+GENERATED SQL:
+SELECT T1.id, T1.artist FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.status = 'Legal' AND T2.format = 'commander' AND (T1.power IS NULL OR T1.power = '*')
+
+RESULT:
+           0                                   1
+0      15543                         Jason Felix
+1      15547                     Slawomir Maniak
+2      15548                        Johann Bodin
+3      15549                           John Avon
+4      15553                      Wayne Reynolds
+5      15558                         Chase Stone
+6      15560                          Eytan Zana
+7      15561                     Steven Belledin
+8      15562                        James Zapata
+[... truncated ...]
+
+EXPECTED RESULT:
+           0                                   1
+0      15543                         Jason Felix
+1      15547                     Slawomir Maniak
+2      15548                        Johann Bodin
+3      15549                           John Avon
+4      15553                      Wayne Reynolds
+5      15558                         Chase Stone
+6      15560                          Eytan Zana
+7      15561                     Steven Belledin
+8      15562                        James Zapata
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:54
+================================================================================
+
+QUESTION: Find all cards illustrated by Stephen Daniel and describe the text of the ruling of these cards. State if these cards have missing or degraded properties and values.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT T1.id, T2.text, T1.hasContentWarning FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.artist = 'Stephen Daniele'
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT T1.id, T2.text,
+[DEBUG] Received error message: 
+[DEBUG] Received question: Find all cards illustrated by Stephen Daniel and describe the text of the ruling of these cards. State if these cards have missing or degraded properties and values.
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T1.id, T2.text,
+[DEBUG] Initial SQL execution error: syntax error at or near "LIMIT"
+LINE 1: SELECT T1.id, T2.text, LIMIT 1
+                               ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOIN rulings T2 ON T1.uuid = T2.uuidWHERE T1.artist = 'Stephen Daniele
+[DEBUG] ERRRORRRR: syntax error at or near "T1LEFT"
+LINE 1: ...CT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOI...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOIN rulings T2 ON T1.uuid = T2.uuidWHERE T1.artist = 'Stephen Daniele
+[DEBUG] ERRRORRRR: syntax error at or near "T1LEFT"
+LINE 1: ...CT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOI...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOIN rulings T2 ON T1.uuid = T2.uuidWHERE T1.artist = 'Stephen Daniele
+[DEBUG] ERRRORRRR: syntax error at or near "T1LEFT"
+LINE 1: ...CT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOI...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOIN rulings T2 ON T1.uuid = T2.uuidWHERE T1.artist = 'Stephen Daniele
+[DEBUG] ERRRORRRR: syntax error at or near "T1LEFT"
+LINE 1: ...CT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOI...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOIN rulings T2 ON T1.uuid = T2.uuidWHERE T1.artist = 'Stephen Daniele
+[DEBUG] ERRRORRRR: syntax error at or near "T1LEFT"
+LINE 1: ...CT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOI...
+                                                             ^
+
+[DEBUG] Final failed SQL: SELECT T1.id, T2.text, T1.hascontentwarningFROM cards T1LEFT JOIN rulings T2 ON T1.uuid = T2.uuidWHERE T1.artist = 'Stephen Daniele
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:55
+================================================================================
+
+QUESTION: Name all the cards which have alternative language in Japanese.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T1.name FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.language = 'Japanese'
+
+GENERATED SQL:
+SELECT T1.name FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.language = 'Japanese'
+
+RESULT:
+                                                                 0
+0                                         Drakuseth, Maw of Flames
+1                                                     Ember Hauler
+2                                                   Fire Elemental
+3                                                      Flame Sweep
+4                                                              Fry
+5                                             Glint-Horn Buccaneer
+6                                              Goblin Bird-Grabber
+7                                                Goblin Ringleader
+8                                                  Goblin Smuggler
+[... truncated ...]
+
+EXPECTED RESULT:
+                                                                 0
+0                                         Drakuseth, Maw of Flames
+1                                                     Ember Hauler
+2                                                   Fire Elemental
+3                                                      Flame Sweep
+4                                                              Fry
+5                                             Glint-Horn Buccaneer
+6                                              Goblin Bird-Grabber
+7                                                Goblin Ringleader
+8                                                  Goblin Smuggler
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:55
+================================================================================
+
+QUESTION: Calculate the percentage of the cards availabe in Chinese Simplified.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT CAST(SUM(CASE WHEN T2.language = 'Chinese Simplified' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid
+
+GENERATED SQL:
+SELECT CAST(SUM(CASE WHEN T2.language = 'Chinese Simplified' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid
+
+RESULT:
+                   0
+0  8.773399659641314
+
+EXPECTED RESULT:
+                   0
+0  8.773399659641314
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:55
+================================================================================
+
+QUESTION: List all the sets available in Italian translation. State the total number of cards per set.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T1.name, T1.totalSetSize FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Italian'
+
+GENERATED SQL:
+SELECT T1.name, T1.totalSetSize FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Italian'
+
+RESULT:
+                                           0    1
+0                              Tenth Edition  508
+1                             Fourth Edition  379
+2                                 Fifth Dawn  165
+3                              Fifth Edition  460
+4                      Classic Sixth Edition  351
+5                            Seventh Edition  354
+6                             Eighth Edition  361
+7                              Ninth Edition  359
+8                              Aether Revolt  197
+[... truncated ...]
+
+EXPECTED RESULT:
+                                           0    1
+0                              Tenth Edition  508
+1                             Fourth Edition  379
+2                                 Fifth Dawn  165
+3                              Fifth Edition  460
+4                      Classic Sixth Edition  351
+5                            Seventh Edition  354
+6                             Eighth Edition  361
+7                              Ninth Edition  359
+8                              Aether Revolt  197
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:55
+================================================================================
+
+QUESTION: How many types of cards does the artist Aaron Boyd illustrated about card art?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT COUNT(type) FROM cards WHERE artist = 'Aaron Boyd'
+
+GENERATED SQL:
+SELECT COUNT(DISTINCT type) FROM cards WHERE artist = 'Aaron Boyd'
+
+RESULT:
+   0
+0  4
+
+EXPECTED RESULT:
+    0
+0  12
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:55
+================================================================================
+
+QUESTION: What is the keyword found on card 'Angel of Mercy'?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT keywords FROM cards WHERE name = 'Angel of Mercy'
+
+GENERATED SQL:
+SELECT keywords FROM cards WHERE name = 'Angel of Mercy'
+
+RESULT:
+         0
+0   Flying
+1   Flying
+2   Flying
+3   Flying
+4   Flying
+5   Flying
+6   Flying
+7   Flying
+8   Flying
+[... truncated ...]
+
+EXPECTED RESULT:
+        0
+0  Flying
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:55
+================================================================================
+
+QUESTION: How many cards have infinite power?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(*) FROM cards WHERE power = '*'
+
+GENERATED SQL:
+SELECT COUNT(*) FROM cards WHERE power = '*'
+
+RESULT:
+     0
+0  429
+
+EXPECTED RESULT:
+     0
+0  429
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:55
+================================================================================
+
+QUESTION: What type of promotion is of card 'Duress'?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT promoTypes FROM cards WHERE name = 'Duress' AND promoTypes IS NOT NULL
+
+GENERATED SQL:
+SELECT promoTypes FROM cards WHERE name = 'Duress' AND promoTypes IS NOT NULL
+
+RESULT:
+             0
+0  arenaleague
+1  mediainsert
+2  mediainsert
+3  tourney,fnm
+
+EXPECTED RESULT:
+             0
+0  arenaleague
+1  mediainsert
+2  mediainsert
+3  tourney,fnm
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:55
+================================================================================
+
+QUESTION: cards are not directly linked to language but through table 'set'. you need to add set in covered table & rephrase your question
+What are the languages available for the set that card 'Angel of Mercy' is in?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT language FROM set_translations WHERE id IN ( SELECT id FROM cards WHERE name = 'Angel of Mercy' )
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT DISTINCT T2.language
+[DEBUG] Received error message: 
+[DEBUG] Received question: cards are not directly linked to language but through table 'set'. you need to add set in covered table & rephrase your question
+What are the languages available for the set that card 'Angel of Mercy' is in?
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT T2.language
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t2"
+LINE 1: SELECT DISTINCT T2.language LIMIT 1
+                        ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT st.languageFROM cards cJOIN set_translations st ON c.setcode = st.setcodeWHERE c.name = 'Angel of Mercy
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT st.languageFROM cards cJOIN set_translations...
+                                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT st.languageFROM cards cJOIN set_translations st ON c.setcode = st.setcodeWHERE c.name = 'Angel of Mercy
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT st.languageFROM cards cJOIN set_translations...
+                                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT st.languageFROM cards cJOIN set_translations st ON c.setcode = st.setcodeWHERE c.name = 'Angel of Mercy
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT st.languageFROM cards cJOIN set_translations...
+                                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT st.languageFROM cards cJOIN set_translations st ON c.setcode = st.setcodeWHERE c.name = 'Angel of Mercy
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT st.languageFROM cards cJOIN set_translations...
+                                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT st.languageFROM cards cJOIN set_translations st ON c.setcode = st.setcodeWHERE c.name = 'Angel of Mercy
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT st.languageFROM cards cJOIN set_translations...
+                                              ^
+
+[DEBUG] Final failed SQL: SELECT DISTINCT st.languageFROM cards cJOIN set_translations st ON c.setcode = st.setcodeWHERE c.name = 'Angel of Mercy
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:55
+================================================================================
+
+QUESTION: Among the Artifact cards, which are black color and comes with foreign languague translation?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT DISTINCT T1.name FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T1.originalType = 'Artifact' AND T1.colors = 'B'
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT DISTINCT T1.name
+[DEBUG] Received error message: 
+[DEBUG] Received question: Among the Artifact cards, which are black color and comes with foreign languague translation?
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT T1.name
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t1"
+LINE 1: SELECT DISTINCT T1.name LIMIT 1
+                        ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.nameFROM cards cINNER JOIN foreign_data fd ON c.uuid = fd.uuidWHERE c.originaltype = 'Artifact'AND c.colors = 'B
+[DEBUG] ERRRORRRR: syntax error at or near "cINNER"
+LINE 1: SELECT DISTINCT c.nameFROM cards cINNER JOIN foreign_data fd...
+                                         ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data fd ON c.uuid = fd.uuidWHERE c.originaltype = 'Artifact'AND c.colors = 'B
+[DEBUG] ERRRORRRR: syntax error at or near "cINNER"
+LINE 1: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data fd O...
+                                       ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data fd ON c.uuid = fd.uuidWHERE c.originaltype = 'Artifact'AND c.colors = 'B
+[DEBUG] ERRRORRRR: syntax error at or near "cINNER"
+LINE 1: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data fd O...
+                                       ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data fd ON c.uuid = fd.uuidWHERE c.originaltype = 'Artifact'AND c.colors = 'B
+[DEBUG] ERRRORRRR: syntax error at or near "cINNER"
+LINE 1: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data fd O...
+                                       ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data fd ON c.uuid = fd.uuidWHERE c.originaltype = 'Artifact'AND c.colors = 'B
+[DEBUG] ERRRORRRR: syntax error at or near "cINNER"
+LINE 1: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data fd O...
+                                       ^
+
+[DEBUG] Final failed SQL: SELECT DISTINCT c.idFROM cards cINNER JOIN foreign_data fd ON c.uuid = fd.uuidWHERE c.originaltype = 'Artifact'AND c.colors = 'B
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:55
+================================================================================
+
+QUESTION: Pick 3 cards with rarity of uncommon, list down name these cards according to ascending order of it's ruling date.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT DISTINCT T1.name FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.rarity = 'uncommon' ORDER BY T2.date ASC LIMIT 3
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT DISTINCT T1.name
+[DEBUG] Received error message: 
+[DEBUG] Received question: Pick 3 cards with rarity of uncommon, list down name these cards according to ascending order of it's ruling date.
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT T1.name
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t1"
+LINE 1: SELECT DISTINCT T1.name LIMIT 1
+                        ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid = r.uuidWHERE c.rarity = 'uncommon'ORDER BY r.date ASCLIMIT 3
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid =...
+                                         ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid = r.uuidWHERE c.rarity = 'uncommon'ORDER BY r.date ASCLIMIT 3
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid =...
+                                         ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid = r.uuidWHERE c.rarity = 'uncommon'ORDER BY r.date ASCLIMIT 3
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid =...
+                                         ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid = r.uuidWHERE c.rarity = 'uncommon'ORDER BY r.date ASCLIMIT 3
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid =...
+                                         ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid = r.uuidWHERE c.rarity = 'uncommon'ORDER BY r.date ASCLIMIT 3
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid =...
+                                         ^
+
+[DEBUG] Final failed SQL: SELECT DISTINCT c.nameFROM cards cJOIN rulings r ON c.uuid = r.uuidWHERE c.rarity = 'uncommon'ORDER BY r.date ASCLIMIT 3
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:56
+================================================================================
+
+QUESTION: On how many cards designed by John Avon is its foil non-powerful?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(id) FROM cards WHERE (cardKingdomId IS NULL OR cardKingdomFoilId IS NULL) AND artist = 'John Avon'
+
+GENERATED SQL:
+SELECT COUNT(id) FROM cards WHERE artist = 'John Avon' AND (cardKingdomId IS NULL OR cardKingdomFoilId IS NULL)
+
+RESULT:
+     0
+0  739
+
+EXPECTED RESULT:
+     0
+0  739
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:56
+================================================================================
+
+QUESTION: How many white bordered cards are powerful?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(id) FROM cards WHERE borderColor = 'white' AND cardKingdomId IS NOT NULL AND cardKingdomFoilId IS NOT NULL
+
+GENERATED SQL:
+SELECT COUNT(id) FROM cards WHERE borderColor = 'white' AND cardKingdomId IS NOT NULL AND cardKingdomFoilId IS NOT NULL
+
+RESULT:
+      0
+0  1050
+
+EXPECTED RESULT:
+      0
+0  1050
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:56
+================================================================================
+
+QUESTION: How many cards designed by UDON and available in mtgo print type has a starting maximum hand size of -1?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(id) FROM cards WHERE hAND = '-1' AND artist = 'UDON' AND Availability = 'mtgo' 
+
+GENERATED SQL:
+SELECT COUNT(id) FROM cards WHERE hand = '-1' AND artist = 'UDON' AND availability = 'mtgo'
+
+RESULT:
+    0
+0  17
+
+EXPECTED RESULT:
+    0
+0  17
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:56
+================================================================================
+
+QUESTION: How many cards with a 1993 frame version and available on paper have a sensitive content warning?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT COUNT(id) FROM cards WHERE frameVersion = 1993 AND availability = 'paper' AND hasContentWarning = 1
+
+GENERATED SQL:
+SELECT COUNT(*) FROM cards WHERE frameVersion = '1993' AND availability = 'paper' AND hasContentWarning = 1
+
+RESULT:
+N/A
+
+EXPECTED RESULT:
+operator does not exist: text = integer
+LINE 1: SELECT COUNT(id) FROM cards WHERE frameVersion = 1993 AND av...
+                                                       ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:56
+================================================================================
+
+QUESTION: What is the mana cost of cards with a normal layout, a 2003 frame version, with a black border color, and available in paper and mtgo?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT manaCost FROM cards WHERE availability = 'mtgo,paper' AND borderColor = 'black' AND frameVersion = 2003 AND layout = 'normal'
+
+GENERATED SQL:
+SELECT manacost FROM cards WHERE layout = 'normal' AND frameversion = '2003' AND bordercolor = 'black' AND availability = 'mtgo,paper'
+
+RESULT:
+N/A
+
+EXPECTED RESULT:
+operator does not exist: text = integer
+LINE 1: ...paper' AND borderColor = 'black' AND frameVersion = 2003 AND...
+                                                             ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:56
+================================================================================
+
+QUESTION: What is the  unconverted mana do all the cards created by Rob Alexander cost in total?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT manaCost FROM cards WHERE artist = 'Rob Alexander'
+
+GENERATED SQL:
+SELECT SUM(convertedmanacost) FROM cards WHERE artist = 'Rob Alexander'
+
+RESULT:
+       0
+0  678.0
+
+EXPECTED RESULT:
+                   0
+0                {W}
+1                {U}
+2                {G}
+3               None
+4               None
+5               None
+6               None
+7                {W}
+8                {U}
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:56
+================================================================================
+
+QUESTION: Lists all types of cards available in arena.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT DISTINCT subtypes, supertypes FROM cards WHERE availability = 'arena' AND subtypes IS NOT NULL AND supertypes IS NOT NULL
+
+GENERATED SQL:
+SELECT DISTINCT types FROM cards WHERE availability LIKE '%arena%'
+
+RESULT:
+                      0
+0                  Land
+1          Planeswalker
+2               Instant
+3     Artifact,Creature
+4               Sorcery
+5              Creature
+6           Enchantment
+7              Artifact
+8  Enchantment,Creature
+
+EXPECTED RESULT:
+                          0          1
+0          Aetherborn,Rogue  Legendary
+1        Aetherborn,Vampire  Legendary
+2                     Ajani  Legendary
+3                     Bolas  Legendary
+4                   Chandra  Legendary
+5                     Demon  Legendary
+6                     Dovin  Legendary
+7             Dwarf,Advisor  Legendary
+8               Dwarf,Pilot  Legendary
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:56
+================================================================================
+
+QUESTION: Lists the set code of all cards translated into Spanish.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT setCode FROM set_translations WHERE language = 'Spanish'
+
+GENERATED SQL:
+SELECT setCode FROM set_translations WHERE language = 'Spanish'
+
+RESULT:
+       0
+0    10E
+1    4ED
+2    5DN
+3    5ED
+4    6ED
+5    7ED
+6    8ED
+7    9ED
+8    AER
+[... truncated ...]
+
+EXPECTED RESULT:
+       0
+0    10E
+1    4ED
+2    5DN
+3    5ED
+4    6ED
+5    7ED
+6    8ED
+7    9ED
+8    AER
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:56
+================================================================================
+
+QUESTION: What percentage of legendary frame effect cards that are only available in online game variations?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT SUM(CASE WHEN isOnlineOnly = 1 THEN 1.0 ELSE 0 END) / COUNT(id) * 100 FROM cards WHERE frameEffects = 'legendary'
+
+GENERATED SQL:
+SELECT CAST(SUM(CASE WHEN isOnlineOnly = 1 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(id) FROM cards WHERE frameEffects = 'legendary'
+
+RESULT:
+                    0
+0  1.0889292196007259
+
+EXPECTED RESULT:
+                        0
+0  1.08892921960072595300
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:57
+================================================================================
+
+QUESTION: What is the percentage of Story Spotlight cards that do not have a text box? List them by their ID.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT CAST(SUM(CASE WHEN isTextless = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(id) FROM cards WHERE isStorySpotlight = 1
+
+GENERATED SQL:
+SELECT
+
+RESULT:
+Empty DataFrame
+Columns: []
+Index: [0]
+
+EXPECTED RESULT:
+       0
+0  100.0
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:57
+================================================================================
+
+QUESTION: Calculate the percentage of cards in Spanish. List them by name.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT ( SELECT CAST(SUM(CASE WHEN language = 'Spanish' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM foreign_data ), name FROM foreign_data WHERE language = 'Spanish'
+
+GENERATED SQL:
+SELECT
+
+RESULT:
+Empty DataFrame
+Columns: []
+Index: [0]
+
+EXPECTED RESULT:
+                        0                                                                        1
+0      12.495963976857226                                               Drakuseth, fauces de fuego
+1      12.495963976857226                                                       Cargador de brasas
+2      12.495963976857226                                                       Sabio de la sabana
+3      12.495963976857226                                                       Elemental de fuego
+4      12.495963976857226                                                        Barrido de llamas
+5      12.495963976857226                                                                    Freír
+6      12.495963976857226                                                    Bucanero centelleasta
+7      12.495963976857226                                                     Aferrapájaros trasgo
+8      12.495963976857226                                                         Cabecilla trasgo
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:57
+================================================================================
+
+QUESTION: Indicates the name of all the languages into which the set whose number of cards is 309 is translated.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.baseSetSize = 309
+
+GENERATED SQL:
+SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.baseSetSize = 309
+
+RESULT:
+                     0
+0   Chinese Simplified
+1  Chinese Traditional
+2               French
+3               German
+4              Italian
+5             Japanese
+6               Korean
+7  Portuguese (Brazil)
+8              Russian
+9              Spanish
+
+EXPECTED RESULT:
+                     0
+0   Chinese Simplified
+1  Chinese Traditional
+2               French
+3               German
+4              Italian
+5             Japanese
+6               Korean
+7  Portuguese (Brazil)
+8              Russian
+9              Spanish
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:57
+================================================================================
+
+QUESTION: How many Brazilian Portuguese translated sets are inside the Commander block?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(T1.id) FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Portuguese (Brazil)' AND T1.block = 'Commander'
+
+GENERATED SQL:
+SELECT COUNT(DISTINCT T1.id) FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Portuguese (Brazil)' AND T1.block = 'Commander'
+
+RESULT:
+   0
+0  7
+
+EXPECTED RESULT:
+   0
+0  7
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:58
+================================================================================
+
+QUESTION: Lists by ID all Creature-type cards with legal status.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T1.id FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid INNER JOIN legalities AS T3 ON T1.uuid = T3.uuid WHERE T3.status = 'Legal' AND T1.types = 'Creature'
+
+GENERATED SQL:
+SELECT T1.id FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.status = 'Legal' AND T1.types = 'Creature'
+
+RESULT:
+            0
+0       15541
+1       15541
+2       15541
+3       15541
+4       15541
+5       15541
+6       15542
+7       15542
+8       15542
+[... truncated ...]
+
+EXPECTED RESULT:
+            0
+0       15541
+1       15541
+2       15541
+3       15541
+4       15541
+5       15541
+6       15542
+7       15542
+8       15542
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:58
+================================================================================
+
+QUESTION: Lists all types of cards in German.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT T1.subtypes, T1.supertypes FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.language = 'German' AND T1.subtypes IS NOT NULL AND T1.supertypes IS NOT NULL
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT DISTINCT T2.type
+[DEBUG] Received error message: 
+[DEBUG] Received question: Lists all types of cards in German.
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT T2.type
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t2"
+LINE 1: SELECT DISTINCT T2.type LIMIT 1
+                        ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language = 'German
+[DEBUG] ERRRORRRR: syntax error at or near "fdWHERE"
+LINE 1: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language...
+                                                 ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language = 'German
+[DEBUG] ERRRORRRR: syntax error at or near "fdWHERE"
+LINE 1: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language...
+                                                 ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language = 'German
+[DEBUG] ERRRORRRR: syntax error at or near "fdWHERE"
+LINE 1: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language...
+                                                 ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language = 'German
+[DEBUG] ERRRORRRR: syntax error at or near "fdWHERE"
+LINE 1: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language...
+                                                 ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language = 'German
+[DEBUG] ERRRORRRR: syntax error at or near "fdWHERE"
+LINE 1: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language...
+                                                 ^
+
+[DEBUG] Final failed SQL: SELECT DISTINCT fd.typeFROM foreign_data fdWHERE fd.language = 'German
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:58
+================================================================================
+
+QUESTION: How many unknown power cards contain info about the triggered ability
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT T2.text FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE (T1.power IS NULL OR T1.power = '*') AND T2.text LIKE '%triggered ability%'
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT COUNT(DISTINCT T1.id)
+[DEBUG] Received error message: 
+[DEBUG] Received question: How many unknown power cards contain info about the triggered ability
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT COUNT(DISTINCT T1.id)
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t1"
+LINE 1: SELECT COUNT(DISTINCT T1.id) LIMIT 1
+                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT COUNT(DISTINCT id)FROM cardsWHERE (power IS NULL OR power = '*')AND text LIKE '%triggered ability%
+[DEBUG] ERRRORRRR: syntax error at or near "AND"
+LINE 1: ... id)FROM cardsWHERE (power IS NULL OR power = '*')AND text L...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT COUNT(DISTINCT id) FROM cards WHERE (power IS NULL OR power = '*') AND text LIKE '%triggered ability%
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'%triggered ability% LIMIT 1"
+LINE 1: ...HERE (power IS NULL OR power = '*') AND text LIKE '%triggere...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT COUNT(DISTINCT id) FROM cards WHERE (power IS NULL OR power = '*') AND text LIKE '%triggered ability%
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'%triggered ability% LIMIT 1"
+LINE 1: ...HERE (power IS NULL OR power = '*') AND text LIKE '%triggere...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT COUNT(DISTINCT id) FROM cards WHERE (power IS NULL OR power = '*') AND text LIKE '%triggered ability%
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'%triggered ability% LIMIT 1"
+LINE 1: ...HERE (power IS NULL OR power = '*') AND text LIKE '%triggere...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT COUNT(DISTINCT id) FROM cards WHERE (power IS NULL OR power = '*') AND text LIKE '%triggered ability%
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'%triggered ability% LIMIT 1"
+LINE 1: ...HERE (power IS NULL OR power = '*') AND text LIKE '%triggere...
+                                                             ^
+
+[DEBUG] Final failed SQL: SELECT COUNT(DISTINCT id) FROM cards WHERE (power IS NULL OR power = '*') AND text LIKE '%triggered ability%
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:59
+================================================================================
+
+QUESTION: Indicates the number of cards with pre-modern format, ruling text "This is a triggered mana ability." that do not have multiple faces.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid INNER JOIN rulings AS T3 ON T1.uuid = T3.uuid WHERE T2.format = 'premodern' AND T3.text = 'This is a triggered mana ability.' AND T1.Side IS NULL
+
+GENERATED SQL:
+SELECT COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid INNER JOIN rulings AS T3 ON T1.uuid = T3.uuid WHERE T2.format = 'premodern' AND T3.text = 'This is a triggered mana ability.' AND T1.side IS NULL
+
+RESULT:
+    0
+0  16
+
+EXPECTED RESULT:
+    0
+0  16
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:59
+================================================================================
+
+QUESTION: Is there any card from Erica Yang artist in pauper format and available in paper? If so, indicate its ID.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T1.id FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.artist = 'Erica Yang' AND T2.format = 'pauper' AND T1.availability = 'paper'
+
+GENERATED SQL:
+SELECT T1.id FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.artist = 'Erica Yang' AND T2.format = 'pauper' AND T1.availability = 'paper'
+
+RESULT:
+       0
+0  15594
+1  15943
+2  30953
+3  45195
+4  45201
+
+EXPECTED RESULT:
+       0
+0  15594
+1  15943
+2  45195
+3  45201
+4  30953
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:59
+================================================================================
+
+QUESTION: To which artist does the card with the text "Das perfekte Gegenmittel zu einer dichten Formation" belong?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT DISTINCT T1.artist FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.flavorText LIKE '%DAS perfekte Gegenmittel zu einer dichten Formation%'
+
+GENERATED SQL:
+SELECT DISTINCT T1.artist FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.flavorText LIKE '%Das perfekte Gegenmittel zu einer dichten Formation%'
+
+RESULT:
+                   0
+0  Matthew D. Wilson
+
+EXPECTED RESULT:
+Empty DataFrame
+Columns: []
+Index: []
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:59
+================================================================================
+
+QUESTION: What is the foreign name of the card in French of type Creature, normal layout and black border color, by artist Matthew D. Wilson?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT name FROM foreign_data WHERE uuid IN ( SELECT uuid FROM cards WHERE types = 'Creature' AND layout = 'normal' AND borderColor = 'black' AND artist = 'Matthew D. Wilson' ) AND language = 'French'
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT T2.name
+[DEBUG] Received error message: 
+[DEBUG] Received question: What is the foreign name of the card in French of type Creature, normal layout and black border color, by artist Matthew D. Wilson?
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T2.name
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t2"
+LINE 1: SELECT T2.name LIMIT 1
+               ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT foreign_data.nameFROM foreign_dataJOIN cards ON foreign_data.uuid = cards.uuidWHERE foreign_data.language = 'French'  AND cards.types = 'Creature'  AND cards.layout = 'normal'  AND cards.bordercolor = 'black'  AND cards.artist = 'Matthew D. Wilson
+[DEBUG] ERRRORRRR: syntax error at or near "cards"
+LINE 1: SELECT foreign_data.nameFROM foreign_dataJOIN cards ON forei...
+                                                      ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT foreign_data.nameFROM foreign_dataJOIN cards ON foreign_data.uuid = cards.uuidWHERE foreign_data.language = 'French'  AND cards.types = 'Creature'  AND cards.layout = 'normal'  AND cards.bordercolor = 'black'  AND cards.artist = 'Matthew D. Wilson
+[DEBUG] ERRRORRRR: syntax error at or near "cards"
+LINE 1: SELECT foreign_data.nameFROM foreign_dataJOIN cards ON forei...
+                                                      ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT foreign_data.nameFROM foreign_dataJOIN cards ON foreign_data.uuid = cards.uuidWHERE foreign_data.language = 'French'  AND cards.types = 'Creature'  AND cards.layout = 'normal'  AND cards.bordercolor = 'black'  AND cards.artist = 'Matthew D. Wilson
+[DEBUG] ERRRORRRR: syntax error at or near "cards"
+LINE 1: SELECT foreign_data.nameFROM foreign_dataJOIN cards ON forei...
+                                                      ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT foreign_data.nameFROM foreign_dataJOIN cards ON foreign_data.uuid = cards.uuidWHERE foreign_data.language = 'French'  AND cards.types = 'Creature'  AND cards.layout = 'normal'  AND cards.bordercolor = 'black'  AND cards.artist = 'Matthew D. Wilson';
+[DEBUG] ERRRORRRR: syntax error at or near "cards"
+LINE 1: SELECT foreign_data.nameFROM foreign_dataJOIN cards ON forei...
+                                                      ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT foreign_data.nameFROM foreign_dataJOIN cards ON foreign_data.uuid = cards.uuidWHERE foreign_data.language = 'French'  AND cards.types = 'Creature'  AND cards.layout = 'normal'  AND cards.bordercolor = 'black'  AND cards.artist = 'Matthew D. Wilson';
+[DEBUG] ERRRORRRR: syntax error at or near "cards"
+LINE 1: SELECT foreign_data.nameFROM foreign_dataJOIN cards ON forei...
+                                                      ^
+
+[DEBUG] Final failed SQL: SELECT foreign_data.nameFROM foreign_dataJOIN cards ON foreign_data.uuid = cards.uuidWHERE foreign_data.language = 'French'  AND cards.types = 'Creature'  AND cards.layout = 'normal'  AND cards.bordercolor = 'black'  AND cards.artist = 'Matthew D. Wilson';
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:59
+================================================================================
+
+QUESTION: How many cards with print rarity have ruling text printed on 01/02/2007?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(DISTINCT T1.id) FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.rarity = 'rare' AND T2.date = '2007-02-01'
+
+GENERATED SQL:
+SELECT COUNT(DISTINCT T1.id) FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.rarity = 'rare' AND T2.date = '2007-02-01'
+
+RESULT:
+     0
+0  126
+
+EXPECTED RESULT:
+     0
+0  126
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:59
+================================================================================
+
+QUESTION: What language is the set of 180 cards that belongs to the Ravnica block translated into?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.block = 'Ravnica' AND T1.baseSetSize = 180
+
+GENERATED SQL:
+SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.block = 'Ravnica' AND T1.baseSetSize = 180
+
+RESULT:
+                     0
+0   Chinese Simplified
+1  Chinese Traditional
+2               French
+3               German
+4              Italian
+5             Japanese
+6               Korean
+7  Portuguese (Brazil)
+8              Russian
+9              Spanish
+
+EXPECTED RESULT:
+                     0
+0   Chinese Simplified
+1  Chinese Traditional
+2               French
+3               German
+4              Italian
+5             Japanese
+6               Korean
+7  Portuguese (Brazil)
+8              Russian
+9              Spanish
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:59
+================================================================================
+
+QUESTION: What percentage of cards with format commander and legal status do not have a content warning?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT CAST(SUM(CASE WHEN T1.hasContentWarning = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal'
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT CAST(SUM(CASE WHEN T1.hasContentWarning = FALSE THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal'
+[DEBUG] Received error message: 
+[DEBUG] Received question: What percentage of cards with format commander and legal status do not have a content warning?
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT CAST(SUM(CASE WHEN T1.hasContentWarning = FALSE THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal'
+[DEBUG] Initial SQL execution error: operator does not exist: integer = boolean
+LINE 1: SELECT CAST(SUM(CASE WHEN T1.hasContentWarning = FALSE THEN ...
+                                                       ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT CAST(SUM(CASE WHEN T1.hasContentWarning = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'Legal LIMIT 1"
+LINE 1: ...uid WHERE T2.format = 'commander' AND T2.status = 'Legal LIM...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT CAST(SUM(CASE WHEN T1.hasContentWarning = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'Legal LIMIT 1"
+LINE 1: ...uid WHERE T2.format = 'commander' AND T2.status = 'Legal LIM...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT CAST(SUM(CASE WHEN T1.hasContentWarning = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'Legal LIMIT 1"
+LINE 1: ...uid WHERE T2.format = 'commander' AND T2.status = 'Legal LIM...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT CAST(SUM(CASE WHEN T1.hasContentWarning = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'Legal LIMIT 1"
+LINE 1: ...uid WHERE T2.format = 'commander' AND T2.status = 'Legal LIM...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT CAST(SUM(CASE WHEN T1.hascontentwarning = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal
+[DEBUG] ERRRORRRR: unterminated quoted string at or near "'Legal LIMIT 1"
+LINE 1: ...uid WHERE T2.format = 'commander' AND T2.status = 'Legal LIM...
+                                                             ^
+
+[DEBUG] Final failed SQL: SELECT CAST(SUM(CASE WHEN T1.hascontentwarning = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:45:59
+================================================================================
+
+QUESTION: What percentage of cards without power are in French?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT CAST(SUM(CASE WHEN T2.language = 'French' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T1.power IS NULL OR T1.power = '*'
+
+GENERATED SQL:
+SELECT CAST(SUM(CASE WHEN T2.language = 'French' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T1.power IS NULL OR T1.power = '*'
+
+RESULT:
+                    0
+0  12.975290140452374
+
+EXPECTED RESULT:
+                    0
+0  12.975290140452374
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:00
+================================================================================
+
+QUESTION: What percentage of Japanese translated sets are expansion sets?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT CAST(SUM(CASE WHEN T2.language = 'Japanese' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.type = 'expansion'
+
+GENERATED SQL:
+SELECT CAST(SUM(CASE WHEN T2.language = 'Japanese' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.type = 'expansion'
+
+RESULT:
+      0
+0  10.0
+
+EXPECTED RESULT:
+      0
+0  10.0
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:00
+================================================================================
+
+QUESTION: What kind of printing is on the card that Daren Bader created?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT availability FROM cards WHERE artist = 'Daren Bader'
+
+GENERATED SQL:
+SELECT DISTINCT availability FROM cards WHERE artist = 'Daren Bader'
+
+RESULT:
+             0
+0        arena
+1  arena,paper
+2    dreamcast
+3         mtgo
+4   mtgo,paper
+5        paper
+
+EXPECTED RESULT:
+             0
+0        arena
+1  arena,paper
+2    dreamcast
+3         mtgo
+4   mtgo,paper
+5        paper
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:00
+================================================================================
+
+QUESTION: How many color cards with no borders have been ranked higher than 12000 on EDHRec?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(id) FROM cards WHERE edhrecRank > 12000 AND borderColor = 'borderless'
+
+GENERATED SQL:
+SELECT COUNT(id) FROM cards WHERE edhrecRank > 12000 AND borderColor = 'borderless'
+
+RESULT:
+   0
+0  7
+
+EXPECTED RESULT:
+   0
+0  7
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:00
+================================================================================
+
+QUESTION: How many cards are oversized, reprinted, and printed for promotions?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(id) FROM cards WHERE isOversized = 1 AND isReprint = 1 AND isPromo = 1
+
+GENERATED SQL:
+SELECT COUNT(id) FROM cards WHERE isoversized = 1 AND isreprint = 1 AND ispromo = 1
+
+RESULT:
+    0
+0  17
+
+EXPECTED RESULT:
+    0
+0  17
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:00
+================================================================================
+
+QUESTION: Please list top three unknown power cards that have promotional types for arena league in alphabetical order.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT name FROM cards WHERE (power IS NULL OR power LIKE '%*%') AND promoTypes = 'arenaleague' ORDER BY name LIMIT 3
+
+GENERATED SQL:
+SELECT name FROM cards WHERE (power IS NULL OR power LIKE '%*%') AND promotypes LIKE '%arenaleague%' ORDER BY name LIMIT 3
+
+RESULT:
+                 0
+0    Arc Lightning
+1  Ashnod's Coupon
+2     Bonesplitter
+
+EXPECTED RESULT:
+                 0
+0    Arc Lightning
+1  Ashnod's Coupon
+2     Bonesplitter
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:00
+================================================================================
+
+QUESTION: What is the language of the card with the multiverse number 149934?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT language FROM foreign_data WHERE multiverseid = 149934
+
+GENERATED SQL:
+SELECT language FROM foreign_data WHERE multiverseid = 149934
+
+RESULT:
+        0
+0  French
+
+EXPECTED RESULT:
+        0
+0  French
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:00
+================================================================================
+
+QUESTION: Please provide the ids of top three powerful pairs of Kingdom Foil and Kingdom Cards sorted by Kingdom Foil id in alphabetical order.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT cardKingdomFoilId, cardKingdomId FROM cards WHERE cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NOT NULL ORDER BY cardKingdomFoilId LIMIT 3
+
+GENERATED SQL:
+SELECT id FROM cards WHERE cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NOT NULL ORDER BY cardKingdomFoilId LIMIT 3
+
+RESULT:
+       0
+0  17204
+1  17205
+2  17206
+
+EXPECTED RESULT:
+        0       1
+0  110502  110332
+1  110503  110333
+2  110504  110334
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:01
+================================================================================
+
+QUESTION: What proportion of cards do not have a text box with a normal layout?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT CAST(SUM(CASE WHEN isTextless = 1 AND layout = 'normal' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM cards
+
+GENERATED SQL:
+SELECT CAST(SUM(CASE WHEN isTextless = 1 AND layout = 'normal' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM cards
+
+RESULT:
+                     0
+0  0.20238639963394459
+
+EXPECTED RESULT:
+                     0
+0  0.20238639963394459
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:01
+================================================================================
+
+QUESTION: What are the card numbers that don't have multiple faces on a single card and have the subtypes Angel and Wizard?
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT id FROM cards WHERE subtypes = 'Angel,Wizard' AND side IS NULL
+
+GENERATED SQL:
+SELECT number FROM cards WHERE subtypes = 'Angel,Wizard' AND side IS NULL
+
+RESULT:
+      0
+0    97
+1  226p
+2  226s
+3   226
+4   368
+
+EXPECTED RESULT:
+       0
+0  25149
+1  45892
+2  45893
+3  56643
+4  56809
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:01
+================================================================================
+
+QUESTION: Please provide top three sets that don't appear in Magic: The Gathering Online, along with their names in in alphabetical order.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT name FROM sets WHERE mtgoCode IS NULL ORDER BY name LIMIT 3
+
+GENERATED SQL:
+SELECT name FROM sets WHERE mtgocode IS NULL ORDER BY name LIMIT 3
+
+RESULT:
+                          0
+0    15th Anniversary Cards
+1  2016 Heroes of the Realm
+2            2017 Gift Pack
+
+EXPECTED RESULT:
+                          0
+0    15th Anniversary Cards
+1  2016 Heroes of the Realm
+2            2017 Gift Pack
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:01
+================================================================================
+
+QUESTION: What languages are available in the set known as Archenemy on the magic card market and having the code ARC?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.mcmName = 'Archenemy' AND T2.setCode = 'ARC'
+
+GENERATED SQL:
+SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.mcmName = 'Archenemy' AND T1.code = 'ARC'
+
+RESULT:
+                     0
+0   Chinese Simplified
+1  Chinese Traditional
+2               French
+3               German
+4              Italian
+5             Japanese
+6               Korean
+7  Portuguese (Brazil)
+8              Russian
+9              Spanish
+
+EXPECTED RESULT:
+                     0
+0   Chinese Simplified
+1  Chinese Traditional
+2               French
+3               German
+4              Italian
+5             Japanese
+6               Korean
+7  Portuguese (Brazil)
+8              Russian
+9              Spanish
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:01
+================================================================================
+
+QUESTION: Which set is not available outside of the United States and has foil cards with Japanese writing on them? Please include the set ID in your response.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT T1.name, T1.id FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Japanese' AND T1.isFoilOnly = 1 AND T1.isForeignOnly = 0
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT T1.name, T1.id
+[DEBUG] Received error message: 
+[DEBUG] Received question: Which set is not available outside of the United States and has foil cards with Japanese writing on them? Please include the set ID in your response.
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T1.name, T1.id
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t1"
+LINE 1: SELECT T1.name, T1.id LIMIT 1
+               ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s.isfoilonly = 1AND EXISTS (    SELECT 1    FROM set_translations st    WHERE st.setcode = s.code    AND st.language = 'Japanese')
+[DEBUG] ERRRORRRR: syntax error at or near "sWHERE"
+LINE 1: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s...
+                                     ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s.isfoilonly = 1AND EXISTS (    SELECT 1    FROM set_translations st    WHERE st.setcode = s.code    AND st.language = 'Japanese')
+[DEBUG] ERRRORRRR: syntax error at or near "sWHERE"
+LINE 1: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s...
+                                     ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s.isfoilonly = 1AND EXISTS (    SELECT 1    FROM set_translations st    WHERE st.setcode = s.code    AND st.language = 'Japanese')
+[DEBUG] ERRRORRRR: syntax error at or near "sWHERE"
+LINE 1: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s...
+                                     ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s.isfoilonly = 1AND EXISTS (    SELECT 1    FROM set_translations st    WHERE st.setcode = s.code    AND st.language = 'Japanese')
+[DEBUG] ERRRORRRR: syntax error at or near "sWHERE"
+LINE 1: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s...
+                                     ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s.isfoilonly = 1AND EXISTS (    SELECT 1    FROM set_translations st    WHERE st.setcode = s.code    AND st.language = 'Japanese')
+[DEBUG] ERRRORRRR: syntax error at or near "sWHERE"
+LINE 1: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s...
+                                     ^
+
+[DEBUG] Final failed SQL: SELECT s.id, s.nameFROM sets sWHERE s.isforeignonly = 0AND s.isfoilonly = 1AND EXISTS (    SELECT 1    FROM set_translations st    WHERE st.setcode = s.code    AND st.language = 'Japanese')
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:01
+================================================================================
+
+QUESTION: Which of these artists have designed a card in the set Coldsnap, Jeremy Jarvis, Aaron Miller or Chippy?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T1.artist FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE (T2.name = 'Coldsnap' AND T1.artist = 'Chippy') OR (T2.name = 'Coldsnap' AND T1.artist = 'Aaron Miller') OR (T2.name = 'Coldsnap' AND T1.artist = 'Jeremy Jarvis') GROUP BY T1.artist
+
+GENERATED SQL:
+SELECT DISTINCT artist FROM cards WHERE setcode = (SELECT code FROM sets WHERE name = 'Coldsnap')   AND artist IN ('Jeremy Jarvis', 'Aaron Miller', 'Chippy')
+
+RESULT:
+               0
+0         Chippy
+1  Jeremy Jarvis
+
+EXPECTED RESULT:
+               0
+0         Chippy
+1  Jeremy Jarvis
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:01
+================================================================================
+
+QUESTION: What is the percentage of incredibly powerful cards in the set Coldsnap?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT CAST(SUM(CASE WHEN T1.cardKingdomFoilId IS NOT NULL AND T1.cardKingdomId IS NOT NULL THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE T2.name = 'Coldsnap'
+
+GENERATED SQL:
+SELECT CAST(SUM(CASE WHEN T1.cardKingdomFoilId IS NOT NULL AND T1.cardKingdomId IS NOT NULL THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE T2.name = 'Coldsnap'
+
+RESULT:
+       0
+0  100.0
+
+EXPECTED RESULT:
+       0
+0  100.0
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:01
+================================================================================
+
+QUESTION: For all cards illustrated by Jim Pavelec. and describe the text of the ruling of these cards. Do these cards have missing or degraded properties and values.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT T2.text , CASE WHEN T1.hasContentWarning = 1 THEN 'YES' ELSE 'NO' END FROM cards AS T1 INNER JOIN rulings AS T2 ON T2.uuid = T1.uuid WHERE T1.artist = 'Jim Pavelec'
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT T2.text,
+[DEBUG] Received error message: 
+[DEBUG] Received question: For all cards illustrated by Jim Pavelec. and describe the text of the ruling of these cards. Do these cards have missing or degraded properties and values.
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT T2.text,
+[DEBUG] Initial SQL execution error: syntax error at or near "LIMIT"
+LINE 1: SELECT T2.text, LIMIT 1
+                        ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN rulings r ON c.uuid = r.uuidWHERE c.artist = 'Jim Pavelec
+[DEBUG] ERRRORRRR: syntax error at or near "cLEFT"
+LINE 1: ...ELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN rulings r ON c.uuid = r.uuidWHERE c.artist = 'Jim Pavelec
+[DEBUG] ERRRORRRR: syntax error at or near "cLEFT"
+LINE 1: ...ELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN rulings r ON c.uuid = r.uuidWHERE c.artist = 'Jim Pavelec
+[DEBUG] ERRRORRRR: syntax error at or near "cLEFT"
+LINE 1: ...ELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN rulings r ON c.uuid = r.uuidWHERE c.artist = 'Jim Pavelec
+[DEBUG] ERRRORRRR: syntax error at or near "cLEFT"
+LINE 1: ...ELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN...
+                                                             ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN rulings r ON c.uuid = r.uuidWHERE c.artist = 'Jim Pavelec
+[DEBUG] ERRRORRRR: syntax error at or near "cLEFT"
+LINE 1: ...ELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN...
+                                                             ^
+
+[DEBUG] Final failed SQL: SELECT c.id, r.text, c.hascontentwarningFROM cards cLEFT JOIN rulings r ON c.uuid = r.uuidWHERE c.artist = 'Jim Pavelec
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:01
+================================================================================
+
+QUESTION: For all the set of cards that has Japanese translation, what is the percentage of them are only available in non-foil?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT CAST(SUM(CASE WHEN isNonFoilOnly = 1 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(id) FROM sets WHERE code IN ( SELECT setCode FROM set_translations WHERE language = 'Japanese' )
+
+GENERATED SQL:
+SELECT CAST(SUM(CASE WHEN isNonFoilOnly = 1 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(id) FROM sets WHERE code IN ( SELECT setCode FROM set_translations WHERE language = 'Japanese' )
+
+RESULT:
+                    0
+0  11.570247933884298
+
+EXPECTED RESULT:
+                    0
+0  11.570247933884298
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:01
+================================================================================
+
+QUESTION: Among the sets whose expansion type is Commander, which set has the highest total number of cards including promotional and related supplemental products but excluding Alchemy modifications? Indicate the id of the set.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT id FROM sets WHERE type = 'commander' ORDER BY totalSetSize DESC LIMIT 1
+
+GENERATED SQL:
+SELECT id FROM sets WHERE type = 'commander' ORDER BY totalsetsize DESC LIMIT 1
+
+RESULT:
+    0
+0  37
+
+EXPECTED RESULT:
+    0
+0  37
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:46:01
+================================================================================
+
+QUESTION: List the names of all the cards in the set Hour of Devastation and find the formats in which these cards are legal.
+
+DIFFICULTY: unknown
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT DISTINCT T2.name , CASE WHEN T1.status = 'Legal' THEN T1.format ELSE NULL END FROM legalities AS T1 INNER JOIN cards AS T2 ON T2.uuid = T1.uuid WHERE T2.setCode IN ( SELECT code FROM sets WHERE name = 'Hour of Devastation' )
+
+GENERATED SQL:
+[Error] [DEBUG] Received flawed SQL: SELECT DISTINCT T1.name, T2.format
+[DEBUG] Received error message: 
+[DEBUG] Received question: List the names of all the cards in the set Hour of Devastation and find the formats in which these cards are legal.
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Auto evidence found in config.json
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT T1.name, T2.format
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "t1"
+LINE 1: SELECT DISTINCT T1.name, T2.format LIMIT 1
+                        ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.name, l.formatFROM cards cJOIN sets s ON c.setcode = s.codeJOIN legalities l ON c.uuid = l.uuidWHERE s.name = 'Hour of Devastation'  AND l.status = 'Legal
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.name, l.formatFROM cards cJOIN sets s ON c...
+                                                   ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.name, l.formatFROM cards cJOIN sets s ON c.setcode = s.codeJOIN legalities l ON c.uuid = l.uuidWHERE s.name = 'Hour of Devastation' AND l.status = 'Legal
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.name, l.formatFROM cards cJOIN sets s ON c...
+                                                   ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.name, l.formatFROM cards cJOIN sets s ON c.setcode = s.codeJOIN legalities l ON c.uuid = l.uuidWHERE s.name = 'Hour of Devastation' AND l.status = 'Legal
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.name, l.formatFROM cards cJOIN sets s ON c...
+                                                   ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.name, l.formatFROM cards cJOIN sets s ON c.setcode = s.codeJOIN legalities l ON c.uuid = l.uuidWHERE s.name = 'Hour of Devastation' AND l.status = 'Legal
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.name, l.formatFROM cards cJOIN sets s ON c...
+                                                   ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.name, l.formatFROM cards cJOIN sets s ON c.setcode = s.codeJOIN legalities l ON c.uuid = l.uuidWHERE s.name = 'Hour of Devastation' AND l.status = 'Legal
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.name, l.formatFROM cards cJOIN sets s ON c...
+                                                   ^
+
+[DEBUG] Final failed SQL: SELECT DISTINCT c.name, l.formatFROM cards cJOIN sets s ON c.setcode = s.codeJOIN legalities l ON c.uuid = l.uuidWHERE s.name = 'Hour of Devastation' AND l.status = 'Legal
+[ERROR] Model failed to produce a valid SQL query after all retries.
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+
+================================================================================
+EVALUATION SUMMARY: 2025-10-04 13:46:01
+================================================================================
+
+Unknown     : 40/62 correct (64.52%)
+
+Overall Accuracy: 40/62 (64.52%)
+================================================================================

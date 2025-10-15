@@ -34,17 +34,26 @@ namespace LLMTextToSql.Agents
                 if (process == null)
                     return "[Error] Could not start Python process.";
 
-                string stdout = await process.StandardOutput.ReadToEndAsync();
-                string stderr = await process.StandardError.ReadToEndAsync();
+                var stdoutTask = process.StandardOutput.ReadToEndAsync();
+                var stderrTask = process.StandardError.ReadToEndAsync();
+
+                await Task.WhenAll(stdoutTask, stderrTask);
                 await process.WaitForExitAsync();
 
+                string stdout = stdoutTask.Result;
+                string stderr = stderrTask.Result;
+
+                if (!string.IsNullOrWhiteSpace(stdout) && stdout.Trim().StartsWith("SELECT", StringComparison.OrdinalIgnoreCase))
+                {
+                    return stdout.Trim();
+                }
+
                 if (!string.IsNullOrWhiteSpace(stderr))
+                {
                     return $"[Python Error]\n{stderr}";
+                }
 
-                string rawSql = stdout.Trim();
-
-                var tables = new List<string> { rawSql };
-                return JsonSerializer.Serialize(tables);
+                return stdout.Trim();
             }
             catch (Exception ex)
             {

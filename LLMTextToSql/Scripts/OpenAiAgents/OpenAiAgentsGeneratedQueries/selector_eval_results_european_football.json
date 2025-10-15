@@ -1,0 +1,374 @@
+[
+  {
+    "question": "Which player has the highest overall rating? Indicate the player's api id.",
+    "expected_sql": "SELECT player_api_id FROM Player_Attributes ORDER BY overall_rating DESC LIMIT 1",
+    "selector_output": "SELECT player_api_id FROM Player_Attributes ORDER BY overall_rating DESC LIMIT 1",
+    "difficulty": "simple"
+  },
+  {
+    "question": "What is the height of the tallest player? Indicate his name.",
+    "expected_sql": "SELECT player_name FROM Player ORDER BY height DESC LIMIT 1",
+    "selector_output": "SELECT player_name FROM Player ORDER BY height DESC LIMIT 1",
+    "difficulty": "simple"
+  },
+  {
+    "question": "What is the preferred foot when attacking of the player with the lowest potential?",
+    "expected_sql": "SELECT preferred_foot FROM Player_Attributes WHERE potential IS NOT NULL ORDER BY potential ASC LIMIT 1",
+    "selector_output": "SELECT preferred_foot FROM Player_Attributes WHERE potential IS NOT NULL ORDER BY potential ASC LIMIT 1",
+    "difficulty": "simple"
+  },
+  {
+    "question": "Who are the top 5 players who perform better in crossing actions? Indicate their player id.",
+    "expected_sql": "SELECT id FROM Player_Attributes ORDER BY crossing DESC LIMIT 5",
+    "selector_output": "SELECT id FROM Player_Attributes ORDER BY crossing DESC LIMIT 5",
+    "difficulty": "simple"
+  },
+  {
+    "question": "Indicate the full names of the top 10 players with the highest number of penalties.",
+    "expected_sql": "SELECT t2.player_name FROM Player_Attributes AS t1 INNER JOIN Player AS t2 ON t1.id = t2.id ORDER BY t1.penalties DESC LIMIT 10",
+    "selector_output": "SELECT t2.player_name FROM Player_Attributes AS t1 INNER JOIN Player AS t2 ON t1.id = t2.id ORDER BY t1.penalties DESC LIMIT 10",
+    "difficulty": "simple"
+  },
+  {
+    "question": "What are the speed in which attacks are put together of the top 4 teams with the highest build Up Play Speed?",
+    "expected_sql": "SELECT t1.buildUpPlaySpeed FROM Team_Attributes AS t1 INNER JOIN Team AS t2 ON t1.team_api_id = t2.team_api_id ORDER BY t1.buildUpPlaySpeed ASC LIMIT 4",
+    "selector_output": "SELECT t1.buildUpPlaySpeed FROM Team_Attributes AS t1 INNER JOIN Team AS t2 ON t1.team_api_id = t2.team_api_id ORDER BY t1.buildUpPlaySpeed ASC LIMIT 4",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "Give the name of the league had the most matches end as draw in the 2016 season?",
+    "expected_sql": "SELECT t2.name FROM Match AS t1 INNER JOIN League AS t2 ON t1.league_id = t2.id WHERE t1.season = '2015/2016' AND t1.home_team_goal = t1.away_team_goal GROUP BY t2.name ORDER BY COUNT(t1.id) DESC LIMIT 1",
+    "selector_output": "SELECT t2.name FROM Match AS t1 INNER JOIN League AS t2 ON t1.league_id = t2.id WHERE t1.season = '2015/2016' AND t1.home_team_goal = t1.away_team_goal GROUP BY t2.name ORDER BY COUNT(t1.id) DESC LIMIT 1",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "Give the name of the league with the highest matches of all time and how many matches were played in the said league.",
+    "expected_sql": "SELECT t2.name, t1.max_count FROM League AS t2 JOIN (SELECT league_id, MAX(cnt) AS max_count FROM (SELECT league_id, COUNT(id) AS cnt FROM Match GROUP BY league_id) AS subquery) AS t1 ON t1.league_id = t2.id",
+    "selector_output": "[Error] No SQL found in output",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "What is the average height of players born between 1990 and 1995?",
+    "expected_sql": "SELECT SUM(height) / COUNT(id) FROM Player WHERE SUBSTR(birthday, 1, 4) BETWEEN '1990' AND '1995'",
+    "selector_output": "SELECT SUM(height) / COUNT(id) FROM Player WHERE SUBSTR(birthday, 1, 4) BETWEEN '1990' AND '1995'",
+    "difficulty": "simple"
+  },
+  {
+    "question": "List the players' api id who had the highest above average overall ratings in 2010.",
+    "expected_sql": "SELECT player_api_id FROM Player_Attributes WHERE SUBSTR(`date`, 1, 4) = '2010' ORDER BY overall_rating DESC LIMIT 1",
+    "selector_output": "SELECT player_api_id FROM Player_Attributes WHERE SUBSTR(`date`, 1, 4) = '2010' ORDER BY overall_rating DESC LIMIT 1",
+    "difficulty": "simple"
+  },
+  {
+    "question": "Give the team_fifa_api_id of teams with more than 50 but less than 60 build-up play speed.",
+    "expected_sql": "SELECT DISTINCT team_fifa_api_id FROM Team_Attributes WHERE buildUpPlaySpeed > 50 AND buildUpPlaySpeed < 60",
+    "selector_output": "SELECT DISTINCT team_fifa_api_id FROM Team_Attributes WHERE buildUpPlaySpeed > 50 AND buildUpPlaySpeed < 60",
+    "difficulty": "simple"
+  },
+  {
+    "question": "List the top 5 leagues in ascending order of the number of goals made in all seasons combined.",
+    "expected_sql": "SELECT t1.name, SUM(t2.home_team_goal) + SUM(t2.away_team_goal) FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id GROUP BY t1.name ORDER BY SUM(t2.home_team_goal) + SUM(t2.away_team_goal) ASC LIMIT 5",
+    "selector_output": "SELECT t1.name, SUM(t2.home_team_goal) + SUM(t2.away_team_goal) FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id GROUP BY t1.name ORDER BY SUM(t2.home_team_goal) + SUM(t2.away_team_goal) ASC LIMIT 5",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "Find the average number of long-shot done by Ahmed Samir Farag.",
+    "expected_sql": "SELECT CAST(SUM(t2.long_shots) AS REAL) / COUNT(t2.`date`) FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'Ahmed Samir Farag'",
+    "selector_output": "[Error] No SQL found in output",
+    "difficulty": "simple"
+  },
+  {
+    "question": "List the top 10 players' names whose heights are above 180 in descending order of average heading accuracy.",
+    "expected_sql": "SELECT t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.height > 180 GROUP BY t1.id ORDER BY CAST(SUM(t2.heading_accuracy) AS REAL) / COUNT(t2.`player_fifa_api_id`) DESC LIMIT 10",
+    "selector_output": "SELECT t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.height > 180 GROUP BY t1.id ORDER BY CAST(SUM(t2.heading_accuracy) AS REAL) / COUNT(t2.`player_fifa_api_id`) DESC LIMIT 10",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "What is the short name of the football team Queens Park Rangers?",
+    "expected_sql": "SELECT team_short_name FROM Team WHERE team_long_name = 'Queens Park Rangers'",
+    "selector_output": "SELECT team_short_name FROM Team WHERE team_long_name = 'Queens Park Rangers'",
+    "difficulty": "simple"
+  },
+  {
+    "question": "List the football players with a birthyear of 1970 and a birthmonth of October.",
+    "expected_sql": "SELECT player_name FROM Player WHERE SUBSTR(birthday, 1, 7) = '1970-10'",
+    "selector_output": "SELECT player_name FROM Player WHERE SUBSTR(birthday, 1, 7) = '1970-10'",
+    "difficulty": "simple"
+  },
+  {
+    "question": "What is the attacking work rate of the football playerr Franco Zennaro?",
+    "expected_sql": "SELECT DISTINCT t2.attacking_work_rate FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'Franco Zennaro'",
+    "selector_output": "SELECT DISTINCT t2.attacking_work_rate",
+    "difficulty": "simple"
+  },
+  {
+    "question": "What is the ADO Den Haag team freedom of movement in the 1st two thirds of the pitch?",
+    "expected_sql": "SELECT DISTINCT t2.buildUpPlayPositioningClass FROM Team AS t1 INNER JOIN Team_attributes AS t2 ON t1.team_fifa_api_id = t2.team_fifa_api_id WHERE t1.team_long_name = 'ADO Den Haag'",
+    "selector_output": "SELECT DISTINCT t2.buildUpPlayPositioningClass FROM Team AS t1 INNER JOIN Team_attributes AS t2 ON t1.team_fifa_api_id = t2.team_fifa_api_id WHERE t1.team_long_name = 'ADO Den Haag'",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "What is the football player Francois Affolter header's finishing rate on 18/09/2014?",
+    "expected_sql": "SELECT t2.heading_accuracy FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'Francois Affolter' AND SUBSTR(t2.`date`, 1, 10) = '2014-09-18'",
+    "selector_output": "SELECT t2.heading_accuracy FROM Player AS t1",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "What is the overall rating of the football player Gabriel Tamas in year 2011?",
+    "expected_sql": "SELECT t2.overall_rating FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'Gabriel Tamas' AND strftime('%Y', t2.date) = '2011'",
+    "selector_output": "SELECT t2.overall_rating FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'Gabriel Tamas' AND strftime('%Y', t2.date) = '2011'",
+    "difficulty": "simple"
+  },
+  {
+    "question": "How many matches in the 2015/2016 season were held in Scotland Premier League\n?",
+    "expected_sql": "SELECT COUNT(t2.id) FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t2.season = '2015/2016' AND t1.name = 'Scotland Premier League'",
+    "selector_output": "SELECT COUNT(t2.id)",
+    "difficulty": "simple"
+  },
+  {
+    "question": "What is the preferred foot when attacking of the youngest football player?",
+    "expected_sql": "SELECT t2.preferred_foot FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id ORDER BY t1.birthday DESC LIMIT 1",
+    "selector_output": "SELECT t2.preferred_foot FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id ORDER BY t1.birthday DESC LIMIT 1",
+    "difficulty": "simple"
+  },
+  {
+    "question": "List all the football player with the highest potential score.",
+    "expected_sql": "SELECT DISTINCT(t1.player_name) FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.potential = (SELECT MAX(potential) FROM Player_Attributes) ",
+    "selector_output": "SELECT DISTINCT(t1.player_name) FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.potential = (SELECT MAX(potential) FROM Player_Attributes)",
+    "difficulty": "simple"
+  },
+  {
+    "question": "What is the defensive work rate of the football player David Wilson\n?",
+    "expected_sql": "SELECT DISTINCT t2.defensive_work_rate FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'David Wilson'",
+    "selector_output": "SELECT DISTINCT t2.defensive_work_rate FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'David Wilson'",
+    "difficulty": "simple"
+  },
+  {
+    "question": "When is the birthday of the football player who has the highest overall rating?",
+    "expected_sql": "SELECT t1.birthday FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id ORDER BY t2.overall_rating DESC LIMIT 1",
+    "selector_output": "SELECT t1.birthday FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id ORDER BY t2.overall_rating DESC LIMIT 1",
+    "difficulty": "simple"
+  },
+  {
+    "question": "What is the name of the football league in the country of Netherlands?",
+    "expected_sql": "SELECT t2.name FROM Country AS t1 INNER JOIN League AS t2 ON t1.id = t2.country_id WHERE t1.name = 'Netherlands'",
+    "selector_output": "SELECT t2.name FROM Country AS t1 INNER JOIN League AS t2 ON t1.id = t2.country_id WHERE t1.name = 'Netherlands'",
+    "difficulty": "simple"
+  },
+  {
+    "question": "Calculate the average home team goal in the 2010/2011 season in the country of Poland.",
+    "expected_sql": "SELECT CAST(SUM(t2.home_team_goal) AS REAL) / COUNT(t2.id) FROM Country AS t1 INNER JOIN Match AS t2 ON t1.id = t2.country_id WHERE t1.name = 'Poland' AND t2.season = '2010/2011'",
+    "selector_output": "SELECT CAST(SUM(t2.home_team_goal) AS REAL) / COUNT(t2.id) FROM Country AS t1 INNER JOIN Match AS t2 ON t1.id = t2.country_id WHERE t1.name = 'Poland' AND t2.season = '2010/2011'",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "Please list player names which are higher than 180.",
+    "expected_sql": "SELECT player_name FROM Player WHERE height > 180",
+    "selector_output": "SELECT player_name FROM Player WHERE height > 180",
+    "difficulty": "simple"
+  },
+  {
+    "question": "How many players were born after 1990?",
+    "expected_sql": "SELECT COUNT(id) FROM Player WHERE STRFTIME('%Y', birthday) > '1990'",
+    "selector_output": "[Error] No SQL found in output",
+    "difficulty": "simple"
+  },
+  {
+    "question": "How many players whose first names are Adam and weigh more than 170?",
+    "expected_sql": "SELECT COUNT(id) FROM Player WHERE weight > 170 AND player_name LIKE 'Adam%'",
+    "selector_output": "SELECT COUNT(id) FROM Player WHERE weight > 170 AND player_name LIKE 'Adam%'",
+    "difficulty": "simple"
+  },
+  {
+    "question": "What is Aaron Doran's potential score?",
+    "expected_sql": "SELECT t2.potential FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'Aaron Doran'",
+    "selector_output": "SELECT t2.potential FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'Aaron Doran'",
+    "difficulty": "simple"
+  },
+  {
+    "question": "List out of players whose preferred foot is left.",
+    "expected_sql": "SELECT DISTINCT t1.id, t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.preferred_foot = 'left'",
+    "selector_output": "SELECT DISTINCT t1.id, t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.preferred_foot = 'left'",
+    "difficulty": "simple"
+  },
+  {
+    "question": "Please list all team names which the speed class is fast.",
+    "expected_sql": "SELECT DISTINCT t1.team_long_name FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t2.buildUpPlaySpeedClass = 'Fast'",
+    "selector_output": "SELECT DISTINCT t1.team_long_name FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t2.buildUpPlaySpeedClass = 'Fast'",
+    "difficulty": "simple"
+  },
+  {
+    "question": "What is the passing class of CLB team?",
+    "expected_sql": "SELECT DISTINCT t2.buildUpPlayPassingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_short_name = 'CLB'",
+    "selector_output": "SELECT DISTINCT t2.buildUpPlayPassingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_short_name = 'CLB'",
+    "difficulty": "simple"
+  },
+  {
+    "question": "Which football player has the shortest height?",
+    "expected_sql": "SELECT player_name FROM player ORDER BY height ASC LIMIT 1",
+    "selector_output": "SELECT player_name FROM player ORDER BY height ASC LIMIT 1",
+    "difficulty": "simple"
+  },
+  {
+    "question": "Which country is the league Italy Serie A from?",
+    "expected_sql": "SELECT t1.name FROM Country AS t1 INNER JOIN League AS t2 ON t1.id = t2.country_id WHERE t2.name = 'Italy Serie A'",
+    "selector_output": "SELECT t1.name FROM Country AS t1 INNER JOIN League AS t2 ON t1.id = t2.country_id WHERE t2.name = 'Italy Serie A'",
+    "difficulty": "simple"
+  },
+  {
+    "question": "List all the short name of the football team that had a home team goal of 10?",
+    "expected_sql": "SELECT t1.team_short_name FROM Team AS t1 INNER JOIN Match AS t2 ON t1.team_api_id = t2.home_team_api_id WHERE t2.home_team_goal = 10",
+    "selector_output": "SELECT t1.team_short_name FROM Team AS t1 INNER JOIN Match AS t2 ON t1.team_api_id = t2.home_team_api_id WHERE t2.home_team_goal = 10",
+    "difficulty": "simple"
+  },
+  {
+    "question": "What's the long name for the team GEN?",
+    "expected_sql": "SELECT team_long_name FROM Team WHERE team_short_name = 'GEN'",
+    "selector_output": "SELECT team_long_name FROM Team WHERE team_short_name = 'GEN'",
+    "difficulty": "simple"
+  },
+  {
+    "question": "Which player is older, Aaron Lennon or Abdelaziz Barrada?",
+    "expected_sql": "SELECT player_name FROM Player WHERE player_name IN ('Aaron Lennon', 'Abdelaziz Barrada') ORDER BY birthday ASC LIMIT 1",
+    "selector_output": "SELECT player_name FROM Player WHERE player_name IN ('Aaron Lennon', 'Abdelaziz Barrada') ORDER BY birthday ASC LIMIT 1",
+    "difficulty": "simple"
+  },
+  {
+    "question": "Which player is the tallest?",
+    "expected_sql": "SELECT player_name FROM Player ORDER BY height DESC LIMIT 1",
+    "selector_output": "SELECT player_name FROM Player ORDER BY height DESC LIMIT 1",
+    "difficulty": "simple"
+  },
+  {
+    "question": "Among the players born before the year 1986, how many of them would remain in his position and defense while the team attacked?",
+    "expected_sql": "SELECT COUNT(DISTINCT t1.player_name) FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE STRFTIME('%Y',t1.birthday) < '1986' AND t2.defensive_work_rate = 'high'",
+    "selector_output": "[Error] No SQL found in output",
+    "difficulty": "challenging"
+  },
+  {
+    "question": "For the players who had a 77 points overall rating on 2016/6/23, who was the oldest? Give the name of the player.",
+    "expected_sql": "SELECT t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE SUBSTR(t2.`date`, 1, 10) = '2016-06-23' AND t2.overall_rating = 77 ORDER BY t1.birthday ASC LIMIT 1",
+    "selector_output": "[Error] No SQL found in output",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "How was Francesco Migliore's attacking work rate on 2015/5/1?",
+    "expected_sql": "SELECT t2.attacking_work_rate FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.`date` LIKE '2015-05-01%' AND t1.player_name = 'Francesco Migliore'",
+    "selector_output": "SELECT t2.attacking_work_rate FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.`date` LIKE '2015-05-01%' AND t1.player_name = 'Francesco Migliore'",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "Tell the defensive work rate for Kevin Berigaud on 2013/2/22.",
+    "expected_sql": "SELECT t2.defensive_work_rate FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_fifa_api_id = t2.player_fifa_api_id WHERE SUBSTR(t2.`date`, 1, 10) = '2013-02-22' AND t1.player_name = 'Kevin Berigaud'",
+    "selector_output": "[Error] No SQL found in output",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "When was the first time did Kevin Constant have his highest crossing score? Give the date.",
+    "expected_sql": "SELECT `date` FROM ( SELECT t2.crossing, t2.`date` FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_fifa_api_id = t2.player_fifa_api_id WHERE t1.player_name = 'Kevin Constant' ORDER BY t2.crossing DESC) ORDER BY date DESC LIMIT 1",
+    "selector_output": "[Error] No SQL found in output",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "What was the build up play speed class for \"Willem II\" on 2011/2/22?",
+    "expected_sql": "SELECT t2.buildUpPlaySpeedClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'Willem II' AND SUBSTR(t2.`date`, 1, 10) = '2011-02-22'",
+    "selector_output": "SELECT t2.buildUpPlaySpeedClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'Willem II' AND SUBSTR(t2.`date`, 1, 10) = '2011-02-22'",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "How was the build up play dribbling class for \"LEI\" on 2015/9/10?",
+    "expected_sql": "SELECT t2.buildUpPlayDribblingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_short_name = 'LEI' AND SUBSTR(t2.`date`, 1, 10) = '2015-09-10'",
+    "selector_output": "SELECT t2.buildUpPlayDribblingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_short_name = 'LEI' AND SUBSTR(t2.`date`, 1, 10) = '2015-09-10'",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "Tell the build Up play passing class for \"FC Lorient\" on 2010/2/22.",
+    "expected_sql": "SELECT t2.buildUpPlayPassingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'FC Lorient' AND t2.`date` LIKE '2010-02-22%'",
+    "selector_output": "SELECT t2.buildUpPlayPassingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'FC Lorient' AND t2.`date` LIKE '2010-02-22%'",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "State the chance creation passing class for \"PEC Zwolle\" on 2013/9/20.",
+    "expected_sql": "SELECT t2.chanceCreationPassingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'PEC Zwolle' AND SUBSTR(t2.`date`, 1, 10) = '2013-09-20'",
+    "selector_output": "SELECT t2.chanceCreationPassingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'PEC Zwolle' AND SUBSTR(t2.`date`, 1, 10) = '2013-09-20'",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "What was the chance creation crossing class for \"Hull City\" on 2010/2/22?",
+    "expected_sql": "SELECT t2.chanceCreationCrossingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'Hull City' AND SUBSTR(t2.`date`, 1, 10) = '2010-02-22'",
+    "selector_output": "SELECT t2.chanceCreationCrossingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'Hull City' AND SUBSTR(t2.`date`, 1, 10) = '2010-02-22'",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "For the team \"Hannover 96\", what was its defence aggression class on 2015/9/10?",
+    "expected_sql": "SELECT t2.chanceCreationShootingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'Hannover 96' AND t2.`date` LIKE '2015-09-10%'",
+    "selector_output": "SELECT t2.chanceCreationShootingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'Hannover 96' AND t2.`date` LIKE '2015-09-10%'",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "What was the average overall rating for Marko Arnautovic from 2007/2/22 to 2016/4/21?",
+    "expected_sql": "SELECT CAST(SUM(t2.overall_rating) AS REAL) / COUNT(t2.id) FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_fifa_api_id = t2.player_fifa_api_id WHERE t1.player_name = 'Marko Arnautovic' AND SUBSTR(t2.`date`, 1, 10) BETWEEN '2007-02-22' AND '2016-04-21'",
+    "selector_output": "SELECT CAST(SUM(t2.overall_rating) AS REAL) / COUNT(t2.id) FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_fifa_api_id = t2.player_fifa_api_id WHERE t1.player_name = 'Marko Arnautovic' AND SUBSTR(t2.`date`, 1, 10) BETWEEN '2007-02-22' AND '2016-04-21'",
+    "difficulty": "challenging"
+  },
+  {
+    "question": "What percentage is Landon Donovan's overall rating higher than Jordan Bowery on 2013/7/12?",
+    "expected_sql": "SELECT (SUM(CASE WHEN t1.player_name = 'Landon Donovan' THEN t2.overall_rating ELSE 0 END) * 1.0 - SUM(CASE WHEN t1.player_name = 'Jordan Bowery' THEN t2.overall_rating ELSE 0 END)) * 100 / SUM(CASE WHEN t1.player_name = 'Landon Donovan' THEN t2.overall_rating ELSE 0 END) LvsJ_percent FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_fifa_api_id = t2.player_fifa_api_id WHERE SUBSTR(t2.`date`, 1, 10) = '2013-07-12'",
+    "selector_output": "[Error] No SQL found in output",
+    "difficulty": "challenging"
+  },
+  {
+    "question": "Sum up the away team goal scored by both Daan Smith and Filipe Ferreira.",
+    "expected_sql": "SELECT SUM(t2.away_team_goal) FROM Player AS t1 INNER JOIN match AS t2 ON t1.player_api_id = t2.away_player_5 WHERE t1.player_name IN ('Daan Smith', 'Filipe Ferreira')",
+    "selector_output": "SELECT SUM(t2.away_team_goal) FROM Player AS t1 INNER JOIN match AS t2 ON t1.player_api_id = t2.away_player_5 WHERE t1.player_name IN ('Daan Smith', 'Filipe Ferreira')",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "Calculate the total home team goal scored by players whose age are 30 years old and below.",
+    "expected_sql": "SELECT SUM(t2.home_team_goal) FROM Player AS t1 INNER JOIN match AS t2 ON t1.player_api_id = t2.away_player_1 WHERE datetime(CURRENT_TIMESTAMP, 'localtime') - datetime(T1.birthday) < 31",
+    "selector_output": "SELECT SUM(t2.home_team_goal) FROM Player AS t1 INNER JOIN match AS t2 ON t1.player_api_id = t2.away_player_1 WHERE datetime(CURRENT_TIMESTAMP, 'localtime') - datetime(T1.birthday) < 31",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "Who are the players that tend to be attacking when their mates were doing attack moves? List down their name.",
+    "expected_sql": "SELECT DISTINCT t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.attacking_work_rate = 'high'",
+    "selector_output": "SELECT DISTINCT t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.attacking_work_rate = 'high'",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "Among the players with finishing rate of 1, pick the eldest player and state the player's name.",
+    "expected_sql": "SELECT DISTINCT t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.finishing = 1 ORDER BY t1.birthday ASC LIMIT 1",
+    "selector_output": "SELECT DISTINCT t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.finishing = 1 ORDER BY t1.birthday ASC LIMIT 1",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "What are the short name of team who played safe while creating chance of passing?",
+    "expected_sql": "SELECT DISTINCT t1.team_short_name FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t2.chanceCreationPassingClass = 'Safe'",
+    "selector_output": "SELECT DISTINCT t1.team_short_name FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t2.chanceCreationPassingClass = 'Safe'",
+    "difficulty": "moderate"
+  },
+  {
+    "question": "What was the final score for the match on September 24, 2008, in the Belgian Jupiler League between the home team and the away team?",
+    "expected_sql": "SELECT t2.home_team_goal, t2.away_team_goal FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t1.name = 'Belgium Jupiler League' AND t2.`date` LIKE '2008-09-24%'",
+    "selector_output": "SELECT t2.home_team_goal, t2.away_team_goal FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t1.name = 'Belgium Jupiler League' AND t2.`date` LIKE '2008-09-24%'",
+    "difficulty": "challenging"
+  },
+  {
+    "question": "What are Alexis Blin's sprint speed, agility, and acceleration scores?",
+    "expected_sql": "SELECT sprint_speed, agility, acceleration FROM Player_Attributes WHERE player_api_id IN ( SELECT player_api_id FROM Player WHERE player_name = 'Alexis Blin' )",
+    "selector_output": "SELECT sprint_speed, agility, acceleration FROM Player_Attributes WHERE player_api_id IN ( SELECT player_api_id FROM Player WHERE player_name = 'Alexis Blin' )",
+    "difficulty": "simple"
+  },
+  {
+    "question": "In the 2015–2016 season, how many games were played in the Italian Serie A league?",
+    "expected_sql": "SELECT COUNT(t2.id) FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t1.name = 'Italy Serie A' AND t2.season = '2015/2016'",
+    "selector_output": "SELECT COUNT(t2.id) FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t1.name = 'Italy Serie A' AND t2.season = '2015/2016'",
+    "difficulty": "simple"
+  },
+  {
+    "question": "What was the highest score of the home team in the Netherlands Eredivisie league?",
+    "expected_sql": "SELECT MAX(t2.home_team_goal) FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t1.name = 'Netherlands Eredivisie'",
+    "selector_output": "SELECT MAX(t2.home_team_goal) FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t1.name = 'Netherlands Eredivisie'",
+    "difficulty": "simple"
+  }
+]

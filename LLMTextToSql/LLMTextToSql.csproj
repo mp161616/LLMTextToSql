@@ -11,15 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Scripts\run_evaluation_refiner_agent.py" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Schemas\" />
+    <Folder Include="Scripts\ClaudeAgents\EvaluationResults\" />
+    <Folder Include="Scripts\OpenAiAgents\EvaluationResults\" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Scripts\config.json" />
+    <None Include="Scripts\Config\config.json" />
   </ItemGroup>
 
   <ItemGroup>

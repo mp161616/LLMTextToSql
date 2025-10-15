@@ -24,6 +24,7 @@ namespace LLMTextToSql.Agents
                $"\"{Escape(flawedSql)}\"",
                $"\"{Escape(err)}\"",
                $"\"{Escape(question)}\"",
+               "\"\"",
                $"\"{Escape(_schema)}\"",
                $"\"{Escape(_dsn)}\""
            );
@@ -43,30 +44,42 @@ namespace LLMTextToSql.Agents
             string stderr = await proc.StandardError.ReadToEndAsync();
             await proc.WaitForExitAsync();
 
-            if (!string.IsNullOrWhiteSpace(stderr))
-                return $"[Python Refiner Error]\n{stderr}";
+            string combined = $"{stdout}\n{stderr}".Trim();
 
-            return ExtractSql(stdout);
+            var refinedSql = ExtractSql(combined);
+            if (!string.IsNullOrEmpty(refinedSql))
+            {
+                return refinedSql;
+            }
+
+            // If no SQL found at all → real Python error
+            if (!string.IsNullOrWhiteSpace(stderr))
+            {
+                return $"[Python Error]\n{stderr}";
+            }
+
+            return stdout.Trim();
+
         }
 
         static string Escape(string s) => s.Replace("\"", "\\\"");
-        private static readonly Regex _rxCodeBlock = new Regex(@"```sql\s*(.*?)\s*```", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-        private static readonly Regex _rxFallback = new Regex(@"(?i)\b(?:SELECT|UPDATE|DELETE)\b[\s\S]+?(?=(;|\z))", RegexOptions.Compiled);
+        private static readonly Regex _rxFallback =
+               new Regex(@"(?i)\b(SELECT|UPDATE|DELETE|INSERT)\b[\s\S]+?(?=(;|\n|$))", RegexOptions.Compiled);
 
         private static string ExtractSql(string text)
         {
-           var codeBlockMatch = _rxCodeBlock.Match(text);
-           if (codeBlockMatch.Success)
-           {
-                return codeBlockMatch.Groups[1].Value.Trim();
-           }
-
             var matches = _rxFallback.Matches(text);
+
             if (matches.Count > 0)
             {
                 var last = matches[matches.Count - 1].Value.Trim();
-                return last.EndsWith(";") ? last : last + ";";
+
+                if (!last.EndsWith(";"))
+                    last += ";";
+
+                return last;
             }
+
             return text.Trim();
         }
 
