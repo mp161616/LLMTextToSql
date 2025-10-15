@@ -9,22 +9,19 @@ namespace LLMTextToSql.Services
     {
         private readonly HttpClient _httpClient;
         private readonly IPythonSelectorAgent _selector;
-        private readonly IAugmentService _augmenter;
         private readonly IFixerService _fixer;
         private readonly string _schemaJson;
 
         public OllamaLlmService(
             HttpClient httpClient,
             IPythonSelectorAgent selector,
-            IAugmentService augmenter,
             IFixerService fixer)
         {
             _httpClient = httpClient;
             _selector = selector;
-            _augmenter = augmenter;
             _fixer = fixer;
 
-            var schemaPath = Path.Combine(AppContext.BaseDirectory, "Schemas", "pagila_compressed_schema.json");
+            var schemaPath = Path.Combine(AppContext.BaseDirectory, "Schemas", "card_games_schema.json");
             _schemaJson = File.ReadAllText(schemaPath);
         }
 

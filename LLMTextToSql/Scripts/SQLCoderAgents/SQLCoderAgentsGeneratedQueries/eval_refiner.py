@@ -2,9 +2,16 @@
 import subprocess
 import os
 
-EVIDENCE_FILE = "config.json"
-SELECTOR_RESULTS_FILE = "output/eval_results.json"
-REFINER_RESULTS_FILE = "output/refiner_eval_results.json"
+# Load Paths from configuration
+def load_settings(path="../appsettings.json"):
+    with open(path, "r", encoding="utf-8") as f:
+        config = json.load(f)
+    return config["Paths"]["SqlCoderSelectorGeneratedQueries"], config["Paths"]["SqlCoderRefinerGeneratedQueries"]
+
+selector_results, refiner_results = load_settings()
+EVIDENCE_FILE = "Config/config.json"
+SELECTOR_RESULTS_FILE = selector_results
+REFINER_RESULTS_FILE = refiner_results
 
 SCHEMA_PATH = "../Schemas/card_games_schema.json"
 DSN = "host=localhost port=5432 dbname=card_games user=postgres password=admin"
@@ -27,20 +34,25 @@ for test in selector_results:
     evidence = evidence_map.get(question, "")
 
     try:
-        output = subprocess.check_output(
-            [
-                "python", "refiner.py",
-                selector_output,
-                "[SQL Error] No SQL" if "Error" in selector_output else "",
-                question,
-                evidence,
-                SCHEMA_PATH,
-                DSN
-            ],
-            stderr=subprocess.STDOUT,
-            text=True,
-            timeout=300
+        full_output = subprocess.check_output(
+           [
+              "python", "SqlCoderAgents/Agents/refiner.py",
+              selector_output,
+              "[SQL Error] No SQL" if "Error" in selector_output else "",
+              question,
+              evidence,
+              SCHEMA_PATH,
+              DSN
+          ],
+          stderr=subprocess.STDOUT,
+          text=True,
+          timeout=300
         ).strip()
+
+         # Get the last non-empty line (SqlCoder's final SQL output)
+        lines = full_output.splitlines()
+        output = next((line for line in reversed(lines) if line.strip() and not line.startswith("[DEBUG]")), "[Error] No output")
+
     except subprocess.CalledProcessError as e:
         output = f"[Error] {e.output.strip()}"
     except subprocess.TimeoutExpired:

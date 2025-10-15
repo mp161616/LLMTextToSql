@@ -14,7 +14,7 @@
     {
         "question": "Name all cards with 2015 frame style ranking below 100 on EDHRec.",
         "expected_sql": "SELECT id FROM cards WHERE edhrecRank < 100 AND frameVersion = 2015",
-        "refiner_output": "SELECT id, name FROM cards WHERE frameVersion = '2015' AND edhRank < 100",
+        "refiner_output": "SELECT id, name FROM cards WHERE frameVersion = '2015' AND edhrecRank < 100",
         "difficulty": "simple"
     },
     {

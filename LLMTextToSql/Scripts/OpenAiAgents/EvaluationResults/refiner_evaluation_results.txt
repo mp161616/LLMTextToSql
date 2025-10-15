@@ -1,33 +1,53 @@
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:06
+EVALUATION RUN: 2025-10-04 13:12:42
 ================================================================================
 
 QUESTION: Which are the cards that have incredibly powerful foils.
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT id FROM cards WHERE cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NOT NULL
 
 GENERATED SQL:
-[Error] No SQL found in output
+SELECT id FROM cards WHERE cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NOT NULL
 
 RESULT:
-No result
+           0
+0      25075
+1      25076
+2      25077
+3      25078
+4      25079
+5      25080
+6      25081
+7      25082
+8      25083
+[... truncated ...]
 
 EXPECTED RESULT:
-N/A
+           0
+0      25075
+1      25076
+2      25077
+3      25078
+4      25079
+5      25080
+6      25081
+7      25082
+8      25083
+[... truncated ...]
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:06
+EVALUATION RUN: 2025-10-04 13:12:42
 ================================================================================
 
 QUESTION: What are the borderless cards available without powerful foils?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -35,41 +55,41 @@ EXPECTED SQL:
 SELECT id FROM cards WHERE borderColor = 'borderless' AND (cardKingdomId IS NULL OR cardKingdomId IS NULL)
 
 GENERATED SQL:
-SELECT id FROM cards WHERE borderColor = 'borderless' AND (cardKingdomFoilId IS NULL OR cardKingdomFoilId IS NULL) AND (cardKingdomId IS NULL OR cardKingdomId IS NULL)
+SELECT id FROM cards WHERE bordercolor = 'borderless' AND NOT (cardkingdomfoilid IS NOT NULL AND cardkingdomid IS NOT NULL)
 
 RESULT:
         0
-0   23004
-1   25350
-2   25355
-3   25357
-4   25359
-5   25361
-6   48432
-7   48433
-8   48434
+0   25350
+1   25355
+2   25357
+3   25359
+4   25361
+5   33094
+6   33095
+7   33096
+8   33097
 [... truncated ...]
 
 EXPECTED RESULT:
         0
-0   23004
-1   25350
-2   25355
-3   25357
-4   25359
-5   25361
-6   33094
-7   33095
-8   33096
+0   25350
+1   25355
+2   25357
+3   25359
+4   25361
+5   33094
+6   33095
+7   33096
+8   33097
 [... truncated ...]
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:07
+EVALUATION RUN: 2025-10-04 13:12:42
 ================================================================================
 
 QUESTION: Name all cards with 2015 frame style ranking below 100 on EDHRec.
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: FAILURE
 
@@ -77,7 +97,7 @@ EXPECTED SQL:
 SELECT id FROM cards WHERE edhrecRank < 100 AND frameVersion = 2015
 
 GENERATED SQL:
-SELECT id, name FROM cards WHERE frameVersion = '2015' AND edhRank < 100
+SELECT name FROM cards WHERE frameversion = '2015' AND CAST(edhrecrank AS integer) < 100
 
 RESULT:
 N/A
@@ -90,12 +110,12 @@ HINT:  No operator matches the given name and argument types. You might need to 
 
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:07
+EVALUATION RUN: 2025-10-04 13:12:42
 ================================================================================
 
 QUESTION: What kind of printing is on the card that Daren Bader created?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -103,20 +123,16 @@ EXPECTED SQL:
 SELECT DISTINCT availability FROM cards WHERE artist = 'Daren Bader'
 
 GENERATED SQL:
-SELECT c.availability FROM public.cards as c WHERE artist = 'Daren Bader'
+SELECT DISTINCT availability FROM cards WHERE artist = 'Daren Bader'
 
 RESULT:
-               0
-0     mtgo,paper
-1     mtgo,paper
-2     mtgo,paper
-3     mtgo,paper
-4     mtgo,paper
-5     mtgo,paper
-6     mtgo,paper
-7     mtgo,paper
-8     mtgo,paper
-[... truncated ...]
+             0
+0        arena
+1  arena,paper
+2    dreamcast
+3         mtgo
+4   mtgo,paper
+5        paper
 
 EXPECTED RESULT:
              0
@@ -128,12 +144,12 @@ EXPECTED RESULT:
 5        paper
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:07
+EVALUATION RUN: 2025-10-04 13:12:42
 ================================================================================
 
 QUESTION: How many cards are oversized, reprinted, and printed for promotions?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -141,7 +157,7 @@ EXPECTED SQL:
 SELECT COUNT(id) FROM cards WHERE isOversized = 1 AND isReprint = 1 AND isPromo = 1
 
 GENERATED SQL:
-SELECT COUNT(*) FROM cards WHERE isOversized = 1 AND isReprint = 1 AND isPromo = 1
+SELECT COUNT(id) FROM cards WHERE isOversized = 1 AND isReprint = 1 AND isPromo = 1
 
 RESULT:
     0
@@ -152,27 +168,52 @@ EXPECTED RESULT:
 0  17
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:07
+EVALUATION RUN: 2025-10-04 13:12:42
+================================================================================
+
+QUESTION: What is the language of the card with the multiverse number 149934?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT language FROM foreign_data WHERE multiverseid = 149934
+
+GENERATED SQL:
+SELECT language FROM foreign_data WHERE multiverseid = 149934
+
+RESULT:
+        0
+0  French
+
+EXPECTED RESULT:
+        0
+0  French
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:12:42
 ================================================================================
 
 QUESTION: List all the mythic rarity print cards banned in gladiator format.
 
-DIFFICULTY: moderate
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT DISTINCT T1.id FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'gladiator' AND T2.status = 'Banned' AND T1.rarity = 'mythic'
 
 GENERATED SQL:
-SELECT DISTINCT T2.name FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'gladiator' AND T2.status = 'Banned' AND rarity = 'mythic'
+SELECT DISTINCT T1.id FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'gladiator' AND T2.status = 'Banned' AND T1.rarity = 'mythic'
 
 RESULT:
-column t2.name does not exist
-LINE 1: SELECT DISTINCT T2.name FROM cards AS T1 INNER JOIN legaliti...
-                        ^
-HINT:  Perhaps you meant to reference the column "t1.name".
-
+       0
+0  17983
+1  18058
+2  29523
+3  38736
+4  38737
 
 EXPECTED RESULT:
        0
@@ -183,26 +224,26 @@ EXPECTED RESULT:
 4  38737
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:07
+EVALUATION RUN: 2025-10-04 13:12:43
 ================================================================================
 
 QUESTION: For artifact type of cards that do not have multiple faces on the same card, state its legalities status for vintage play format.
 
-DIFFICULTY: moderate
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT DISTINCT T2.status FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.type = 'Artifact' AND T2.format = 'vintage' AND T1.side IS NULL
 
 GENERATED SQL:
-SELECT DISTINCT T2.status FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.type = 'Artifact' AND (T1.side IS NULL AND T2.format = 'vintage'
+SELECT DISTINCT T2.status FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.type = 'Artifact' AND T2.format = 'vintage' AND T1.side IS NULL
 
 RESULT:
-syntax error at end of input
-LINE 1: ... = 'Artifact' AND (T1.side IS NULL AND T2.format = 'vintage'
-                                                                       ^
-
+            0
+0      Banned
+1       Legal
+2  Restricted
 
 EXPECTED RESULT:
             0
@@ -211,48 +252,75 @@ EXPECTED RESULT:
 2  Restricted
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:07
+EVALUATION RUN: 2025-10-04 13:12:43
 ================================================================================
 
 QUESTION: List all the card id and artist with unknown power which are legal for commander play format.
 
-DIFFICULTY: moderate
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT T1.id, T1.artist FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.status = 'Legal' AND T2.format = 'commander' AND (T1.power IS NULL OR T1.power = '*')
 
 GENERATED SQL:
-[Error] No SQL found in output
+SELECT T1.id, T1.artist FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.status = 'Legal' AND T2.format = 'commander' AND (T1.power IS NULL OR T1.power = '*')
 
 RESULT:
-No result
+           0                                   1
+0      15588                   Magali Villeneuve
+1      15589                       Kieran Yanner
+2      15595                        Josu Hernaiz
+3      15596                       Vincent Proce
+4      15597                     Franz Vohwinkel
+5      15599                     Steven Belledin
+6      15600                       Philip Straub
+7      15601                      Eric Deschamps
+8      15602                       Rob Alexander
+[... truncated ...]
 
 EXPECTED RESULT:
-N/A
+           0                                   1
+0      15588                   Magali Villeneuve
+1      15589                       Kieran Yanner
+2      15595                        Josu Hernaiz
+3      15596                       Vincent Proce
+4      15597                     Franz Vohwinkel
+5      15599                     Steven Belledin
+6      15600                       Philip Straub
+7      15601                      Eric Deschamps
+8      15602                       Rob Alexander
+[... truncated ...]
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:08
+EVALUATION RUN: 2025-10-04 13:12:43
 ================================================================================
 
 QUESTION: Find all cards illustrated by Stephen Daniel and describe the text of the ruling of these cards. State if these cards have missing or degraded properties and values.
 
-DIFFICULTY: moderate
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT T1.id, T2.text, T1.hasContentWarning FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.artist = 'Stephen Daniele'
 
 GENERATED SQL:
-SELECT T1.id, T2.text, COALESCE(T1.hasContentWarning, FALSE) AS hasContentWarning FROM cards T1 INNER JOIN rulings T2 ON T1.uuid = T2.uuid WHERE EXISTS ( SELECT 1 FROM cards C WHERE C.artist = 'Stephen Daniele' AND C.uuid = T1.uuid ) AND T2.text IS NOT NULL
+SELECT T1.id, T2.text, T1.hasContentWarning FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.artist = 'Stephen Daniele'
 
 RESULT:
-COALESCE types integer and boolean cannot be matched
-LINE 1: ...CT T1.id, T2.text, COALESCE(T1.hasContentWarning, FALSE) AS ...
-                                                             ^
-
+        0                                                                                                                                                                                                                                                                1  2
+0      29  You can’t put an Aura card from your hand onto the battlefield this way if that Aura can’t legally enchant Academy Researchers. For example, you can’t put an Aura with “enchant land” or “enchant green creature” onto the battlefield attached to Academy Res  0
+1    3872                 This card now has Enchant Swamp, which works exactly like any other Enchant ability. This means it can only be cast targeting a Swamp, and it will be put into its owner’s graveyard if the permanent it’s attached to ever stops being a Swamp.  0
+2    6651                      Cycling is an activated ability. Effects that interact with activated abilities (such as Stifle or Rings of Brighthearth) will interact with cycling. Effects that interact with spells (such as Remove Soul or Faerie Tauntings) will not.  0
+3    6652                      Cycling is an activated ability. Effects that interact with activated abilities (such as Stifle or Rings of Brighthearth) will interact with cycling. Effects that interact with spells (such as Remove Soul or Faerie Tauntings) will not.  0
+4    7950                      Cycling is an activated ability. Effects that interact with activated abilities (such as Stifle or Rings of Brighthearth) will interact with cycling. Effects that interact with spells (such as Remove Soul or Faerie Tauntings) will not.  0
+5    7970                      Cycling is an activated ability. Effects that interact with activated abilities (such as Stifle or Rings of Brighthearth) will interact with cycling. Effects that interact with spells (such as Remove Soul or Faerie Tauntings) will not.  0
+6    8107                      Cycling is an activated ability. Effects that interact with activated abilities (such as Stifle or Rings of Brighthearth) will interact with cycling. Effects that interact with spells (such as Remove Soul or Faerie Tauntings) will not.  0
+7    8109                      Cycling is an activated ability. Effects that interact with activated abilities (such as Stifle or Rings of Brighthearth) will interact with cycling. Effects that interact with spells (such as Remove Soul or Faerie Tauntings) will not.  0
+8    8448                      Cycling is an activated ability. Effects that interact with activated abilities (such as Stifle or Rings of Brighthearth) will interact with cycling. Effects that interact with spells (such as Remove Soul or Faerie Tauntings) will not.  0
+[... truncated ...]
 
 EXPECTED RESULT:
         0                                                                                                                                                                                                                                                                1  2
@@ -268,12 +336,12 @@ EXPECTED RESULT:
 [... truncated ...]
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:14
+EVALUATION RUN: 2025-10-04 13:12:43
 ================================================================================
 
 QUESTION: Name all the cards which have alternative language in Japanese.
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -281,41 +349,41 @@ EXPECTED SQL:
 SELECT T1.name FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.language = 'Japanese'
 
 GENERATED SQL:
-SELECT DISTINCT name FROM foreign_data WHERE language = 'Japanese'
+SELECT T1.name FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.language = 'Japanese'
 
 RESULT:
-                                                     0
-0                                               壊疽のゾンビ
-1                                              突撃ゼッペリド
-2                                              焼灼スリヴァー
-3                                                 魂の威厳
-4                                        屍錬金術師、ルーデヴィック
-5                                               水晶の這行器
-6                                             過去との取り組み
-7                                            ギルドパクトの秘本
-8                                                溶岩の飛散
+                                                                 0
+0                                         Drakuseth, Maw of Flames
+1                                                     Ember Hauler
+2                                                   Fire Elemental
+3                                                      Flame Sweep
+4                                                              Fry
+5                                             Glint-Horn Buccaneer
+6                                              Goblin Bird-Grabber
+7                                                Goblin Ringleader
+8                                                  Goblin Smuggler
 [... truncated ...]
 
 EXPECTED RESULT:
                                                                  0
-0                                                Ancestor's Chosen
-1                                                   Angel of Mercy
-2                                                 Aven Cloudchaser
-3                                                   Ballista Squad
-4                                                          Bandage
-5                                            Beacon of Immortality
-6                                                  Benalish Knight
-7                                         Cho-Manno, Revolutionary
-8                                                          Condemn
+0                                         Drakuseth, Maw of Flames
+1                                                     Ember Hauler
+2                                                   Fire Elemental
+3                                                      Flame Sweep
+4                                                              Fry
+5                                             Glint-Horn Buccaneer
+6                                              Goblin Bird-Grabber
+7                                                Goblin Ringleader
+8                                                  Goblin Smuggler
 [... truncated ...]
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:15
+EVALUATION RUN: 2025-10-04 13:12:44
 ================================================================================
 
 QUESTION: Calculate the percentage of the cards availabe in Chinese Simplified.
 
-DIFFICULTY: moderate
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -323,7 +391,7 @@ EXPECTED SQL:
 SELECT CAST(SUM(CASE WHEN T2.language = 'Chinese Simplified' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid
 
 GENERATED SQL:
-SELECT DISTINCT CAST(SUM(CASE WHEN T2.language = 'Chinese Simplified' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid
+SELECT CAST(SUM(CASE WHEN T2.language = 'Chinese Simplified' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid
 
 RESULT:
                    0
@@ -334,12 +402,12 @@ EXPECTED RESULT:
 0  8.773399659641314
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:15
+EVALUATION RUN: 2025-10-04 13:12:44
 ================================================================================
 
 QUESTION: List all the sets available in Italian translation. State the total number of cards per set.
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -347,19 +415,19 @@ EXPECTED SQL:
 SELECT T1.name, T1.totalSetSize FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Italian'
 
 GENERATED SQL:
-SELECT DISTINCT T1.name, CASE WHEN T1.totalSetSize > 0 THEN T1.totalSetSize ELSE NULL END AS totalSetSize FROM sets T1 INNER JOIN set_translations T2 ON T1.code = T2.setCode WHERE EXISTS ( SELECT 1 FROM set_translations ST WHERE ST.language = 'Italian' AND ST.setCode = T1.code ) AND LENGTH(T1.name) > 1
+SELECT T1.name, T1.totalSetSize FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Italian'
 
 RESULT:
                                            0    1
-0                                 Magic 2014  249
-1                         Throne of Eldraine  397
-2                     From the Vault: Realms   15
-3                            Shards of Alara  249
-4                                    Torment  143
-5                     From the Vault: Relics   15
-6                    Ravnica: City of Guilds  306
-7                Duel Decks: Jace vs. Vraska   88
-8                        Theros Beyond Death  358
+0                              Tenth Edition  508
+1                             Fourth Edition  379
+2                                 Fifth Dawn  165
+3                              Fifth Edition  460
+4                      Classic Sixth Edition  351
+5                            Seventh Edition  354
+6                             Eighth Edition  361
+7                              Ninth Edition  359
+8                              Aether Revolt  197
 [... truncated ...]
 
 EXPECTED RESULT:
@@ -376,12 +444,12 @@ EXPECTED RESULT:
 [... truncated ...]
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:15
+EVALUATION RUN: 2025-10-04 13:12:44
 ================================================================================
 
 QUESTION: How many types of cards does the artist Aaron Boyd illustrated about card art?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -389,7 +457,7 @@ EXPECTED SQL:
 SELECT COUNT(type) FROM cards WHERE artist = 'Aaron Boyd'
 
 GENERATED SQL:
-SELECT DISTINCT COUNT(type) FROM public.cards WHERE artist = 'Aaron Boyd'
+SELECT COUNT(type) FROM cards WHERE artist = 'Aaron Boyd'
 
 RESULT:
     0
@@ -400,12 +468,12 @@ EXPECTED RESULT:
 0  12
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:15
+EVALUATION RUN: 2025-10-04 13:12:44
 ================================================================================
 
 QUESTION: What is the keyword found on card 'Angel of Mercy'?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -413,32 +481,23 @@ EXPECTED SQL:
 SELECT DISTINCT keywords FROM cards WHERE name = 'Angel of Mercy'
 
 GENERATED SQL:
-SELECT keywords FROM cards WHERE name = 'Angel of Mercy'
+SELECT DISTINCT keywords FROM cards WHERE name = 'Angel of Mercy'
 
 RESULT:
-         0
-0   Flying
-1   Flying
-2   Flying
-3   Flying
-4   Flying
-5   Flying
-6   Flying
-7   Flying
-8   Flying
-[... truncated ...]
+        0
+0  Flying
 
 EXPECTED RESULT:
         0
 0  Flying
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:15
+EVALUATION RUN: 2025-10-04 13:12:44
 ================================================================================
 
 QUESTION: How many cards have infinite power?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -446,7 +505,7 @@ EXPECTED SQL:
 SELECT COUNT(*) FROM cards WHERE power = '*'
 
 GENERATED SQL:
-SELECT DISTINCT COUNT(id) FROM cards WHERE power = '*'
+SELECT COUNT(*) FROM cards WHERE power = '*'
 
 RESULT:
      0
@@ -457,12 +516,12 @@ EXPECTED RESULT:
 0  429
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:16
+EVALUATION RUN: 2025-10-04 13:12:44
 ================================================================================
 
 QUESTION: What type of promotion is of card 'Duress'?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -470,30 +529,30 @@ EXPECTED SQL:
 SELECT promoTypes FROM cards WHERE name = 'Duress' AND promoTypes IS NOT NULL
 
 GENERATED SQL:
-SELECT promoTypes FROM public.cards WHERE promoTypes IS NOT NULL AND name = 'Duress' AND promoTypes IS NOT NULL
+SELECT promoTypes FROM cards WHERE name = 'Duress' AND promoTypes IS NOT NULL
 
 RESULT:
              0
-0  tourney,fnm
-1  arenaleague
+0  arenaleague
+1  mediainsert
 2  mediainsert
-3  mediainsert
+3  tourney,fnm
 
 EXPECTED RESULT:
              0
-0  tourney,fnm
-1  arenaleague
+0  arenaleague
+1  mediainsert
 2  mediainsert
-3  mediainsert
+3  tourney,fnm
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:16
+EVALUATION RUN: 2025-10-04 13:12:44
 ================================================================================
 
 QUESTION: cards are not directly linked to language but through table 'set'. you need to add set in covered table & rephrase your question
 What are the languages available for the set that card 'Angel of Mercy' is in?
 
-DIFFICULTY: moderate
+DIFFICULTY: unknown
 
 STATUS: FAILURE
 
@@ -501,7 +560,51 @@ EXPECTED SQL:
 SELECT language FROM set_translations WHERE id IN ( SELECT id FROM cards WHERE name = 'Angel of Mercy' )
 
 GENERATED SQL:
-[Timeout]
+[Error] [DEBUG] Received flawed SQL: SELECT DISTINCT st.language
+[DEBUG] Received error message: 
+[DEBUG] Received question: cards are not directly linked to language but through table 'set'. you need to add set in covered table & rephrase your question
+What are the languages available for the set that card 'Angel of Mercy' is in?
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT st.language
+[DEBUG] Initial SQL execution error: missing FROM-clause entry for table "st"
+LINE 1: SELECT DISTINCT st.language LIMIT 1
+                        ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT st.languageFROM cards cJOIN sets s ON s.code = c.setcodeJOIN set_translations st ON st.setcode = s.codeWHERE c.name = 'Angel of Mercy
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT st.languageFROM cards cJOIN sets s ON s.code...
+                                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT st.languageFROM cards cJOIN sets s ON s.code = c.setcodeJOIN set_translations st ON st.setcode = s.codeWHERE c.name = 'Angel of Mercy';
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT st.languageFROM cards cJOIN sets s ON s.code...
+                                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT st.languageFROM cards cJOIN sets s ON s.code = c.setcodeJOIN set_translations st ON st.setcode = s.codeWHERE c.name = 'Angel of Mercy';
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT st.languageFROM cards cJOIN sets s ON s.code...
+                                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT st.languageFROM cards cJOIN sets s ON s.code = c.setcodeJOIN set_translations st ON st.setcode = s.codeWHERE c.name = 'Angel of Mercy';
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT st.languageFROM cards cJOIN sets s ON s.code...
+                                              ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT st.languageFROM cards cJOIN sets s ON s.code = c.setcodeJOIN set_translations st ON st.setcode = s.codeWHERE c.name = 'Angel of Mercy';
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT st.languageFROM cards cJOIN sets s ON s.code...
+                                              ^
+
+[DEBUG] Final failed SQL: SELECT DISTINCT st.languageFROM cards cJOIN sets s ON s.code = c.setcodeJOIN set_translations st ON st.setcode = s.codeWHERE c.name = 'Angel of Mercy';
+[ERROR] Model failed to produce a valid SQL query after all retries.
 
 RESULT:
 No result
@@ -510,34 +613,50 @@ EXPECTED RESULT:
 N/A
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:16
+EVALUATION RUN: 2025-10-04 13:12:44
 ================================================================================
 
 QUESTION: Among the Artifact cards, which are black color and comes with foreign languague translation?
 
-DIFFICULTY: moderate
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT DISTINCT T1.name FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T1.originalType = 'Artifact' AND T1.colors = 'B'
 
 GENERATED SQL:
-[Timeout]
+SELECT DISTINCT T1.name FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T1.originalType = 'Artifact' AND T1.colors = 'B'
 
 RESULT:
-No result
+                       0
+0      Bloodsoaked Altar
+1  Executioner's Capsule
+2          Immortal Coil
+3       Netherborn Altar
+4            Onyx Goblet
+5       Scepter of Fugue
+6      Wishclaw Talisman
+7       Witch's Cauldron
 
 EXPECTED RESULT:
-N/A
+                       0
+0      Bloodsoaked Altar
+1  Executioner's Capsule
+2          Immortal Coil
+3       Netherborn Altar
+4            Onyx Goblet
+5       Scepter of Fugue
+6      Wishclaw Talisman
+7       Witch's Cauldron
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:16
+EVALUATION RUN: 2025-10-04 13:12:44
 ================================================================================
 
 QUESTION: Pick 3 cards with rarity of uncommon, list down name these cards according to ascending order of it's ruling date.
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: FAILURE
 
@@ -557,63 +676,60 @@ LINE 1: ...d = T2.uuid WHERE T1.rarity = 'uncommon' ORDER BY T2.date AS...
 
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:16
+EVALUATION RUN: 2025-10-04 13:12:44
 ================================================================================
 
 QUESTION: On how many cards designed by John Avon is its foil non-powerful?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT COUNT(id) FROM cards WHERE (cardKingdomId IS NULL OR cardKingdomFoilId IS NULL) AND artist = 'John Avon'
 
 GENERATED SQL:
-SELECT COUNT(*) FROM cards WHERE cards.artist = 'John Avon' AND cardKingdomId IS NULL
+SELECT COUNT(id) FROM cards WHERE (cardKingdomId IS NULL OR cardKingdomFoilId IS NULL) AND artist = 'John Avon'
 
 RESULT:
      0
-0  361
+0  739
 
 EXPECTED RESULT:
      0
 0  739
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:16
+EVALUATION RUN: 2025-10-04 13:12:44
 ================================================================================
 
 QUESTION: How many white bordered cards are powerful?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT COUNT(id) FROM cards WHERE borderColor = 'white' AND cardKingdomId IS NOT NULL AND cardKingdomFoilId IS NOT NULL
 
 GENERATED SQL:
-SELECT DISTINCT COUNT(id) FROM cards WHERE border_color = 'white' AND cardKingdomId IS NOT NULL AND cardKingdomFoilId IS NOT NULL
+SELECT COUNT(id) FROM cards WHERE borderColor = 'white' AND cardKingdomId IS NOT NULL AND cardKingdomFoilId IS NOT NULL
 
 RESULT:
-column "border_color" does not exist
-LINE 1: SELECT DISTINCT COUNT(id) FROM cards WHERE border_color = 'w...
-                                                   ^
-HINT:  Perhaps you meant to reference the column "cards.bordercolor".
-
+      0
+0  1050
 
 EXPECTED RESULT:
       0
 0  1050
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:16
+EVALUATION RUN: 2025-10-04 13:12:45
 ================================================================================
 
 QUESTION: How many cards designed by UDON and available in mtgo print type has a starting maximum hand size of -1?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -621,7 +737,7 @@ EXPECTED SQL:
 SELECT COUNT(id) FROM cards WHERE hAND = '-1' AND artist = 'UDON' AND Availability = 'mtgo' 
 
 GENERATED SQL:
-SELECT DISTINCT COUNT(id) FROM cards WHERE hAND = '-1' AND Availability = 'mtgo' AND artist = 'UDON'
+SELECT COUNT(id) FROM cards WHERE hAND = '-1' AND artist = 'UDON' AND Availability = 'mtgo'
 
 RESULT:
     0
@@ -632,12 +748,12 @@ EXPECTED RESULT:
 0  17
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:16
+EVALUATION RUN: 2025-10-04 13:12:45
 ================================================================================
 
 QUESTION: How many cards with a 1993 frame version and available on paper have a sensitive content warning?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: FAILURE
 
@@ -645,7 +761,7 @@ EXPECTED SQL:
 SELECT COUNT(id) FROM cards WHERE frameVersion = 1993 AND availability = 'paper' AND hasContentWarning = 1
 
 GENERATED SQL:
-SELECT DISTINCT COUNT(id) FROM cards WHERE cards.frameVersion = 1993 AND Availability = 'paper' AND hasContentWarning = 1
+SELECT COUNT(*) FROM cards WHERE frameversion = '1993' AND availability = 'paper' AND hascontentwarning = 1;
 
 RESULT:
 N/A
@@ -658,12 +774,12 @@ HINT:  No operator matches the given name and argument types. You might need to 
 
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:16
+EVALUATION RUN: 2025-10-04 13:12:45
 ================================================================================
 
 QUESTION: What is the mana cost of cards with a normal layout, a 2003 frame version, with a black border color, and available in paper and mtgo?
 
-DIFFICULTY: moderate
+DIFFICULTY: unknown
 
 STATUS: FAILURE
 
@@ -671,7 +787,7 @@ EXPECTED SQL:
 SELECT manaCost FROM cards WHERE availability = 'mtgo,paper' AND borderColor = 'black' AND frameVersion = 2003 AND layout = 'normal'
 
 GENERATED SQL:
-SELECT c.manaCost FROM cards AS c WHERE c.Availability = 'mtgo,paper' AND c.borderColor = 'black' AND c.frameVersion = '2003' AND c.layout = 'normal'
+SELECT manacost FROM cards WHERE availability = 'mtgo,paper' AND bordercolor = 'black' AND frameversion = '2003' AND layout = 'normal';
 
 RESULT:
 N/A
@@ -684,12 +800,12 @@ HINT:  No operator matches the given name and argument types. You might need to 
 
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:17
+EVALUATION RUN: 2025-10-04 13:12:45
 ================================================================================
 
-QUESTION: What is the unconverted mana do all the cards created by Rob Alexander cost in total?
+QUESTION: What is the  unconverted mana do all the cards created by Rob Alexander cost in total?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -697,41 +813,41 @@ EXPECTED SQL:
 SELECT manaCost FROM cards WHERE artist = 'Rob Alexander'
 
 GENERATED SQL:
-SELECT DISTINCT manaCost FROM cards WHERE artist = 'Rob Alexander'
+SELECT manaCost FROM cards WHERE artist = 'Rob Alexander'
 
 RESULT:
-                  0
-0               {1}
-1            {1}{B}
-2            {1}{G}
-3         {1}{G}{G}
-4            {1}{R}
-5         {1}{R}{R}
-6            {1}{U}
-7            {1}{W}
-8               {2}
-[... truncated ...]
-
-EXPECTED RESULT:
                    0
-0             {5}{W}
-1          {3}{G}{G}
-2               None
+0                {W}
+1                {U}
+2                {G}
 3               None
 4               None
 5               None
 6               None
-7               None
-8               None
+7                {W}
+8                {U}
+[... truncated ...]
+
+EXPECTED RESULT:
+                   0
+0                {W}
+1                {U}
+2                {G}
+3               None
+4               None
+5               None
+6               None
+7                {W}
+8                {U}
 [... truncated ...]
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:17
+EVALUATION RUN: 2025-10-04 13:12:45
 ================================================================================
 
 QUESTION: Lists all types of cards available in arena.
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -739,19 +855,19 @@ EXPECTED SQL:
 SELECT DISTINCT subtypes, supertypes FROM cards WHERE availability = 'arena' AND subtypes IS NOT NULL AND supertypes IS NOT NULL
 
 GENERATED SQL:
-SELECT DISTINCT subtypes, supertypes FROM cards WHERE availability = 'arena'
+SELECT DISTINCT subtypes, supertypes FROM cards WHERE availability = 'arena' AND subtypes IS NOT NULL AND supertypes IS NOT NULL
 
 RESULT:
-                           0          1
-0       Aetherborn,Artificer       None
-1           Aetherborn,Rogue  Legendary
-2           Aetherborn,Rogue       None
-3         Aetherborn,Vampire  Legendary
-4         Aetherborn,Vampire       None
-5         Aetherborn,Warrior       None
-6                      Ajani  Legendary
-7                      Angel       None
-8                   Antelope       None
+                          0          1
+0          Aetherborn,Rogue  Legendary
+1        Aetherborn,Vampire  Legendary
+2                     Ajani  Legendary
+3                     Bolas  Legendary
+4                   Chandra  Legendary
+5                     Demon  Legendary
+6                     Dovin  Legendary
+7             Dwarf,Advisor  Legendary
+8               Dwarf,Pilot  Legendary
 [... truncated ...]
 
 EXPECTED RESULT:
@@ -768,27 +884,33 @@ EXPECTED RESULT:
 [... truncated ...]
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:17
+EVALUATION RUN: 2025-10-04 13:12:45
 ================================================================================
 
 QUESTION: Lists the set code of all cards translated into Spanish.
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT setCode FROM set_translations WHERE language = 'Spanish'
 
 GENERATED SQL:
-SELECT st.set_code FROM set_translations as st WHERE language = 'Spanish'
+SELECT setCode FROM set_translations WHERE language = 'Spanish'
 
 RESULT:
-column st.set_code does not exist
-LINE 1: SELECT st.set_code FROM set_translations as st WHERE languag...
-               ^
-HINT:  Perhaps you meant to reference the column "st.setcode".
-
+       0
+0    10E
+1    4ED
+2    5DN
+3    5ED
+4    6ED
+5    7ED
+6    8ED
+7    9ED
+8    AER
+[... truncated ...]
 
 EXPECTED RESULT:
        0
@@ -804,34 +926,36 @@ EXPECTED RESULT:
 [... truncated ...]
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:17
+EVALUATION RUN: 2025-10-04 13:12:45
 ================================================================================
 
 QUESTION: What percentage of legendary frame effect cards that are only available in online game variations?
 
-DIFFICULTY: moderate
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT SUM(CASE WHEN isOnlineOnly = 1 THEN 1.0 ELSE 0 END) / COUNT(id) * 100 FROM cards WHERE frameEffects = 'legendary'
 
 GENERATED SQL:
-[Error] No SQL found in output
+SELECT SUM(CASE WHEN isOnlineOnly = 1 THEN 1.0 ELSE 0 END) / COUNT(id) * 100 FROM cards WHERE frameEffects = 'legendary'
 
 RESULT:
-No result
+                        0
+0  1.08892921960072595300
 
 EXPECTED RESULT:
-N/A
+                        0
+0  1.08892921960072595300
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:17
+EVALUATION RUN: 2025-10-04 13:12:45
 ================================================================================
 
 QUESTION: What is the percentage of Story Spotlight cards that do not have a text box? List them by their ID.
 
-DIFFICULTY: moderate
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -839,7 +963,7 @@ EXPECTED SQL:
 SELECT CAST(SUM(CASE WHEN isTextless = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(id) FROM cards WHERE isStorySpotlight = 1
 
 GENERATED SQL:
-SELECT DISTINCT CAST(SUM(CASE WHEN isTextless = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(id) FROM cards WHERE isStorySpotlight = 1
+SELECT CAST(SUM(CASE WHEN isTextless = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(id) FROM cards WHERE isStorySpotlight = 1
 
 RESULT:
        0
@@ -850,12 +974,12 @@ EXPECTED RESULT:
 0  100.0
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:18
+EVALUATION RUN: 2025-10-04 13:12:46
 ================================================================================
 
 QUESTION: Calculate the percentage of cards in Spanish. List them by name.
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -863,41 +987,41 @@ EXPECTED SQL:
 SELECT ( SELECT CAST(SUM(CASE WHEN language = 'Spanish' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM foreign_data ), name FROM foreign_data WHERE language = 'Spanish'
 
 GENERATED SQL:
-SELECT (SELECT CAST(SUM(CASE WHEN language = 'Spanish' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM foreign_data ), name FROM foreign_data WHERE language = 'Spanish'
+SELECT ( SELECT CAST(SUM(CASE WHEN language = 'Spanish' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM foreign_data ), name FROM foreign_data WHERE language = 'Spanish'
 
 RESULT:
                         0                                                                        1
-0      12.495963976857226                                                 Elegido de la Antepasada
-1      12.495963976857226                                                          Ángel de piedad
-2      12.495963976857226                                                           Cazanubes aven
-3      12.495963976857226                                                     Escuadra de ballesta
-4      12.495963976857226                                                                  Vendaje
-5      12.495963976857226                                                     Faro de inmortalidad
-6      12.495963976857226                                                       Caballero benalita
-7      12.495963976857226                                                Cho-Manno, revolucionario
-8      12.495963976857226                                                                 Condenar
+0      12.495963976857226                                               Drakuseth, fauces de fuego
+1      12.495963976857226                                                       Cargador de brasas
+2      12.495963976857226                                                       Sabio de la sabana
+3      12.495963976857226                                                       Elemental de fuego
+4      12.495963976857226                                                        Barrido de llamas
+5      12.495963976857226                                                                    Freír
+6      12.495963976857226                                                    Bucanero centelleasta
+7      12.495963976857226                                                     Aferrapájaros trasgo
+8      12.495963976857226                                                         Cabecilla trasgo
 [... truncated ...]
 
 EXPECTED RESULT:
                         0                                                                        1
-0      12.495963976857226                                                 Elegido de la Antepasada
-1      12.495963976857226                                                          Ángel de piedad
-2      12.495963976857226                                                           Cazanubes aven
-3      12.495963976857226                                                     Escuadra de ballesta
-4      12.495963976857226                                                                  Vendaje
-5      12.495963976857226                                                     Faro de inmortalidad
-6      12.495963976857226                                                       Caballero benalita
-7      12.495963976857226                                                Cho-Manno, revolucionario
-8      12.495963976857226                                                                 Condenar
+0      12.495963976857226                                               Drakuseth, fauces de fuego
+1      12.495963976857226                                                       Cargador de brasas
+2      12.495963976857226                                                       Sabio de la sabana
+3      12.495963976857226                                                       Elemental de fuego
+4      12.495963976857226                                                        Barrido de llamas
+5      12.495963976857226                                                                    Freír
+6      12.495963976857226                                                    Bucanero centelleasta
+7      12.495963976857226                                                     Aferrapájaros trasgo
+8      12.495963976857226                                                         Cabecilla trasgo
 [... truncated ...]
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:18
+EVALUATION RUN: 2025-10-04 13:12:46
 ================================================================================
 
 QUESTION: Indicates the name of all the languages into which the set whose number of cards is 309 is translated.
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -905,7 +1029,7 @@ EXPECTED SQL:
 SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.baseSetSize = 309
 
 GENERATED SQL:
-SELECT T1.language FROM sets AS T2 INNER JOIN set_translations AS T1 ON T2.code = T1.setCode WHERE T2.baseSetSize = 309
+SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.baseSetSize = 309
 
 RESULT:
                      0
@@ -934,12 +1058,12 @@ EXPECTED RESULT:
 9              Spanish
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:18
+EVALUATION RUN: 2025-10-04 13:12:46
 ================================================================================
 
 QUESTION: How many Brazilian Portuguese translated sets are inside the Commander block?
 
-DIFFICULTY: moderate
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -947,7 +1071,7 @@ EXPECTED SQL:
 SELECT COUNT(T1.id) FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Portuguese (Brazil)' AND T1.block = 'Commander'
 
 GENERATED SQL:
-SELECT DISTINCT COUNT(T1.id) FROM public.sets AS T1 INNER JOIN public.set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Portuguese (Brazil)' AND T1.block = 'Commander'
+SELECT COUNT(T1.id) FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Portuguese (Brazil)' AND T1.block = 'Commander'
 
 RESULT:
    0
@@ -958,90 +1082,117 @@ EXPECTED RESULT:
 0  7
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:18
+EVALUATION RUN: 2025-10-04 13:12:47
 ================================================================================
 
 QUESTION: Lists by ID all Creature-type cards with legal status.
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT T1.id FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid INNER JOIN legalities AS T3 ON T1.uuid = T3.uuid WHERE T3.status = 'Legal' AND T1.types = 'Creature'
 
 GENERATED SQL:
-[Error] No SQL found in output
+SELECT T1.id FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid INNER JOIN legalities AS T3 ON T1.uuid = T3.uuid WHERE T3.status = 'Legal' AND T1.types = 'Creature'
 
 RESULT:
-No result
+            0
+0       15541
+1       15541
+2       15541
+3       15541
+4       15541
+5       15541
+6       15542
+7       15542
+8       15542
+[... truncated ...]
 
 EXPECTED RESULT:
-N/A
+            0
+0       15541
+1       15541
+2       15541
+3       15541
+4       15541
+5       15541
+6       15542
+7       15542
+8       15542
+[... truncated ...]
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:19
+EVALUATION RUN: 2025-10-04 13:12:48
 ================================================================================
 
 QUESTION: Lists all types of cards in German.
 
-DIFFICULTY: moderate
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT T1.subtypes, T1.supertypes FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.language = 'German' AND T1.subtypes IS NOT NULL AND T1.supertypes IS NOT NULL
 
 GENERATED SQL:
-SELECT T1.supertypes, T1.subtypes FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T1.supertypes IS NOT NULL AND T1.subtypes IS NOT NULL AND T2.language = 'German'
+SELECT T1.subtypes, T1.supertypes FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.language = 'German' AND T1.subtypes IS NOT NULL AND T1.supertypes IS NOT NULL
 
 RESULT:
-               0                          1
-0      Legendary                      Angel
-1      Legendary              Vampire,Noble
-2      Legendary              Avatar,Minion
-3      Legendary            Human,Barbarian
-4      Legendary                     Wizard
-5      Legendary                Cat,Warrior
-6      Legendary                  Elemental
-7      Legendary                     Goblin
-8      Legendary                       Karn
+                              0           1
+0                        Dragon   Legendary
+1                         Hydra   Legendary
+2                        Vivien   Legendary
+3                  Human,Cleric   Legendary
+4                   Elf,Advisor   Legendary
+5                   Bird,Wizard   Legendary
+6                     Elemental   Legendary
+7              Elemental,Horror   Legendary
+8                         Scout   Legendary
 [... truncated ...]
 
 EXPECTED RESULT:
                               0           1
-0                Merfolk,Wizard   Legendary
-1                 Vampire,Noble   Legendary
-2                 Avatar,Minion   Legendary
-3               Human,Barbarian   Legendary
-4                   Cat,Warrior   Legendary
-5                     Elemental   Legendary
-6                        Goblin   Legendary
-7                         Angel   Legendary
-8                    Cat,Cleric   Legendary
+0                        Dragon   Legendary
+1                         Hydra   Legendary
+2                        Vivien   Legendary
+3                  Human,Cleric   Legendary
+4                   Elf,Advisor   Legendary
+5                   Bird,Wizard   Legendary
+6                     Elemental   Legendary
+7              Elemental,Horror   Legendary
+8                         Scout   Legendary
 [... truncated ...]
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:19
+EVALUATION RUN: 2025-10-04 13:12:48
 ================================================================================
 
 QUESTION: How many unknown power cards contain info about the triggered ability
 
-DIFFICULTY: moderate
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT T2.text FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE (T1.power IS NULL OR T1.power = '*') AND T2.text LIKE '%triggered ability%'
 
 GENERATED SQL:
-SELECT COUNT(*) FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.skyfullid WHERE EXISTS IN (T1.power IS NULL OR T1.power = '*') AND T2.text LIKE '%triggered ability%'
+SELECT T2.text FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE (T1.power IS NULL OR T1.power = '*') AND T2.text LIKE '%triggered ability%'
 
 RESULT:
-column t2.skyfullid does not exist
-LINE 1: ...cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.skyfull...
-                                                             ^
-
+                                                                                                                                                                                                                                                                    0
+0                                         Mortal Combat’s ability has an “intervening ‘if’ clause,” so the condition is checked again when the triggered ability resolves. If you don’t still have twenty creature cards in your graveyard, the ability does nothing.
+1                                                                                                                                          This card has a triggered ability that causes a separate effect for 1 point of damage each time a land is tapped for mana.
+2                                                                                                                                          The additional draw is separate from any other draw during your draw step. It happens when the triggered ability resolves.
+3                                                                                                                                                                    The triggered ability is put onto the stack after you have already drawn your card for the turn.
+4                                                                                                     You only gain the life when the triggered ability resolves. If you are reduced to zero life before the ability resolves, you will lose before gaining the life.
+5                                                                                                     You only gain the life when the triggered ability resolves. If you are reduced to zero life before the ability resolves, you will lose before gaining the life.
+6                                                                                                     If Animate Dead isn’t on the battlefield as its triggered ability resolves, none of its effects happen. The creature card won’t be returned to the battlefield.
+7     If you have multiple Lich cards on the battlefield, you must sacrifice a permanent for each damage done to you for each Lich. This is because the sacrifice is a triggered ability. But you only draw one card for each life gained regardless of how many Lich
+8                                                                            This is a change from the most recent wording. As was the case in the past, Paralyze itself has the last triggered ability, rather than granting that ability to the enchanted creature.
+[... truncated ...]
 
 EXPECTED RESULT:
                                                                                                                                                                                                                                                                     0
@@ -1057,50 +1208,52 @@ EXPECTED RESULT:
 [... truncated ...]
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:20
+EVALUATION RUN: 2025-10-04 13:12:48
 ================================================================================
 
-QUESTION: Indicates the number of cards with pre-modern format, ruling text. This is a triggered mana ability that do not have multiple faces.
+QUESTION: Indicates the number of cards with pre-modern format, ruling text "This is a triggered mana ability." that do not have multiple faces.
 
-DIFFICULTY: moderate
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid INNER JOIN rulings AS T3 ON T1.uuid = T3.uuid WHERE T2.format = 'premodern' AND T3.text = 'This is a triggered mana ability.' AND T1.Side IS NULL
 
 GENERATED SQL:
-SELECT COUNT(*) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid INNER JOIN rulings AS T3 ON T1.uuid = T3.uuid WHERE T2.format = 'premodern' AND (LOWER(T3.text) LIKE '%This is a triggered mana ability.%') AND T1.Side IS NULL
+SELECT COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid INNER JOIN rulings AS T3 ON T1.uuid = T3.uuid WHERE T2.format = 'premodern' AND T3.text = 'This is a triggered mana ability.' AND T1.Side IS NULL
 
 RESULT:
-   0
-0  0
+    0
+0  16
 
 EXPECTED RESULT:
     0
 0  16
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:20
+EVALUATION RUN: 2025-10-04 13:12:48
 ================================================================================
 
 QUESTION: Is there any card from Erica Yang artist in pauper format and available in paper? If so, indicate its ID.
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT T1.id FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.artist = 'Erica Yang' AND T2.format = 'pauper' AND T1.availability = 'paper'
 
 GENERATED SQL:
-SELECT DISTINCT T1.id FROM cards AS T1 LEFT INNER JOIN legalities AS T2 ON T1.uuid = T2.skyfullid WHERE T1.artist = 'Erica Yang' AND T2.format = 'pauper' AND T1.availability = 'paper'
+SELECT T1.id FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.artist = 'Erica Yang' AND T2.format = 'pauper' AND T1.availability = 'paper'
 
 RESULT:
-syntax error at or near "INNER"
-LINE 1: SELECT DISTINCT T1.id FROM cards AS T1 LEFT INNER JOIN legal...
-                                                    ^
-
+       0
+0  15594
+1  15943
+2  30953
+3  45195
+4  45201
 
 EXPECTED RESULT:
        0
@@ -1111,12 +1264,12 @@ EXPECTED RESULT:
 4  45201
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:20
+EVALUATION RUN: 2025-10-04 13:12:48
 ================================================================================
 
 QUESTION: To which artist does the card with the text "Das perfekte Gegenmittel zu einer dichten Formation" belong?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: FAILURE
 
@@ -1124,26 +1277,56 @@ EXPECTED SQL:
 SELECT DISTINCT T1.artist FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.flavorText LIKE '%DAS perfekte Gegenmittel zu einer dichten Formation%'
 
 GENERATED SQL:
-SELECT DISTINCT T1.artist FROM cards AS T1 INNER JOIN ForeignData AS T2 ON T1.uuid = T2.uuid WHERE T2.flavorText LIKE '%DAS perfekte Gegenmittel zu einer dichten Formation%'
+[Error] [DEBUG] Received flawed SQL: SELECT DISTINCT T1.artist FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.flavorText LIKE '%DAS perfekte Gegenmittel zu einer dichten Formation%'
+[DEBUG] Received error message: 
+[DEBUG] Received question: To which artist does the card with the text "Das perfekte Gegenmittel zu einer dichten Formation" belong?
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT T1.artist FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.flavorText LIKE '%DAS perfekte Gegenmittel zu einer dichten Formation%'
+[DEBUG] Model returned invalid SQL-like garbage.
+[DEBUG] ERRRORRRR: Model failed to produce usable SQL.
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.artistFROM cards cJOIN foreign_data f ON f.uuid = c.uuidWHERE f.language = 'German'  AND (    f.flavortext = 'Das perfekte Gegenmittel zu einer dichten Formation'    OR f.text = 'Das perfekte Gegenmittel zu einer dichten Formation'  );
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.artistFROM cards cJOIN foreign_data f ON f...
+                                           ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.artistFROM cards cJOIN foreign_data f ON f.uuid = c.uuidWHERE f.language = 'German'  AND (    f.flavortext = 'Das perfekte Gegenmittel zu einer dichten Formation'    OR f.text = 'Das perfekte Gegenmittel zu einer dichten Formation'  );
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.artistFROM cards cJOIN foreign_data f ON f...
+                                           ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.artistFROM cards cJOIN foreign_data f ON f.uuid = c.uuidWHERE f.language = 'German'  AND (f.flavortext = 'Das perfekte Gegenmittel zu einer dichten Formation'       OR f.text = 'Das perfekte Gegenmittel zu einer dichten Formation');
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.artistFROM cards cJOIN foreign_data f ON f...
+                                           ^
+
+[DEBUG] Detected SQL type: SELECT
+[DEBUG] SQL being executed: SELECT DISTINCT c.artistFROM cards cJOIN foreign_data f ON f.uuid = c.uuidWHERE f.language = 'German'  AND (f.flavortext = 'Das perfekte Gegenmittel zu einer dichten Formation'       OR f.text = 'Das perfekte Gegenmittel zu einer dichten Formation')
+[DEBUG] ERRRORRRR: syntax error at or near "cJOIN"
+LINE 1: SELECT DISTINCT c.artistFROM cards cJOIN foreign_data f ON f...
+                                           ^
+
+[DEBUG] Final failed SQL: SELECT DISTINCT c.artistFROM cards cJOIN foreign_data f ON f.uuid = c.uuidWHERE f.language = 'German'  AND (f.flavortext = 'Das perfekte Gegenmittel zu einer dichten Formation'       OR f.text = 'Das perfekte Gegenmittel zu einer dichten Formation')
+[ERROR] Model failed to produce a valid SQL query after all retries.
 
 RESULT:
-relation "foreigndata" does not exist
-LINE 1: ...CT DISTINCT T1.artist FROM cards AS T1 INNER JOIN ForeignDat...
-                                                             ^
-
+No result
 
 EXPECTED RESULT:
-Empty DataFrame
-Columns: []
-Index: []
+N/A
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:20
+EVALUATION RUN: 2025-10-04 13:12:48
 ================================================================================
 
 QUESTION: What is the foreign name of the card in French of type Creature, normal layout and black border color, by artist Matthew D. Wilson?
 
-DIFFICULTY: moderate
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -1151,68 +1334,65 @@ EXPECTED SQL:
 SELECT name FROM foreign_data WHERE uuid IN ( SELECT uuid FROM cards WHERE types = 'Creature' AND layout = 'normal' AND borderColor = 'black' AND artist = 'Matthew D. Wilson' ) AND language = 'French'
 
 GENERATED SQL:
-SELECT fd.name FROM cards AS c INNER JOIN foreign_data AS fd ON c.uuid = fd.uuid WHERE (c.types LIKE '%Creature%' AND c.layout = 'normal' AND c.borderColor = 'black') AND c.artist = 'Matthew D. Wilson' AND fd.language = 'French'
+SELECT name FROM foreign_data WHERE uuid IN ( SELECT uuid FROM cards WHERE types = 'Creature' AND layout = 'normal' AND borderColor = 'black' AND artist = 'Matthew D. Wilson' ) AND language = 'French'
 
 RESULT:
                                    0
-0               Escouade de balistes
-1                  Tisseuse d'esprit
-2                     Étrangleur mou
-3              Vampire de Mephidross
-4                         Ange déchu
-5                 Dragon du fourneau
-6                  Tisseuse d'esprit
-7                   Séraphin argenté
-8                    Gorgone masquée
+0                   Élu de Tel-Jilad
+1     Jolrael, impératrice des bêtes
+2                  Collecteur d'âmes
+3                        Dragon mage
+4            Karona, fausse divinité
+5                       Rats enragés
+6          Assassin de la Forteresse
+7                    Ange vengeresse
+8                  Mercenaire dauthi
 [... truncated ...]
 
 EXPECTED RESULT:
                                    0
-0                    Reya Aubevenant
-1                  Tisseuse d'esprit
-2                     Étrangleur mou
-3              Vampire de Mephidross
-4            Acolyte de l'obsidienne
-5                    Reya Aubevenant
-6                  Tisseuse d'esprit
-7                    Gorgone masquée
-8                      Diacre infâme
+0               Capitaine ramosienne
+1                   Élu de Tel-Jilad
+2          Ensorceleuse du Marennois
+3            Karona, fausse divinité
+4                       Rats enragés
+5          Assassin de la Forteresse
+6                    Ange vengeresse
+7                  Mercenaire dauthi
+8                         Kezzerdrix
 [... truncated ...]
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:20
+EVALUATION RUN: 2025-10-04 13:12:48
 ================================================================================
 
 QUESTION: How many cards with print rarity have ruling text printed on 01/02/2007?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT COUNT(DISTINCT T1.id) FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.rarity = 'rare' AND T2.date = '2007-02-01'
 
 GENERATED SQL:
-SELECT DISTINCT COUNT(DISTINCT T1.id) FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.rarity = 'rare' AND T2.date = 2007-02-01
+SELECT COUNT(DISTINCT T1.id) FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.rarity = 'rare' AND T2.date = '2007-02-01'
 
 RESULT:
-operator does not exist: date = integer
-LINE 1: ...id = T2.uuid WHERE T1.rarity = 'rare' AND T2.date = 2007-02-...
-                                                             ^
-HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
-
+     0
+0  126
 
 EXPECTED RESULT:
      0
 0  126
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:21
+EVALUATION RUN: 2025-10-04 13:12:48
 ================================================================================
 
 QUESTION: What language is the set of 180 cards that belongs to the Ravnica block translated into?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -1220,7 +1400,7 @@ EXPECTED SQL:
 SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.block = 'Ravnica' AND T1.baseSetSize = 180
 
 GENERATED SQL:
-SELECT DISTINCT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.block = 'Ravnica' AND T1.baseSetSize = 180
+SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.block = 'Ravnica' AND T1.baseSetSize = 180
 
 RESULT:
                      0
@@ -1249,34 +1429,36 @@ EXPECTED RESULT:
 9              Spanish
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:21
+EVALUATION RUN: 2025-10-04 13:12:49
 ================================================================================
 
 QUESTION: What percentage of cards with format commander and legal status do not have a content warning?
 
-DIFFICULTY: challenging
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT CAST(SUM(CASE WHEN T1.hasContentWarning = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal'
 
 GENERATED SQL:
-[Timeout]
+SELECT CAST(SUM(CASE WHEN T1.hasContentWarning = 0 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T2.format = 'commander' AND T2.status = 'Legal'
 
 RESULT:
-No result
+       0
+0  100.0
 
 EXPECTED RESULT:
-N/A
+       0
+0  100.0
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:21
+EVALUATION RUN: 2025-10-04 13:12:49
 ================================================================================
 
 QUESTION: What percentage of cards without power are in French?
 
-DIFFICULTY: challenging
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -1284,7 +1466,7 @@ EXPECTED SQL:
 SELECT CAST(SUM(CASE WHEN T2.language = 'French' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T1.power IS NULL OR T1.power = '*'
 
 GENERATED SQL:
-SELECT CAST(SUM(CASE WHEN foreign_data.language = 'French' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(cards.id) FROM cards INNER JOIN foreign_data ON cards.uuid = foreign_data.uuid WHERE power IS NULL OR power = '*'
+SELECT CAST(SUM(CASE WHEN T2.language = 'French' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T1.power IS NULL OR T1.power = '*'
 
 RESULT:
                     0
@@ -1295,38 +1477,36 @@ EXPECTED RESULT:
 0  12.975290140452374
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:21
+EVALUATION RUN: 2025-10-04 13:12:49
 ================================================================================
 
 QUESTION: What percentage of Japanese translated sets are expansion sets?
 
-DIFFICULTY: moderate
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT CAST(SUM(CASE WHEN T2.language = 'Japanese' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.type = 'expansion'
 
 GENERATED SQL:
-SELECT CAST(SUM(CASE WHEN language = 'Japanese' THEN CASE WHEN type = 'expansion' THEN 1 ELSE 0 END ELSE NULL END) AS REAL) / COUNT(*) * 100 as Percentage FROM set_translations GROUP BY code
+SELECT CAST(SUM(CASE WHEN T2.language = 'Japanese' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.type = 'expansion'
 
 RESULT:
-column "type" does not exist
-LINE 1: ...UM(CASE WHEN language = 'Japanese' THEN CASE WHEN type = 'ex...
-                                                             ^
-
+      0
+0  10.0
 
 EXPECTED RESULT:
       0
 0  10.0
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:21
+EVALUATION RUN: 2025-10-04 13:12:49
 ================================================================================
 
 QUESTION: What kind of printing is on the card that Daren Bader created?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -1355,39 +1535,36 @@ EXPECTED RESULT:
 5        paper
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:21
+EVALUATION RUN: 2025-10-04 13:12:49
 ================================================================================
 
 QUESTION: How many color cards with no borders have been ranked higher than 12000 on EDHRec?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT COUNT(id) FROM cards WHERE edhrecRank > 12000 AND borderColor = 'borderless'
 
 GENERATED SQL:
-SELECT COUNT(*) FROM cards WHERE edhreRank > 12000 AND borderColor = 'borderless'
+SELECT COUNT(id) FROM cards WHERE edhrecRank > 12000 AND borderColor = 'borderless'
 
 RESULT:
-column "edhrerank" does not exist
-LINE 1: SELECT COUNT(*) FROM cards WHERE edhreRank > 12000 AND borde...
-                                         ^
-HINT:  Perhaps you meant to reference the column "cards.edhrecrank".
-
+   0
+0  7
 
 EXPECTED RESULT:
    0
 0  7
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:22
+EVALUATION RUN: 2025-10-04 13:12:49
 ================================================================================
 
 QUESTION: How many cards are oversized, reprinted, and printed for promotions?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -1406,12 +1583,12 @@ EXPECTED RESULT:
 0  17
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:22
+EVALUATION RUN: 2025-10-04 13:12:49
 ================================================================================
 
 QUESTION: Please list top three unknown power cards that have promotional types for arena league in alphabetical order.
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -1434,12 +1611,12 @@ EXPECTED RESULT:
 2     Bonesplitter
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:22
+EVALUATION RUN: 2025-10-04 13:12:49
 ================================================================================
 
 QUESTION: What is the language of the card with the multiverse number 149934?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -1447,7 +1624,7 @@ EXPECTED SQL:
 SELECT language FROM foreign_data WHERE multiverseid = 149934
 
 GENERATED SQL:
-SELECT DISTINCT language FROM foreign_data WHERE multiverseid = 149934
+SELECT language FROM foreign_data WHERE multiverseid = 149934
 
 RESULT:
         0
@@ -1458,12 +1635,12 @@ EXPECTED RESULT:
 0  French
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:22
+EVALUATION RUN: 2025-10-04 13:12:49
 ================================================================================
 
 QUESTION: Please provide the ids of top three powerful pairs of Kingdom Foil and Kingdom Cards sorted by Kingdom Foil id in alphabetical order.
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -1471,7 +1648,7 @@ EXPECTED SQL:
 SELECT cardKingdomFoilId, cardKingdomId FROM cards WHERE cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NOT NULL ORDER BY cardKingdomFoilId LIMIT 3
 
 GENERATED SQL:
-SELECT DISTINCT cardKingdomFoilId, cardKingdomId FROM cards WHERE cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NOT NULL ORDER BY cardKingdomFoilId LIMIT 3
+SELECT cardKingdomFoilId, cardKingdomId FROM cards WHERE cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NOT NULL ORDER BY cardKingdomFoilId LIMIT 3
 
 RESULT:
         0       1
@@ -1486,38 +1663,36 @@ EXPECTED RESULT:
 2  110504  110334
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:22
+EVALUATION RUN: 2025-10-04 13:12:50
 ================================================================================
 
 QUESTION: What proportion of cards do not have a text box with a normal layout?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT CAST(SUM(CASE WHEN isTextless = 1 AND layout = 'normal' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM cards
 
 GENERATED SQL:
-SELECT CAST(SUM(CASE WHEN isTextless = 1 AND layout LIKE %normal% THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM cards
+SELECT CAST(SUM(CASE WHEN isTextless = 1 AND layout = 'normal' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM cards
 
 RESULT:
-syntax error at or near "%"
-LINE 1: ...CAST(SUM(CASE WHEN isTextless = 1 AND layout LIKE %normal% T...
-                                                             ^
-
+                     0
+0  0.20238639963394459
 
 EXPECTED RESULT:
-          0
-0  0.202386
+                     0
+0  0.20238639963394459
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:22
+EVALUATION RUN: 2025-10-04 13:12:50
 ================================================================================
 
 QUESTION: What are the card numbers that don't have multiple faces on a single card and have the subtypes Angel and Wizard?
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -1525,7 +1700,7 @@ EXPECTED SQL:
 SELECT id FROM cards WHERE subtypes = 'Angel,Wizard' AND side IS NULL
 
 GENERATED SQL:
-SELECT c.id FROM (SELECT DISTINCT id, subtypes, side FROM cards) c WHERE COALESCE(TRIM(c.subtypes), '') = 'Angel,Wizard' AND (c.side IS NULL OR c.side IS NOT DISTINCT FROM NULL)
+SELECT id FROM cards WHERE subtypes = 'Angel,Wizard' AND side IS NULL
 
 RESULT:
        0
@@ -1544,12 +1719,12 @@ EXPECTED RESULT:
 4  56809
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:22
+EVALUATION RUN: 2025-10-04 13:12:50
 ================================================================================
 
 QUESTION: Please provide top three sets that don't appear in Magic: The Gathering Online, along with their names in in alphabetical order.
 
-DIFFICULTY: simple
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -1572,12 +1747,12 @@ EXPECTED RESULT:
 2            2017 Gift Pack
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:23
+EVALUATION RUN: 2025-10-04 13:12:50
 ================================================================================
 
 QUESTION: What languages are available in the set known as Archenemy on the magic card market and having the code ARC?
 
-DIFFICULTY: moderate
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -1585,7 +1760,7 @@ EXPECTED SQL:
 SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.mcmName = 'Archenemy' AND T2.setCode = 'ARC'
 
 GENERATED SQL:
-SELECT DISTINCT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.mcmName = 'Archenemy' AND T2.setCode = 'ARC'
+SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.mcmName = 'Archenemy' AND T2.setCode = 'ARC'
 
 RESULT:
                      0
@@ -1614,12 +1789,12 @@ EXPECTED RESULT:
 9              Spanish
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:23
+EVALUATION RUN: 2025-10-04 13:12:50
 ================================================================================
 
 QUESTION: Which set is not available outside of the United States and has foil cards with Japanese writing on them? Please include the set ID in your response.
 
-DIFFICULTY: challenging
+DIFFICULTY: unknown
 
 STATUS: FAILURE
 
@@ -1627,101 +1802,34 @@ EXPECTED SQL:
 SELECT T1.name, T1.id FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Japanese' AND T1.isFoilOnly = 1 AND T1.isForeignOnly = 0
 
 GENERATED SQL:
-SELECT T1.id FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Japanese' AND T1.isFoilOnly = 1 AND T1.isForeignOnly = 0
+[Error] [DEBUG] Received flawed SQL: [Error] No SQL found in output
+[DEBUG] Received error message: [SQL Error] No SQL
+[DEBUG] Received question: Which set is not available outside of the United States and has foil cards with Japanese writing on them? Please include the set ID in your response.
+[DEBUG] Using schema path: ../Schemas/card_games_schema.json
+[DEBUG] Using DB connection string: host=localhost port=5432 dbname=card_games user=postgres password=admin
+[DEBUG] Loading schema from path: ../Schemas/card_games_schema.json
+[DEBUG] Detected SQL type: [ERROR]
+[DEBUG] SQL being executed: [Error] No SQL found in output
+[DEBUG] SQL execution error: syntax error at or near "["
+LINE 1: [Error] No SQL found in output
+        ^
 
-RESULT:
-     0
-0   50
-1  307
-2  522
-3  523
-4  524
-5  525
-6  526
-7  527
-8  528
-9  529
+[DEBUG] Initial SQL execution error: syntax error at or near "["
+LINE 1: [Error] No SQL found in output
+        ^
 
-EXPECTED RESULT:
-                                         0    1
-0                      Commander's Arsenal   50
-1  Premium Deck Series: Fire and Lightning  307
-2                   From the Vault: Exiled  522
-3                   From the Vault: Relics  523
-4                  From the Vault: Legends  524
-5                   From the Vault: Realms  525
-6                   From the Vault: Twenty  526
-7             From the Vault: Annihilation  527
-8                   From the Vault: Angels  528
-9                     From the Vault: Lore  529
-
-================================================================================
-EVALUATION RUN: 2025-09-05 19:07:23
-================================================================================
-
-QUESTION: Which of these artists have designed a card in the set Coldsnap, Jeremy Jarvis, Aaron Miller or Chippy?
-
-DIFFICULTY: challenging
-
-STATUS: SUCCESS
-
-EXPECTED SQL:
-SELECT T1.artist FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE (T2.name = 'Coldsnap' AND T1.artist = 'Chippy') OR (T2.name = 'Coldsnap' AND T1.artist = 'Aaron Miller') OR (T2.name = 'Coldsnap' AND T1.artist = 'Jeremy Jarvis') GROUP BY T1.artist
-
-GENERATED SQL:
-SELECT T1.artist FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE (T2.name = 'Coldsnap' AND T1.artist = 'Chippy') OR (T2.name = 'Coldsnap' AND T1.artist = 'Aaron Miller') OR (T2.name = 'Coldsnap' AND T1.artist = 'Jeremy Jarvis') GROUP BY T1.artist
-
-RESULT:
-               0
-0         Chippy
-1  Jeremy Jarvis
-
-EXPECTED RESULT:
-               0
-0         Chippy
-1  Jeremy Jarvis
-
-================================================================================
-EVALUATION RUN: 2025-09-05 19:07:23
-================================================================================
-
-QUESTION: What is the percentage of incredibly powerful cards in the set Coldsnap?
-
-DIFFICULTY: challenging
-
-STATUS: FAILURE
-
-EXPECTED SQL:
-SELECT CAST(SUM(CASE WHEN T1.cardKingdomFoilId IS NOT NULL AND T1.cardKingdomId IS NOT NULL THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE T2.name = 'Coldsnap'
-
-GENERATED SQL:
-SELECT CAST(SUM(CASE WHEN cardKingdomFoilId IS NOT NULL AND cardKingdomId IS NULL THEN 0 ELSE 1 END) AS REAL) * 100 / COUNT(*) as percentage_of_powerful FROM cards INNER JOIN foreign_data ON Cards.uuid = ForeignData.scryfallid WHERE setCode = 'Coldsnap'
-
-RESULT:
-missing FROM-clause entry for table "foreigndata"
-LINE 1: ...ROM cards INNER JOIN foreign_data ON Cards.uuid = ForeignDat...
-                                                             ^
-
-
-EXPECTED RESULT:
-       0
-0  100.0
-
-================================================================================
-EVALUATION RUN: 2025-09-05 19:07:23
-================================================================================
-
-QUESTION: For all cards illustrated by Jim Pavelec. and describe the text of the ruling of these cards. Do these cards have missing or degraded properties and values.
-
-DIFFICULTY: challenging
-
-STATUS: FAILURE
-
-EXPECTED SQL:
-SELECT T2.text , CASE WHEN T1.hasContentWarning = 1 THEN 'YES' ELSE 'NO' END FROM cards AS T1 INNER JOIN rulings AS T2 ON T2.uuid = T1.uuid WHERE T1.artist = 'Jim Pavelec'
-
-GENERATED SQL:
-[Error] No SQL found in output
+[DEBUG] Model returned invalid SQL-like garbage.
+[DEBUG] ERRRORRRR: Model failed to produce usable SQL.
+[DEBUG] Model returned invalid SQL-like garbage.
+[DEBUG] ERRRORRRR: Model failed to produce usable SQL.
+[DEBUG] Model returned invalid SQL-like garbage.
+[DEBUG] ERRRORRRR: Model failed to produce usable SQL.
+[DEBUG] Model returned invalid SQL-like garbage.
+[DEBUG] ERRRORRRR: Model failed to produce usable SQL.
+[DEBUG] Model returned invalid SQL-like garbage.
+[DEBUG] ERRRORRRR: Model failed to produce usable SQL.
+[DEBUG] Final failed SQL: 
+[ERROR] Model failed to produce a valid SQL query after all retries.
 
 RESULT:
 No result
@@ -1730,39 +1838,128 @@ EXPECTED RESULT:
 N/A
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:23
+EVALUATION RUN: 2025-10-04 13:12:50
+================================================================================
+
+QUESTION: Which of these artists have designed a card in the set Coldsnap, Jeremy Jarvis, Aaron Miller or Chippy?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T1.artist FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE (T2.name = 'Coldsnap' AND T1.artist = 'Chippy') OR (T2.name = 'Coldsnap' AND T1.artist = 'Aaron Miller') OR (T2.name = 'Coldsnap' AND T1.artist = 'Jeremy Jarvis') GROUP BY T1.artist
+
+GENERATED SQL:
+SELECT T1.artist FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE (T2.name = 'Coldsnap' AND T1.artist = 'Chippy') OR (T2.name = 'Coldsnap' AND T1.artist = 'Aaron Miller') OR (T2.name = 'Coldsnap' AND T1.artist = 'Jeremy Jarvis') GROUP BY T1.artist
+
+RESULT:
+               0
+0         Chippy
+1  Jeremy Jarvis
+
+EXPECTED RESULT:
+               0
+0         Chippy
+1  Jeremy Jarvis
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:12:50
+================================================================================
+
+QUESTION: What is the percentage of incredibly powerful cards in the set Coldsnap?
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT CAST(SUM(CASE WHEN T1.cardKingdomFoilId IS NOT NULL AND T1.cardKingdomId IS NOT NULL THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE T2.name = 'Coldsnap'
+
+GENERATED SQL:
+SELECT CAST(SUM(CASE WHEN T1.cardKingdomFoilId IS NOT NULL AND T1.cardKingdomId IS NOT NULL THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE T2.name = 'Coldsnap'
+
+RESULT:
+       0
+0  100.0
+
+EXPECTED RESULT:
+       0
+0  100.0
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:12:50
+================================================================================
+
+QUESTION: For all cards illustrated by Jim Pavelec. and describe the text of the ruling of these cards. Do these cards have missing or degraded properties and values.
+
+DIFFICULTY: unknown
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT T2.text , CASE WHEN T1.hasContentWarning = 1 THEN 'YES' ELSE 'NO' END FROM cards AS T1 INNER JOIN rulings AS T2 ON T2.uuid = T1.uuid WHERE T1.artist = 'Jim Pavelec'
+
+GENERATED SQL:
+SELECT T2.text , CASE WHEN T1.hasContentWarning = 1 THEN 'YES' ELSE 'NO' END FROM cards AS T1 INNER JOIN rulings AS T2 ON T2.uuid = T1.uuid WHERE T1.artist = 'Jim Pavelec'
+
+RESULT:
+                                                                                                                                                                                                                                                                   0   1
+0                                                                                                                                      If Oubliette leaves the battlefield before its triggered ability resolves, the target creature won’t be phased out or tapped.  NO
+1              While a permanent is phased out, it’s treated as though it doesn’t exist. It can’t be the target of spells or abilities, its static abilities have no effect on the game, its triggered abilities can’t trigger, it can’t attack or block, and so on.  NO
+2                                                                                                  Phasing out doesn’t cause any “leaves the battlefield” abilities to trigger. Similarly, phasing in won’t cause any “enters the battlefield” abilities to trigger.  NO
+3                                                                                                        Any one-shot effects that are waiting “until [this] leaves the battlefield,” such as that of Kitesail Freebooter, won’t happen when a permanent phases out.  NO
+4                                        Any continuous effects with a “for as long as” duration such as that of Awakener Druid ignore phased-out objects. Any such effects will expire if their conditions are no longer met after ignoring the phased-out objects.  NO
+5                           Each Aura and Equipment attached to a permanent that’s phasing out also phases out. They will phase in with that permanent and still be attached to it. Similarly, permanents that phase out with counters phase in with those counters.  NO
+6                                                                                                                                                                     Choices made for permanents as they entered the battlefield are remembered when they phase in.  NO
+7                                                                                         A creature phased out by Oubliette doesn’t phase in during its controller’s untap step as normal. Rather, it phases in immediately after Oubliette leaves the battlefield.  NO
+8                                                                                                                                                            Abilities that trigger when a creature becomes tapped won’t trigger when the creature phases in tapped.  NO
+[... truncated ...]
+
+EXPECTED RESULT:
+                                                                                                                                                                                                                                                                   0   1
+0                                                                                                                                      If Oubliette leaves the battlefield before its triggered ability resolves, the target creature won’t be phased out or tapped.  NO
+1              While a permanent is phased out, it’s treated as though it doesn’t exist. It can’t be the target of spells or abilities, its static abilities have no effect on the game, its triggered abilities can’t trigger, it can’t attack or block, and so on.  NO
+2                                                                                                  Phasing out doesn’t cause any “leaves the battlefield” abilities to trigger. Similarly, phasing in won’t cause any “enters the battlefield” abilities to trigger.  NO
+3                                                                                                        Any one-shot effects that are waiting “until [this] leaves the battlefield,” such as that of Kitesail Freebooter, won’t happen when a permanent phases out.  NO
+4                                        Any continuous effects with a “for as long as” duration such as that of Awakener Druid ignore phased-out objects. Any such effects will expire if their conditions are no longer met after ignoring the phased-out objects.  NO
+5                           Each Aura and Equipment attached to a permanent that’s phasing out also phases out. They will phase in with that permanent and still be attached to it. Similarly, permanents that phase out with counters phase in with those counters.  NO
+6                                                                                                                                                                     Choices made for permanents as they entered the battlefield are remembered when they phase in.  NO
+7                                                                                         A creature phased out by Oubliette doesn’t phase in during its controller’s untap step as normal. Rather, it phases in immediately after Oubliette leaves the battlefield.  NO
+8                                                                                                                                                            Abilities that trigger when a creature becomes tapped won’t trigger when the creature phases in tapped.  NO
+[... truncated ...]
+
+================================================================================
+EVALUATION RUN: 2025-10-04 13:12:50
 ================================================================================
 
 QUESTION: For all the set of cards that has Japanese translation, what is the percentage of them are only available in non-foil?
 
-DIFFICULTY: challenging
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT CAST(SUM(CASE WHEN isNonFoilOnly = 1 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(id) FROM sets WHERE code IN ( SELECT setCode FROM set_translations WHERE language = 'Japanese' )
 
 GENERATED SQL:
-SELECT CAST(SUM(CASE WHEN T2.language = 'Japanese' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN set_translations AS T2 ON T1.scryfallId = T2.uuid WHERE (isNonFoilOnly = TRUE AND isForeignOnly = FALSE)
+SELECT CAST(SUM(CASE WHEN isNonFoilOnly = 1 THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(id) FROM sets WHERE code IN ( SELECT setCode FROM set_translations WHERE language = 'Japanese' )
 
 RESULT:
-column t2.uuid does not exist
-LINE 1: ...ER JOIN set_translations AS T2 ON T1.scryfallId = T2.uuid WH...
-                                                             ^
-HINT:  Perhaps you meant to reference the column "t1.uuid".
-
+                    0
+0  11.570247933884298
 
 EXPECTED RESULT:
-           0
-0  11.570248
+                    0
+0  11.570247933884298
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:23
+EVALUATION RUN: 2025-10-04 13:12:50
 ================================================================================
 
 QUESTION: Among the sets whose expansion type is Commander, which set has the highest total number of cards including promotional and related supplemental products but excluding Alchemy modifications? Indicate the id of the set.
 
-DIFFICULTY: challenging
+DIFFICULTY: unknown
 
 STATUS: SUCCESS
 
@@ -1770,7 +1967,7 @@ EXPECTED SQL:
 SELECT id FROM sets WHERE type = 'commander' ORDER BY totalSetSize DESC LIMIT 1
 
 GENERATED SQL:
-SELECT id FROM sets WHERE type = 'commander' ORDER BY totalSetSize DESC LIMIT 1
+SELECT id FROM sets WHERE type = 'commander' AND totalsetsize = (SELECT MAX(totalsetsize) FROM sets WHERE type = 'commander')
 
 RESULT:
     0
@@ -1781,26 +1978,33 @@ EXPECTED RESULT:
 0  37
 
 ================================================================================
-EVALUATION RUN: 2025-09-05 19:07:23
+EVALUATION RUN: 2025-10-04 13:12:51
 ================================================================================
 
 QUESTION: List the names of all the cards in the set Hour of Devastation and find the formats in which these cards are legal.
 
-DIFFICULTY: challenging
+DIFFICULTY: unknown
 
-STATUS: FAILURE
+STATUS: SUCCESS
 
 EXPECTED SQL:
 SELECT DISTINCT T2.name , CASE WHEN T1.status = 'Legal' THEN T1.format ELSE NULL END FROM legalities AS T1 INNER JOIN cards AS T2 ON T2.uuid = T1.uuid WHERE T2.setCode IN ( SELECT code FROM sets WHERE name = 'Hour of Devastation' )
 
 GENERATED SQL:
-SELECT T2.name, CASE WHEN T1.status IN ('Legal', 'Experimental') THEN T1.format ELSE NULL END FROM legalities AS T1 INNER JOIN sets ON T1.uuid = ( SELECT uuid FROM set_translations WHERE language = current locale AND code = SETS(SETS).setcode ) AS SetsT2 INNER JOIN cards AS CardsON SetsT2.id = CardsON.scryfallId WHERE EXISTS ( SELECT 1 FROM sets T3 WHERE NAME IN ('Hour of Devastation') )
+SELECT DISTINCT T2.name , CASE WHEN T1.status = 'Legal' THEN T1.format ELSE NULL END FROM legalities AS T1 INNER JOIN cards AS T2 ON T2.uuid = T1.uuid WHERE T2.setCode IN ( SELECT code FROM sets WHERE name = 'Hour of Devastation' )
 
 RESULT:
-syntax error at or near "locale"
-LINE 1: ...id FROM set_translations WHERE language = current locale AND...
-                                                             ^
-
+                                0          1
+0           Abandoned Sarcophagus  commander
+1           Abandoned Sarcophagus       duel
+2           Abandoned Sarcophagus  gladiator
+3           Abandoned Sarcophagus   historic
+4           Abandoned Sarcophagus     legacy
+5           Abandoned Sarcophagus     modern
+6           Abandoned Sarcophagus      penny
+7           Abandoned Sarcophagus    pioneer
+8           Abandoned Sarcophagus    vintage
+[... truncated ...]
 
 EXPECTED RESULT:
                                 0          1
@@ -1817,12 +2021,10 @@ EXPECTED RESULT:
 
 
 ================================================================================
-EVALUATION SUMMARY: 2025-09-05 19:07:23
+EVALUATION SUMMARY: 2025-10-04 13:12:51
 ================================================================================
 
-Simple      : 22/35 correct (62.86%)
-Moderate    : 5/17 correct (29.41%)
-Challenging : 3/9 correct (33.33%)
+Unknown     : 55/62 correct (88.71%)
 
-Overall Accuracy: 30/61 (49.18%)
+Overall Accuracy: 55/62 (88.71%)
 ================================================================================

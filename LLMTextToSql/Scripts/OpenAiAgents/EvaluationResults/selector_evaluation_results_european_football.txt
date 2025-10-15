@@ -1,0 +1,1389 @@
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Which player has the highest overall rating? Indicate the player's api id.
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT player_api_id FROM Player_Attributes ORDER BY overall_rating DESC LIMIT 1
+
+GENERATED SQL:
+SELECT player_api_id FROM Player_Attributes ORDER BY overall_rating DESC LIMIT 1
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What is the height of the tallest player? Indicate his name.
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT player_name FROM Player ORDER BY height DESC LIMIT 1
+
+GENERATED SQL:
+SELECT player_name FROM Player ORDER BY height DESC LIMIT 1
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What is the preferred foot when attacking of the player with the lowest potential?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT preferred_foot FROM Player_Attributes WHERE potential IS NOT NULL ORDER BY potential ASC LIMIT 1
+
+GENERATED SQL:
+SELECT preferred_foot FROM Player_Attributes WHERE potential IS NOT NULL ORDER BY potential ASC LIMIT 1
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Who are the top 5 players who perform better in crossing actions? Indicate their player id.
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT id FROM Player_Attributes ORDER BY crossing DESC LIMIT 5
+
+GENERATED SQL:
+SELECT id FROM Player_Attributes ORDER BY crossing DESC LIMIT 5
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Indicate the full names of the top 10 players with the highest number of penalties.
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t2.player_name FROM Player_Attributes AS t1 INNER JOIN Player AS t2 ON t1.id = t2.id ORDER BY t1.penalties DESC LIMIT 10
+
+GENERATED SQL:
+SELECT t2.player_name FROM Player_Attributes AS t1 INNER JOIN Player AS t2 ON t1.id = t2.id ORDER BY t1.penalties DESC LIMIT 10
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What are the speed in which attacks are put together of the top 4 teams with the highest build Up Play Speed?
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t1.buildUpPlaySpeed FROM Team_Attributes AS t1 INNER JOIN Team AS t2 ON t1.team_api_id = t2.team_api_id ORDER BY t1.buildUpPlaySpeed ASC LIMIT 4
+
+GENERATED SQL:
+SELECT t1.buildUpPlaySpeed FROM Team_Attributes AS t1 INNER JOIN Team AS t2 ON t1.team_api_id = t2.team_api_id ORDER BY t1.buildUpPlaySpeed ASC LIMIT 4
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Give the name of the league had the most matches end as draw in the 2016 season?
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t2.name FROM Match AS t1 INNER JOIN League AS t2 ON t1.league_id = t2.id WHERE t1.season = '2015/2016' AND t1.home_team_goal = t1.away_team_goal GROUP BY t2.name ORDER BY COUNT(t1.id) DESC LIMIT 1
+
+GENERATED SQL:
+SELECT t2.name FROM Match AS t1 INNER JOIN League AS t2 ON t1.league_id = t2.id WHERE t1.season = '2015/2016' AND t1.home_team_goal = t1.away_team_goal GROUP BY t2.name ORDER BY COUNT(t1.id) DESC LIMIT 1
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Give the name of the league with the highest matches of all time and how many matches were played in the said league.
+
+DIFFICULTY: moderate
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT t2.name, t1.max_count FROM League AS t2 JOIN (SELECT league_id, MAX(cnt) AS max_count FROM (SELECT league_id, COUNT(id) AS cnt FROM Match GROUP BY league_id) AS subquery) AS t1 ON t1.league_id = t2.id
+
+GENERATED SQL:
+[Error] No SQL found in output
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What is the average height of players born between 1990 and 1995?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT SUM(height) / COUNT(id) FROM Player WHERE SUBSTR(birthday, 1, 4) BETWEEN '1990' AND '1995'
+
+GENERATED SQL:
+SELECT SUM(height) / COUNT(id) FROM Player WHERE SUBSTR(birthday, 1, 4) BETWEEN '1990' AND '1995'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: List the players' api id who had the highest above average overall ratings in 2010.
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT player_api_id FROM Player_Attributes WHERE SUBSTR(`date`, 1, 4) = '2010' ORDER BY overall_rating DESC LIMIT 1
+
+GENERATED SQL:
+SELECT player_api_id FROM Player_Attributes WHERE SUBSTR(`date`, 1, 4) = '2010' ORDER BY overall_rating DESC LIMIT 1
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Give the team_fifa_api_id of teams with more than 50 but less than 60 build-up play speed.
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT team_fifa_api_id FROM Team_Attributes WHERE buildUpPlaySpeed > 50 AND buildUpPlaySpeed < 60
+
+GENERATED SQL:
+SELECT DISTINCT team_fifa_api_id FROM Team_Attributes WHERE buildUpPlaySpeed > 50 AND buildUpPlaySpeed < 60
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: List the top 5 leagues in ascending order of the number of goals made in all seasons combined.
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t1.name, SUM(t2.home_team_goal) + SUM(t2.away_team_goal) FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id GROUP BY t1.name ORDER BY SUM(t2.home_team_goal) + SUM(t2.away_team_goal) ASC LIMIT 5
+
+GENERATED SQL:
+SELECT t1.name, SUM(t2.home_team_goal) + SUM(t2.away_team_goal) FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id GROUP BY t1.name ORDER BY SUM(t2.home_team_goal) + SUM(t2.away_team_goal) ASC LIMIT 5
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Find the average number of long-shot done by Ahmed Samir Farag.
+
+DIFFICULTY: simple
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT CAST(SUM(t2.long_shots) AS REAL) / COUNT(t2.`date`) FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'Ahmed Samir Farag'
+
+GENERATED SQL:
+[Error] No SQL found in output
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: List the top 10 players' names whose heights are above 180 in descending order of average heading accuracy.
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.height > 180 GROUP BY t1.id ORDER BY CAST(SUM(t2.heading_accuracy) AS REAL) / COUNT(t2.`player_fifa_api_id`) DESC LIMIT 10
+
+GENERATED SQL:
+SELECT t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.height > 180 GROUP BY t1.id ORDER BY CAST(SUM(t2.heading_accuracy) AS REAL) / COUNT(t2.`player_fifa_api_id`) DESC LIMIT 10
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What is the short name of the football team Queens Park Rangers?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT team_short_name FROM Team WHERE team_long_name = 'Queens Park Rangers'
+
+GENERATED SQL:
+SELECT team_short_name FROM Team WHERE team_long_name = 'Queens Park Rangers'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: List the football players with a birthyear of 1970 and a birthmonth of October.
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT player_name FROM Player WHERE SUBSTR(birthday, 1, 7) = '1970-10'
+
+GENERATED SQL:
+SELECT player_name FROM Player WHERE SUBSTR(birthday, 1, 7) = '1970-10'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What is the attacking work rate of the football playerr Franco Zennaro?
+
+DIFFICULTY: simple
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT DISTINCT t2.attacking_work_rate FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'Franco Zennaro'
+
+GENERATED SQL:
+SELECT DISTINCT t2.attacking_work_rate
+
+RESULT:
+missing FROM-clause entry for table "t2"
+LINE 1: SELECT DISTINCT t2.attacking_work_rate
+                        ^
+
+
+EXPECTED RESULT:
+        0
+0  medium
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What is the ADO Den Haag team freedom of movement in the 1st two thirds of the pitch?
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT t2.buildUpPlayPositioningClass FROM Team AS t1 INNER JOIN Team_attributes AS t2 ON t1.team_fifa_api_id = t2.team_fifa_api_id WHERE t1.team_long_name = 'ADO Den Haag'
+
+GENERATED SQL:
+SELECT DISTINCT t2.buildUpPlayPositioningClass FROM Team AS t1 INNER JOIN Team_attributes AS t2 ON t1.team_fifa_api_id = t2.team_fifa_api_id WHERE t1.team_long_name = 'ADO Den Haag'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What is the football player Francois Affolter header's finishing rate on 18/09/2014?
+
+DIFFICULTY: moderate
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT t2.heading_accuracy FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'Francois Affolter' AND SUBSTR(t2.`date`, 1, 10) = '2014-09-18'
+
+GENERATED SQL:
+SELECT t2.heading_accuracy FROM Player AS t1
+
+RESULT:
+N/A
+
+EXPECTED RESULT:
+syntax error at or near "`"
+LINE 1: ...1.player_name = 'Francois Affolter' AND SUBSTR(t2.`date`, 1,...
+                                                             ^
+
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What is the overall rating of the football player Gabriel Tamas in year 2011?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t2.overall_rating FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'Gabriel Tamas' AND strftime('%Y', t2.date) = '2011'
+
+GENERATED SQL:
+SELECT t2.overall_rating FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'Gabriel Tamas' AND strftime('%Y', t2.date) = '2011'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: How many matches in the 2015/2016 season were held in Scotland Premier League
+?
+
+DIFFICULTY: simple
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT COUNT(t2.id) FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t2.season = '2015/2016' AND t1.name = 'Scotland Premier League'
+
+GENERATED SQL:
+SELECT COUNT(t2.id)
+
+RESULT:
+missing FROM-clause entry for table "t2"
+LINE 1: SELECT COUNT(t2.id)
+                     ^
+
+
+EXPECTED RESULT:
+     0
+0  228
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What is the preferred foot when attacking of the youngest football player?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t2.preferred_foot FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id ORDER BY t1.birthday DESC LIMIT 1
+
+GENERATED SQL:
+SELECT t2.preferred_foot FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id ORDER BY t1.birthday DESC LIMIT 1
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: List all the football player with the highest potential score.
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT(t1.player_name) FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.potential = (SELECT MAX(potential) FROM Player_Attributes) 
+
+GENERATED SQL:
+SELECT DISTINCT(t1.player_name) FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.potential = (SELECT MAX(potential) FROM Player_Attributes)
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What is the defensive work rate of the football player David Wilson
+?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT t2.defensive_work_rate FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'David Wilson'
+
+GENERATED SQL:
+SELECT DISTINCT t2.defensive_work_rate FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'David Wilson'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: When is the birthday of the football player who has the highest overall rating?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t1.birthday FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id ORDER BY t2.overall_rating DESC LIMIT 1
+
+GENERATED SQL:
+SELECT t1.birthday FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id ORDER BY t2.overall_rating DESC LIMIT 1
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What is the name of the football league in the country of Netherlands?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t2.name FROM Country AS t1 INNER JOIN League AS t2 ON t1.id = t2.country_id WHERE t1.name = 'Netherlands'
+
+GENERATED SQL:
+SELECT t2.name FROM Country AS t1 INNER JOIN League AS t2 ON t1.id = t2.country_id WHERE t1.name = 'Netherlands'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Calculate the average home team goal in the 2010/2011 season in the country of Poland.
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT CAST(SUM(t2.home_team_goal) AS REAL) / COUNT(t2.id) FROM Country AS t1 INNER JOIN Match AS t2 ON t1.id = t2.country_id WHERE t1.name = 'Poland' AND t2.season = '2010/2011'
+
+GENERATED SQL:
+SELECT CAST(SUM(t2.home_team_goal) AS REAL) / COUNT(t2.id) FROM Country AS t1 INNER JOIN Match AS t2 ON t1.id = t2.country_id WHERE t1.name = 'Poland' AND t2.season = '2010/2011'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Please list player names which are higher than 180.
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT player_name FROM Player WHERE height > 180
+
+GENERATED SQL:
+SELECT player_name FROM Player WHERE height > 180
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: How many players were born after 1990?
+
+DIFFICULTY: simple
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT COUNT(id) FROM Player WHERE STRFTIME('%Y', birthday) > '1990'
+
+GENERATED SQL:
+[Error] No SQL found in output
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: How many players whose first names are Adam and weigh more than 170?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(id) FROM Player WHERE weight > 170 AND player_name LIKE 'Adam%'
+
+GENERATED SQL:
+SELECT COUNT(id) FROM Player WHERE weight > 170 AND player_name LIKE 'Adam%'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What is Aaron Doran's potential score?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t2.potential FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'Aaron Doran'
+
+GENERATED SQL:
+SELECT t2.potential FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'Aaron Doran'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: List out of players whose preferred foot is left.
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT t1.id, t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.preferred_foot = 'left'
+
+GENERATED SQL:
+SELECT DISTINCT t1.id, t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.preferred_foot = 'left'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Please list all team names which the speed class is fast.
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT t1.team_long_name FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t2.buildUpPlaySpeedClass = 'Fast'
+
+GENERATED SQL:
+SELECT DISTINCT t1.team_long_name FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t2.buildUpPlaySpeedClass = 'Fast'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What is the passing class of CLB team?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT t2.buildUpPlayPassingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_short_name = 'CLB'
+
+GENERATED SQL:
+SELECT DISTINCT t2.buildUpPlayPassingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_short_name = 'CLB'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Which football player has the shortest height?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT player_name FROM player ORDER BY height ASC LIMIT 1
+
+GENERATED SQL:
+SELECT player_name FROM player ORDER BY height ASC LIMIT 1
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Which country is the league Italy Serie A from?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t1.name FROM Country AS t1 INNER JOIN League AS t2 ON t1.id = t2.country_id WHERE t2.name = 'Italy Serie A'
+
+GENERATED SQL:
+SELECT t1.name FROM Country AS t1 INNER JOIN League AS t2 ON t1.id = t2.country_id WHERE t2.name = 'Italy Serie A'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: List all the short name of the football team that had a home team goal of 10?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t1.team_short_name FROM Team AS t1 INNER JOIN Match AS t2 ON t1.team_api_id = t2.home_team_api_id WHERE t2.home_team_goal = 10
+
+GENERATED SQL:
+SELECT t1.team_short_name FROM Team AS t1 INNER JOIN Match AS t2 ON t1.team_api_id = t2.home_team_api_id WHERE t2.home_team_goal = 10
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What's the long name for the team GEN?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT team_long_name FROM Team WHERE team_short_name = 'GEN'
+
+GENERATED SQL:
+SELECT team_long_name FROM Team WHERE team_short_name = 'GEN'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Which player is older, Aaron Lennon or Abdelaziz Barrada?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT player_name FROM Player WHERE player_name IN ('Aaron Lennon', 'Abdelaziz Barrada') ORDER BY birthday ASC LIMIT 1
+
+GENERATED SQL:
+SELECT player_name FROM Player WHERE player_name IN ('Aaron Lennon', 'Abdelaziz Barrada') ORDER BY birthday ASC LIMIT 1
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Which player is the tallest?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT player_name FROM Player ORDER BY height DESC LIMIT 1
+
+GENERATED SQL:
+SELECT player_name FROM Player ORDER BY height DESC LIMIT 1
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Among the players born before the year 1986, how many of them would remain in his position and defense while the team attacked?
+
+DIFFICULTY: challenging
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT COUNT(DISTINCT t1.player_name) FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE STRFTIME('%Y',t1.birthday) < '1986' AND t2.defensive_work_rate = 'high'
+
+GENERATED SQL:
+[Error] No SQL found in output
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: For the players who had a 77 points overall rating on 2016/6/23, who was the oldest? Give the name of the player.
+
+DIFFICULTY: moderate
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE SUBSTR(t2.`date`, 1, 10) = '2016-06-23' AND t2.overall_rating = 77 ORDER BY t1.birthday ASC LIMIT 1
+
+GENERATED SQL:
+[Error] No SQL found in output
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: How was Francesco Migliore's attacking work rate on 2015/5/1?
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t2.attacking_work_rate FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.`date` LIKE '2015-05-01%' AND t1.player_name = 'Francesco Migliore'
+
+GENERATED SQL:
+SELECT t2.attacking_work_rate FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.`date` LIKE '2015-05-01%' AND t1.player_name = 'Francesco Migliore'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Tell the defensive work rate for Kevin Berigaud on 2013/2/22.
+
+DIFFICULTY: moderate
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT t2.defensive_work_rate FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_fifa_api_id = t2.player_fifa_api_id WHERE SUBSTR(t2.`date`, 1, 10) = '2013-02-22' AND t1.player_name = 'Kevin Berigaud'
+
+GENERATED SQL:
+[Error] No SQL found in output
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: When was the first time did Kevin Constant have his highest crossing score? Give the date.
+
+DIFFICULTY: moderate
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT `date` FROM ( SELECT t2.crossing, t2.`date` FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_fifa_api_id = t2.player_fifa_api_id WHERE t1.player_name = 'Kevin Constant' ORDER BY t2.crossing DESC) ORDER BY date DESC LIMIT 1
+
+GENERATED SQL:
+[Error] No SQL found in output
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What was the build up play speed class for "Willem II" on 2011/2/22?
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t2.buildUpPlaySpeedClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'Willem II' AND SUBSTR(t2.`date`, 1, 10) = '2011-02-22'
+
+GENERATED SQL:
+SELECT t2.buildUpPlaySpeedClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'Willem II' AND SUBSTR(t2.`date`, 1, 10) = '2011-02-22'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: How was the build up play dribbling class for "LEI" on 2015/9/10?
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t2.buildUpPlayDribblingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_short_name = 'LEI' AND SUBSTR(t2.`date`, 1, 10) = '2015-09-10'
+
+GENERATED SQL:
+SELECT t2.buildUpPlayDribblingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_short_name = 'LEI' AND SUBSTR(t2.`date`, 1, 10) = '2015-09-10'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Tell the build Up play passing class for "FC Lorient" on 2010/2/22.
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t2.buildUpPlayPassingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'FC Lorient' AND t2.`date` LIKE '2010-02-22%'
+
+GENERATED SQL:
+SELECT t2.buildUpPlayPassingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'FC Lorient' AND t2.`date` LIKE '2010-02-22%'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: State the chance creation passing class for "PEC Zwolle" on 2013/9/20.
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t2.chanceCreationPassingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'PEC Zwolle' AND SUBSTR(t2.`date`, 1, 10) = '2013-09-20'
+
+GENERATED SQL:
+SELECT t2.chanceCreationPassingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'PEC Zwolle' AND SUBSTR(t2.`date`, 1, 10) = '2013-09-20'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What was the chance creation crossing class for "Hull City" on 2010/2/22?
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t2.chanceCreationCrossingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'Hull City' AND SUBSTR(t2.`date`, 1, 10) = '2010-02-22'
+
+GENERATED SQL:
+SELECT t2.chanceCreationCrossingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'Hull City' AND SUBSTR(t2.`date`, 1, 10) = '2010-02-22'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: For the team "Hannover 96", what was its defence aggression class on 2015/9/10?
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t2.chanceCreationShootingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'Hannover 96' AND t2.`date` LIKE '2015-09-10%'
+
+GENERATED SQL:
+SELECT t2.chanceCreationShootingClass FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t1.team_long_name = 'Hannover 96' AND t2.`date` LIKE '2015-09-10%'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What was the average overall rating for Marko Arnautovic from 2007/2/22 to 2016/4/21?
+
+DIFFICULTY: challenging
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT CAST(SUM(t2.overall_rating) AS REAL) / COUNT(t2.id) FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_fifa_api_id = t2.player_fifa_api_id WHERE t1.player_name = 'Marko Arnautovic' AND SUBSTR(t2.`date`, 1, 10) BETWEEN '2007-02-22' AND '2016-04-21'
+
+GENERATED SQL:
+SELECT CAST(SUM(t2.overall_rating) AS REAL) / COUNT(t2.id) FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_fifa_api_id = t2.player_fifa_api_id WHERE t1.player_name = 'Marko Arnautovic' AND SUBSTR(t2.`date`, 1, 10) BETWEEN '2007-02-22' AND '2016-04-21'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What percentage is Landon Donovan's overall rating higher than Jordan Bowery on 2013/7/12?
+
+DIFFICULTY: challenging
+
+STATUS: FAILURE
+
+EXPECTED SQL:
+SELECT (SUM(CASE WHEN t1.player_name = 'Landon Donovan' THEN t2.overall_rating ELSE 0 END) * 1.0 - SUM(CASE WHEN t1.player_name = 'Jordan Bowery' THEN t2.overall_rating ELSE 0 END)) * 100 / SUM(CASE WHEN t1.player_name = 'Landon Donovan' THEN t2.overall_rating ELSE 0 END) LvsJ_percent FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_fifa_api_id = t2.player_fifa_api_id WHERE SUBSTR(t2.`date`, 1, 10) = '2013-07-12'
+
+GENERATED SQL:
+[Error] No SQL found in output
+
+RESULT:
+No result
+
+EXPECTED RESULT:
+N/A
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Sum up the away team goal scored by both Daan Smith and Filipe Ferreira.
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT SUM(t2.away_team_goal) FROM Player AS t1 INNER JOIN match AS t2 ON t1.player_api_id = t2.away_player_5 WHERE t1.player_name IN ('Daan Smith', 'Filipe Ferreira')
+
+GENERATED SQL:
+SELECT SUM(t2.away_team_goal) FROM Player AS t1 INNER JOIN match AS t2 ON t1.player_api_id = t2.away_player_5 WHERE t1.player_name IN ('Daan Smith', 'Filipe Ferreira')
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Calculate the total home team goal scored by players whose age are 30 years old and below.
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT SUM(t2.home_team_goal) FROM Player AS t1 INNER JOIN match AS t2 ON t1.player_api_id = t2.away_player_1 WHERE datetime(CURRENT_TIMESTAMP, 'localtime') - datetime(T1.birthday) < 31
+
+GENERATED SQL:
+SELECT SUM(t2.home_team_goal) FROM Player AS t1 INNER JOIN match AS t2 ON t1.player_api_id = t2.away_player_1 WHERE datetime(CURRENT_TIMESTAMP, 'localtime') - datetime(T1.birthday) < 31
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Who are the players that tend to be attacking when their mates were doing attack moves? List down their name.
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.attacking_work_rate = 'high'
+
+GENERATED SQL:
+SELECT DISTINCT t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.attacking_work_rate = 'high'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: Among the players with finishing rate of 1, pick the eldest player and state the player's name.
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.finishing = 1 ORDER BY t1.birthday ASC LIMIT 1
+
+GENERATED SQL:
+SELECT DISTINCT t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.finishing = 1 ORDER BY t1.birthday ASC LIMIT 1
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What are the short name of team who played safe while creating chance of passing?
+
+DIFFICULTY: moderate
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT DISTINCT t1.team_short_name FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t2.chanceCreationPassingClass = 'Safe'
+
+GENERATED SQL:
+SELECT DISTINCT t1.team_short_name FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t2.chanceCreationPassingClass = 'Safe'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What was the final score for the match on September 24, 2008, in the Belgian Jupiler League between the home team and the away team?
+
+DIFFICULTY: challenging
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT t2.home_team_goal, t2.away_team_goal FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t1.name = 'Belgium Jupiler League' AND t2.`date` LIKE '2008-09-24%'
+
+GENERATED SQL:
+SELECT t2.home_team_goal, t2.away_team_goal FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t1.name = 'Belgium Jupiler League' AND t2.`date` LIKE '2008-09-24%'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What are Alexis Blin's sprint speed, agility, and acceleration scores?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT sprint_speed, agility, acceleration FROM Player_Attributes WHERE player_api_id IN ( SELECT player_api_id FROM Player WHERE player_name = 'Alexis Blin' )
+
+GENERATED SQL:
+SELECT sprint_speed, agility, acceleration FROM Player_Attributes WHERE player_api_id IN ( SELECT player_api_id FROM Player WHERE player_name = 'Alexis Blin' )
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: In the 2015–2016 season, how many games were played in the Italian Serie A league?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT COUNT(t2.id) FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t1.name = 'Italy Serie A' AND t2.season = '2015/2016'
+
+GENERATED SQL:
+SELECT COUNT(t2.id) FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t1.name = 'Italy Serie A' AND t2.season = '2015/2016'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+================================================================================
+EVALUATION RUN: 2025-10-05 17:14:15
+================================================================================
+
+QUESTION: What was the highest score of the home team in the Netherlands Eredivisie league?
+
+DIFFICULTY: simple
+
+STATUS: SUCCESS
+
+EXPECTED SQL:
+SELECT MAX(t2.home_team_goal) FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t1.name = 'Netherlands Eredivisie'
+
+GENERATED SQL:
+SELECT MAX(t2.home_team_goal) FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t1.name = 'Netherlands Eredivisie'
+
+RESULT:
+[Skipped DB Execution] — SQL matched syntactically.
+
+EXPECTED RESULT:
+[Skipped DB Execution]
+
+
+================================================================================
+EVALUATION SUMMARY: 2025-10-05 17:14:15
+================================================================================
+
+Simple      : 31/35 correct (88.57%)
+Moderate    : 18/23 correct (78.26%)
+Challenging : 2/4 correct (50.00%)
+
+Overall Accuracy: 51/62 (82.26%)
+================================================================================

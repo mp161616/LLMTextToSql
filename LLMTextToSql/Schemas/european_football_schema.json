@@ -1,0 +1,89 @@
+[
+    {
+        "table_name": "Country",
+        "columns": [
+            {
+                "column_name": "id",
+                "data_type": "integer",
+                "is_nullable": "NO",
+                "column_default": "nextval('\"Country_id_seq\"'::regclass)"
+            },
+            {
+                "column_name": "name",
+                "data_type": "text",
+                "is_nullable": "YES",
+                "column_default": null
+            }
+        ]
+    },
+    {
+        "table_name": "League",
+        "columns": [
+            {
+                "column_name": "id",
+                "data_type": "integer",
+                "is_nullable": "NO",
+                "column_default": "nextval('\"League_id_seq\"'::regclass)"
+            },
+            {
+                "column_name": "country_id",
+                "data_type": "integer",
+                "is_nullable": "YES",
+                "column_default": null
+            },
+            {
+                "column_name": "name",
+                "data_type": "text",
+                "is_nullable": "YES",
+                "column_default": null
+            }
+        ]
+    },
+    {
+        "table_name": "Player",
+        "columns": [
+            {
+                "column_name": "id",
+                "data_type": "integer",
+                "is_nullable": "NO",
+                "column_default": "nextval('\"Player_id_seq\"'::regclass)"
+            },
+            {
+                "column_name": "player_api_id",
+                "data_type": "integer",
+                "is_nullable": "YES",
+                "column_default": null
+            },
+            {
+                "column_name": "player_name",
+                "data_type": "text",
+                "is_nullable": "YES",
+                "column_default": null
+            },
+            {
+                "column_name": "player_fifa_api_id",
+                "data_type": "integer",
+                "is_nullable": "YES",
+                "column_default": null
+            },
+            {
+                "column_name": "birthday",
+                "data_type": "text",
+                "is_nullable": "YES",
+                "column_default": null
+            },
+            {
+                "column_name": "height",
+                "data_type": "integer",
+                "is_nullable": "YES",
+                "column_default": null
+            },
+            {
+                "column_name": "weight",
+                "data_type": "integer",
+                "is_nullable": "YES",
+                "column_default": null
+            }
+        ]
+    }
+]
